@@ -1,0 +1,59 @@
+name: publish-websites
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  # Build site
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    env:
+      PYTHONPATH: '.' # Required for mkdocs to find the configuration file
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Python 3
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install Poetry
+        run: python -m pip install poetry==2.1.0
+      - name: Configure poetry
+        run: poetry config virtualenvs.in-project true
+      - name: Cache the virtualenv
+        uses: actions/cache@v4
+        with:
+          path: ./.venv
+          key: ${{ runner.os }}-venv-${{ hashFiles('**/poetry.lock') }}
+      - name: Install dependencies
+        run: poetry install
+      - name: Build site
+        run: poetry run mkdocs build -d public
+      - name: Upload pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+  # Deploy site to Github pages
+  deploy:
+    needs: build
+    if: >
+      (github.event_name == 'push' && github.ref == 'refs/heads/main')
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

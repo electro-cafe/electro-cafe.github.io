@@ -1,0 +1,17 @@
+[project]
+name = "electro-cafe-github-io"
+version = "0.1.0"
+description = ""
+authors = [{ name = "Jacques Supcik", email = "jacques@supcik.net" }]
+license = { text = "Apache-2.0 OR MIT" }
+readme = "README.md"
+requires-python = ">=3.12,<4"
+dependencies = ["mkdocs-material (>=9.6.4,<10.0.0)", "mkdocs-rss-plugin (>=1.17.1,<2.0.0)"]
+
+[tool.poetry]
+package-mode = false
+packages = [{ include = "electro_cafe" }]
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"

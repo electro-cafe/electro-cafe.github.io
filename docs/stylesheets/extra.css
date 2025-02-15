@@ -1,0 +1,21 @@
+/*
+
+https://colors.artyclick.com/color-names-dictionary/color-names/rich-electric-blue-color/ 
+https://mycolor.space/?hex=%230892D0&sub=1
+
+*/
+
+[data-md-color-scheme='default'] {
+  --md-primary-fg-color: #0892d0;
+  --md-primary-fg-color--light: #37a7db;
+  --md-primary-fg-color--dark: #0671a2;
+  --md-accent-fg-color: #e79c25;
+}
+
+[data-md-color-scheme='slate'] {
+  --md-primary-fg-color: #0892d0;
+  --md-primary-fg-color--light: #37a7db;
+  --md-primary-fg-color--dark: #0671a2;
+  --md-accent-fg-color: #e79c25;
+  --md-hue: 210;
+}
