@@ -61,3 +61,4 @@ nav:
   - Blog:
       - blog/index.md
       - blog/tags.md
+      - "article 1 liste logiciels et matériel": blog/article_1_logiciel_materiel.md
