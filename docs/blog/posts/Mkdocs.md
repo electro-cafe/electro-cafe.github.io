@@ -35,7 +35,7 @@ La partie d'édition de fichier permet de créer du text, changer sa mise en for
 Le terminal nous permet de simuler notre page en local.
 Pour ce faire taper **poetry run mkdocs serve** puis enter, la ligne de commande s'exécute. avec ctrl + clic sur le lien ça ouvre la page web en local:
 
-![commande pour lancer le site en local](../../../../sources/images/commande_run_server.png "commande pour lancer le site en local")
+![commande pour lancer le site en local](../../../sources/images/commande_run_server.png "commande pour lancer le site en local")
 
 On peut ajouter nos fichiers dans le dossier draft. Il ne sont visible qu'en local. 
 Ils apparaissent avec la mention brouillon
