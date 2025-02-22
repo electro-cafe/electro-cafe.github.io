@@ -1,7 +1,6 @@
 ---
 date:
   created: 2025-02-15
-
 categories:
   - Divers
 tags:

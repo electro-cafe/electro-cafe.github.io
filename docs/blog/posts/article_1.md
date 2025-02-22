@@ -1,7 +1,6 @@
 ---
 date:
   created: 2025-02-22
-
 categories:
   - Electronique
 tags:
@@ -10,6 +9,7 @@ authors:
   - thomas
 slug: liste_materiel
 ---
+
 # Article 1 liste du matériel  
 
 Cet article liste les logiciels et le matériel nécessaire.  
