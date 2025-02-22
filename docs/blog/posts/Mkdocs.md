@@ -42,10 +42,20 @@ Ils apparaissent avec la mention brouillon
 
 ![aperçu d'un draft en local](mkdocs/draft_preview.png)
 
-lorsque l'on est content du résultat on peut les sortir de draft pour les mettre dans posts. Attention il faut enlever "../" au chemin des images.
+
 
 Dans le terminal faire **ctrl + c** pour mettre fin à la synchronisation du site en local.
-**flèche vers le haut** pour parcourir l'historique des commandes entrées dans le terminal.
+
+Astuce: **flèche vers le haut** pour parcourir l'historique des commandes entrées dans le terminal.
+
+## insérer des images dans un article
+on va créer un dossier contenant les images **au même niveau que les articles du blog**  ici nommé mkdocs  
+P.S. Précédement le dossier était plus à la racine et je devais naviguer comme suit vers les images: "../../../../sources/images/staged_changes.png" cela fonctionnait en local mais pas en online.  
+<figure markdown="span">
+  ![push to git](mkdocs/dossier_images.png)
+  <figcaption>à gauche le dossier mkdocs contenant les images. à droite l.30 l'implémentation des images</figcaption>
+</figure>
+
 
 ## Publier changements sur Github
 
@@ -68,3 +78,38 @@ Puis Sync changes
 </figure>
 
 
+## synchroniser repository github avec notre dossier local
+
+Utile pour travailler avec la dernière version mise à jour par les collègues.  
+Il va falloir utiliser [gitbash](https://git-scm.com/downloads).
+
+<figure markdown="span">
+  ![push to git](mkdocs/fenetre_gitbash.png)
+  <figcaption>terminal de commande gitbasht</figcaption>
+</figure>
+
+Il faut dire à gitbash ou est situé notre dossier local avec cette commande:  
+ **cd /c/Users/thoma/Documents/Github/electro-cafe.github.io**    
+ s
+<figure markdown="span">
+  ![push to git](mkdocs/localiser_gitbash.png)
+  <figcaption>ici j'ai demandé où gitbash se "situe" puis je l'ai "placé" dans mon dossier copie local du repository github. Quand je lui redemande où il se situe, il nous indique qu'il est dans le dossier demandé</figcaption>
+</figure>
+
+Voici quelques commandes utiles 
+
+- **pwd** → Affiche le chemin complet du répertoire actuel dans lequel vous travaillez.
+
+- **git status**
+→ Montre fichiers modifiés, en attente de commit, non suivis, etc.
+
+- **git remote add origin https://github.com/electro-cafe/electro-cafe.github.io.git**
+→ Lie votre dépôt local à un dépôt distant sur GitHub appelé origin.
+
+- **git pull origin main**
+→ Récupère la dernière version sur github et met à jour notre dossier local.
+
+<figure markdown="span">
+  ![push to git](mkdocs/gitbash_pull.png)
+  <figcaption>ici on voit que mon dossier local est mis à jour selon la dernière version sur github</figcaption>
+</figure>

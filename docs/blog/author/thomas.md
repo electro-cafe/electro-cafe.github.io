@@ -1,4 +1,4 @@
 # Thomas Fessler
 
-Thomas Fessler, intéressé à s'initié à l'électronique
+Thomas Fessler, intéressé à s'initier à l'électronique
 Il est membre du groupe Electro Café.
