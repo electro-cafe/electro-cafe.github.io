@@ -50,14 +50,18 @@ Dans le terminal faire **ctrl + c** pour mettre fin à la synchronisation du sit
 ## Publier changements sur Github
 
 les changements sont indiqué à droite de l'écran sous source control. Ici il y en a 6
-![aperçu d'un draft en local](../../../../sources/images/icone_changement.png "aperçu d'un draft en local")
+![stage changes](../../../../sources/images/icone_changement.png "stage changes")
 
 Ils sont ici listés, on ajoute ceux qu'on désire avec le +
-![aperçu d'un draft en local](../../../../sources/images/Stash_files.png "aperçu d'un draft en local")
+![staged changes](../../../../sources/images/Stash_files.png "staged changes")
 
 les ajouts passent en "staged change". On ajoute une description des changement dans la case message pour mieux s'y retrouver si on doit utiliser l'historique des changements.
-On clique sur Commit
+On clique sur Commit, c'est comme faire une photo de l'état du projet, afin de marquer une étape dans son historique et de pouvoir y revenir au besoin.
 
-![aperçu d'un draft en local](../../../../sources/images/staged_changes.png "aperçu d'un draft en local")
+![commit changes](../../../../sources/images/staged_changes.png "commit changes")
+
+Puis Sync changes
+
+![push to git](../../../../sources/images/push.png "push to git")
 
 
