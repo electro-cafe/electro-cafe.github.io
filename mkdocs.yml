@@ -34,7 +34,6 @@ plugins:
       categories_allowed:
         - Information
         - Electronique
-        - INformatique
         - 3D
         - Divers
       authors_profiles: true

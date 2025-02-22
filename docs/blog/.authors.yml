@@ -3,3 +3,8 @@ authors:
     name: Jacques Supcik
     description: Professeur
     avatar: https://github.com/supcik.png
+
+  thomas:
+    name: Thomas Fessler
+    description: élève
+    avatar: https://github.com/culiacan77.png
