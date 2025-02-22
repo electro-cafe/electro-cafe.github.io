@@ -11,13 +11,16 @@ Les outils logiciels recommandés sont :
 - **KiCad** – Conception de circuits imprimés  
 
 ## Section 2 : Matériel  
-Voici la liste du matériel requis :  
+Voici la liste du matériel commandé :  
 
-- **12 LEDs**  
-- **2 boutons On/Off**  
-- **2 prises femelle**  
-- **3 moteurs pas à pas**  
-- **3 interrupteurs 3 positions**  
-- **2 batteries**  
-- **1 Arduino**  
-- **1 capteur de mouvement**  
+- **50 LEDs**  
+- **10 boutons switch 3 points**  
+- **1 pince coupe fil**  
+- **1 pince à dénuder**  
+- **2 breadboards**  
+- **fil à souder**  
+- **2 Usb-a vers Usb-c**  
+- **3 jeux de fils male to male**  
+- **1 fer à souder électrique**  
+- **1 Esp32**  
+- **1 s3 mini pro**  
