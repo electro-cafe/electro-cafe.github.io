@@ -19,3 +19,13 @@ https://mycolor.space/?hex=%230892D0&sub=1
   --md-accent-fg-color: #e79c25;
   --md-hue: 210;
 }
+
+/*colore la 1ère ligne du tableau en gris */
+.md-typeset table thead tr { 
+  background-color: lightgray; 
+}
+
+/*colore la 1ère colonne du tableau en gris claire */
+.md-typeset table tr td:first-child {
+  background-color: #f0f0f0;
+}
