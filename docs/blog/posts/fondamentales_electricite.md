@@ -2,7 +2,7 @@
 date:
   created: 2025-03-02
 categories:
-  - Electronique
+  - Formules
 tags:
   - introduction
 authors:
@@ -16,15 +16,22 @@ Cet article présente les définitions, concepts et formules du domaine de l'él
 
 <!-- more -->
 
-## Section 1 : Logiciels  
-Les outils logiciels recommandés sont :  
+## Section 1 : Définitions  
 
-- **Visual Studio Code** – Éditeur de code  
-- **Python** – Langage de programmation  
-- **Docker** – Conteneurisation  
-- **KiCad** – Conception de circuits imprimés  
 
-## Section 2 : Matériel  
+| nom  | autre nomination | définition  | sympole math. | unité |
+| :---------------| :-------------- |:---------------:| -------:| -------:|
+| Tension | Voltage, potentiel   |  | U | Volt |
+| Intensité  | - |              | I | Ampère |
+| Puissance  | - |              | W | Watt |
+| Résistance  | - |           |  Ω   | Ohm |
+
+- **Tension** – Éditeur de code  
+- **Intensité** – Langage de programmation  
+- **Puissance** – Conteneurisation  
+- **Résistance** – Conception de circuits imprimés  
+
+## Section 2 : Formules mathématiques  
 Voici la liste du matériel commandé :  
 
 - **50 LEDs**  
