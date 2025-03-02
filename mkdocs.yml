@@ -32,6 +32,7 @@ plugins:
       blog_toc: true
       archive_date_format: MMMM yyyy
       categories_allowed:
+        - Formules
         - Information
         - Electronique
         - 3D
