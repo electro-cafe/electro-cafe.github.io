@@ -29,3 +29,6 @@ https://mycolor.space/?hex=%230892D0&sub=1
 .md-typeset table tr td:first-child {
   background-color: #f0f0f0;
 }
+
+extra_css:
+  - https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/katex.min.css
