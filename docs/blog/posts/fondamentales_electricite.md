@@ -316,31 +316,63 @@ Il est important de noter que, bien que le symbole **"W"** soit utilisé pour re
 
 ![Loi d'Ohm](mkdocs/loi_ohm.png)  
 
+
 - **Loi d'Ohm** :  
   $$
   U = R \cdot I
   $$
-  (*Tension = Résistance × Intensité*)  
+  *Tension = Résistance × Intensité*
+  >⚠️ On Utilise **U** pour la tension aux borne d'un élément du circuit et **E** pour la tension de la source
 
 - **Puissance électrique** :  
   $$
   P = U \cdot I
   $$
-  (*Puissance = Tension × Intensité*)
+  *Puissance = Tension × Intensité*
 
-- **Loi de Kirchoff** :    Work in progress  
+- **Loi de kirshhoff - noeuds** :    
 $$
 ∑I 
 entrant
 ​
  =∑I 
 sortant
+$$
+Dans un noeud, la somme de l'**Intensité** qui rentre = la somme de ce qui sort
+
+- **Loi de kirshhoff - maille** :    
+$$
+∑I 
+entrant
 ​
+ =∑I 
+sortant
+$$
+Dans une maille(boucle fermée), la somme des **tensions** = 0 car l'énergie fournie est toujours entièrement consommée.
+> ce n'est pas nous qui choisissons la tension des résistance, c'est leur résistance, en fonction de celle ci elles vont se répartir la tension totale afin que la somme soit 0. 
 
+
+exemple calcul de répartition des tension dans un système de 9V avec 2 résistances de 10Ω et 20Ω:   
 $$  
-une maille c'est    
-un noeud c'est  
-une branche c'est  
-un dipole c'est
+I = \frac{9V}{10Ω + 20Ω} = 0.3A  
+$$
+U1 = 10Ω * 0.3A = 3V  
+U2 = 20Ω * 0.3A = 6V
 
-Liens: https://physique-enligne.univ-lille.fr/electrocinetique/co/chapitre1_1_1.html
+---
+
+## ✏️ Schéma électrique vocabulaire 
+
+![Schema circuit electrique](mkdocs/schema_circuit_electrique.gif)  
+
+une **maille** c'est un chemin fermé dans un circuit.   
+un **noeud** c'est une connexion ou arrivent plusieurs branches.
+une **branche** c'est un chemin du circuit à un noeud.    
+un **dipole** c'est  un composant électrique possédant deux bornes.
+une **borne** c'est le point de connexion d'un composant électrique. 
+  
+    
+
+## 🌐 Ressources 
+Complément d'information: [université Lille 1](https://physique-enligne.univ-lille.fr/electrocinetique/co/chapitre1_1_1.html)  
+youtube [Profcoudert](https://www.youtube.com/watch?v=hFzQDGhtpXA)
