@@ -366,9 +366,9 @@ U2 = 20Ω * 0.3A = 6V
 ![Schema circuit electrique](mkdocs/schema_circuit_electrique.gif)  
 
 une **maille** c'est un chemin fermé dans un circuit.   
-un **noeud** c'est une connexion ou arrivent plusieurs branches.
+un **noeud** c'est une connexion ou arrivent plusieurs branches.  
 une **branche** c'est un chemin du circuit à un noeud.    
-un **dipole** c'est  un composant électrique possédant deux bornes.
+un **dipole** c'est  un composant électrique possédant deux bornes.  
 une **borne** c'est le point de connexion d'un composant électrique. 
   
     
