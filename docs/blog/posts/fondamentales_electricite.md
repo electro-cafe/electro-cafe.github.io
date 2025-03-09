@@ -16,138 +16,6 @@ Cet article présente les définitions, concepts et formules du domaine de l'él
 
 <!-- more -->
 
-  
-
-
-
-<!-- | nom  | autre nomination | définition  | analogie chute d'une enclume | sympole math. | unité |
-| :---------------| :-------------- |:---------------:| :---------------:| :-------:| -------:|
-| Tension | Voltage, potentiel, courant   | différence de potentiel | hauteur de chute | U | Volt (V)|
-| Intensité  | ampérage |       débit du courant électrique      | masse de l'enclume | I | Ampère (A) |
-| Puissance  | - |       quantité d’énergie fournie ou consommée      | énergie lors de l'impact | P | Watt (W) |
-| Résistance  | - |     opposition au passage du courant    | frottement de l'air |  R   | Ohm (Ω) |
-
-Et l'électricité dans tout ça ?  
-L'électricité est un tout, ce tableau représente ces composantes et permet de la décrire et la mesurer.
-
-**Attention** : force et puissance ne sont pas la même chose.  
-
-La **force mécanique** :  
-$$ F = m \times a $$  
-
-La **puissance mécanique** :  
-$$ P = F \times v $$  
-ce qu'on peut décomposer en :  
-$$ P = m \times a \times v $$  
-
-On peut détailler avec :  
-$$ a = \frac{v_1 - v_2}{t} $$  
-ce qui donne :  
-$$ P = m \times \frac{(v_1 - v_2)}{t} \times v $$  
-
-La **puissance électrique** :  
-$$ P = U \times I $$  
-
----
-
-**Attention** : la masse et le poids ne sont pas la même chose.  
-
-- La **masse** se mesure en **kg**, c'est ce que l'on nomme le poids dans le langage courant.  
-- Le **poids** se mesure en **Newton (N)**, c'est une **force**. C'est l'attraction exercée par la gravité de la planète sur la masse de l'objet. C'est également la force que l'objet exerce contre la planète.
-
----
-
-Ce que je ne comprends pas, c'est que si je pousse contre un mur, rien ne bouge, pourtant j'exerce une force et j'utilise ma puissance.  
-Comme rien ne bouge :  
-$$ a = 0 \Rightarrow F = 0 \Rightarrow P = 0 $$  
-Peut-être qu'il n'y a pas de force car c'est un **système** et que le mur exerce une force dans le sens opposé.  
-Ma force est convertie en **perte d'énergie**, c'est-à-dire en **chaleur dans les muscles**.  
-
----
-
-L'**énergie**, c'est la **puissance × temps** :  
-$$ E = P \times t $$  
-**Exemple** : 1 joule = 1 W × 1 s  
-
-C'est pour ça que les joules sont donnés en **watts-heures**.  
-
-La **puissance** :  
-$$ P = U \times I $$  
-C'est aussi l'**énergie par unité de temps** :  
-$$ P = \frac{E}{t} $$  
-
----
-
-### **Fréquence et Période**  
-
-- **1 Hertz (Hz) = 1 oscillation par seconde.**  
-- **1 MégaHertz (MHz) = 1 million d'oscillations par seconde.**  
-- **1 GigaHertz (GHz) = 1 milliard d'oscillations par seconde.**  
-
-La **fréquence** est le **nombre d'oscillations par seconde** :  
-Une fréquence de **50 Hz** correspond à **50 cycles par seconde**, un cycle correspondant au fait que l'onde revient à sa valeur initiale :  
-$$ f = \frac{1}{T} $$  
-
-La **période** est la durée d'un cycle complet de l'onde, son unité est la seconde :  
-$$ T = \frac{1}{f} $$  
-
-La **fréquence et la période** sont donc liées, elles sont **inversément proportionnelles**.  
-**Exemple** : 2 Hz = 2 cycles par seconde.  
-
-L'**onde** transporte de l'énergie sans que la matière se déplace de façon nette.  
-L'onde est une **variation de la tension**. Les oscillations peuvent être utilisées pour **mesurer le temps**.  
-
-Le **courant alternatif** a une **fréquence** qui oscille.  
-Le **courant continu** n'a **pas de fréquence**.  
-
----
-
-### **Charge électrique et tension**  
-
-Le **coulomb (C)** est l'unité de charge électrique :  
-$$ 1C = 6.242 \times 10^{18} \text{ électrons} $$  
-C'est donc une **quantité d'électrons**.  
-
-On le définit comme :  
-$$ Q = I \times t $$  
-
-L'**ampère (A)** est défini comme **1 coulomb par seconde** :  
-$$ I = \frac{Q}{t} $$  
-
-Le **volt (V)** est défini comme **1 joule par coulomb** :  
-$$ 1V = \frac{1J}{1C} $$  
-
-L'**énergie (E)**, donnée en **joules (J)**, est définie par :  
-$$ E = Q \times V $$  
-
-Le **joule (J)** est le travail d'une force de **1 Newton sur 1 mètre** ou la pression exercée sous l'effet de la gravité par une pomme de 100 g sur le sol :  
-$$ 1J = 1N \times 1m $$  
-
-C'est aussi :  
-- L'**énergie d'un coulomb sous 1 volt** :  
-  $$ 1J = 1C \times 1V $$  
-- L'**énergie consommée par un appareil de 1 Watt fonctionnant pendant 1 seconde** :  
-  $$ 1J = 1W \times 1s $$  
-
-Donc :  
-$$ 1 kWh = 1000 W \times 3600 s = 3,6 \text{ MJ} $$  
-
----
-
-## **Formules mathématiques**  
-
-![layout mkdocs visualstudio code](mkdocs/loi_ohm.png)  
-
-- **Loi d'Ohm** :  
-  $$ U = R \times I $$  
-  (*Tension = Résistance × Intensité*)  
-
-- **Puissance électrique** :  
-  $$ P = U \times I $$  
-  (*Puissance = Tension × Intensité*)  
--->
-
-
 # L'Électricité : Comprendre ses Composantes  
 
 L'électricité est invisible, on ne peut observer que ces effets, ce tableau représente ces composantes et permet de la décrire et la mesurer  
@@ -342,20 +210,20 @@ Dans un noeud, la somme de l'**Intensité** qui rentre = la somme de ce qui sort
 
 - **Loi de kirshhoff - maille** :    
 $$
-∑I 
-entrant
-​
- =∑I 
-sortant
+Uad = Uab + Ubc + Ucd
 $$
-Dans une maille(boucle fermée), la somme des **tensions** = 0 car l'énergie fournie est toujours entièrement consommée.
-> ce n'est pas nous qui choisissons la tension des résistance, c'est leur résistance, en fonction de celle ci elles vont se répartir la tension totale afin que la somme soit 0. 
+![Schema maille](mkdocs/kirchhoff_loi_maille.png)  
+Dans une maille(boucle fermée), la somme des **tensions** = 0 car l'énergie fournie est toujours entièrement consommée.  
+le potentiel mesuré avant et après la batterie sur la maille = la somme des potentiel mesurés sur les différents éléments de la maille.
+> ce n'est pas nous qui choisissons la tension des résistance. Elles vont se répartir la tension totale en fonction de leur résistance, afin que la somme soit 0. 
 
 
-exemple calcul de répartition des tension dans un système de 9V avec 2 résistances de 10Ω et 20Ω:   
+exemple calcul de répartition des tension dans un système de 9V avec 2 résistances de 10Ω et 20Ω.  
+On commence par calculer l'intencité en utilisant U = R * I  -> I = U/R   
 $$  
 I = \frac{9V}{10Ω + 20Ω} = 0.3A  
-$$
+$$  
+on peux calculer le voltage de chaque résistance:  
 U1 = 10Ω * 0.3A = 3V  
 U2 = 20Ω * 0.3A = 6V
 

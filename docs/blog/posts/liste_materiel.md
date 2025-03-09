@@ -10,7 +10,7 @@ authors:
 slug: liste_materiel
 ---
 
-# Article 1 liste du matériel  
+# Liste du matériel  
 
 Cet article liste les logiciels et le matériel nécessaire.  
 
@@ -23,6 +23,7 @@ Les outils logiciels recommandés sont :
 - **Python** – Langage de programmation  
 - **Docker** – Conteneurisation  
 - **KiCad** – Conception de circuits imprimés  
+- **Arduino IDE** – Environnement de dévellopement Arduino  
 
 ## Section 2 : Matériel  
 Voici la liste du matériel commandé :  
