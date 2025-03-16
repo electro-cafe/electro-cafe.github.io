@@ -229,6 +229,13 @@ U2 = 20Ω * 0.3A = 6V
 
 ---
 
+## 💡 Différence tension/électricité montage en parallèle/série
+
+|     | **Tension** | **Intensité** | 
+|--------------|----------------------------|----------------------------------------------------------|
+| **en parallèle**  | **Identique** sur chaque branche| **Différente** dans chaque branche en fonction de la résistance | 
+| **en série** | **Différente** sur chaque composant | **Identique** à travers tous les composants |
+
 ## ✏️ Schéma électrique vocabulaire 
 
 ![Schema circuit electrique](mkdocs/schema_circuit_electrique.gif)  
