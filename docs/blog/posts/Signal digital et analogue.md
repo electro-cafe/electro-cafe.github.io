@@ -57,7 +57,7 @@ Quelle est la fréquence de pulsation ?
 
 comment chainer 2 led au niveau du câblage ?  
 >simplement relier les sorties dout de la 1ère led à la 2ème. J'étais confus sur quoi faire avec les sorties dout de la 2ème led, il ne faut pas les relier au gnd.   
-![inclure la librairie neopixel d'adafruit](mkdocs/WS2812_chaine.jpg ) 
+![WS2812 chainé](mkdocs/WS2812_montage_1.jpg) 
   
 
 Pourquoi les WS2812 n'on pas de résistance dans le circuit comme avec la diode ?
@@ -72,6 +72,9 @@ Pourtant lorsque l'on mesure la résistance de l'entrée de l'allimentation et s
 
 >![schéma connexion élément WS2812](mkdocs/schema_connexion_WS2812.png) 
 (on a représenté que l'alimentation)
+
+![WS2812 chainé](mkdocs/WS2812_montage_2.jpg) 
+Ici le câblage prête un peu moins à confusion.
 
 > le câble transmettant le signal de donné (fil du milieu) est connecté en série.  
 
