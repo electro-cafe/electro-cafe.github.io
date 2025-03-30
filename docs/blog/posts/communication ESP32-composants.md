@@ -17,7 +17,7 @@ Comment l'ESP32 fait elle pour échanger et recevoir des informations avec les c
 <!-- more -->
 
 
-<!-- a completer et mettre en forme:
+
 ## Langage binaire
 
 L’ESP32, comme tout microcontrôleur, fonctionne en langage binaire. Cela signifie qu'il ne comprend que des 0 et des 1, qui correspondent respectivement à des niveaux bas et hauts de tension électrique. Cette logique binaire est la base de la communication entre l’ESP32 et les composants électroniques connectés.
@@ -80,26 +80,26 @@ Sortie des données vers une autre LED (chaînage)
 
 L’ESP32 envoie un signal PWM sur la broche Din de la LED pour modifier sa couleur. Voici un exemple de code pour allumer la LED en rouge, puis la faire passer au bleu :
 
-#include <Adafruit_NeoPixel.h>
+>'#include <Adafruit_NeoPixel.h>'
 
-#define LED_PIN 4  // GPIO où la LED est connectée
-#define NUM_LEDS 1 // Nombre de LED
+>'#define LED_PIN 4  // GPIO où la LED est connectée'
+>'#define NUM_LEDS 1 // Nombre de LED'
 
-Adafruit_NeoPixel strip(NUM_LEDS, LED_PIN, NEO_GRB + NEO_KHZ800);
+>'Adafruit_NeoPixel strip(NUM_LEDS, LED_PIN, NEO_GRB + NEO_KHZ800);'
 
-void setup() {
+>'void setup() {
   strip.begin();
   strip.show(); // Éteindre les LED au démarrage
-}
+}'
 
-void loop() {
+>'void loop() {
   strip.setPixelColor(0, strip.Color(255, 0, 0)); // Rouge
   strip.show();
   delay(1000);
   strip.setPixelColor(0, strip.Color(0, 0, 255)); // Bleu
   strip.show();
   delay(1000);
-}
+}'
 
 Dans cet exemple :
 
@@ -113,4 +113,5 @@ L’ESP32 envoie un signal binaire sous forme de pulses électriques pour comman
 
 
 ![télécharger les librairies](mkdocs/board_manager_url.png)  
+Il faut télécharger la librairie de l'ESP32 pour avoir accès à divers fonction de notre board au sein de l'arduino IDE
 

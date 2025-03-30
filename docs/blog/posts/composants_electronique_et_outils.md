@@ -43,5 +43,5 @@ Permet de mesurer le potentiel (courant alternatif, courant continu), la résist
 - mesure **en série**: on ouvre la boucle pour faire passer le courant au travers du multimètre. (le multimètre est intégré à la boulce) 
 - mesure **en parallèle**: on vient prendre la mesure avant et après un élément de la boucle. le multimètre crée une nouvelle boucle.
 
-
-
+## interrupteur 3 point
+![multimètre](mkdocs/interupteur_3_points.png) 
