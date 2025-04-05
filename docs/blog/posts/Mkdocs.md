@@ -90,7 +90,7 @@ Il va falloir utiliser [gitbash](https://git-scm.com/downloads).
 
 Il faut dire à gitbash ou est situé notre dossier local avec cette commande:  
  **cd /c/Users/thoma/Documents/Github/electro-cafe.github.io**    
- s
+ 
 <figure markdown="span">
   ![push to git](mkdocs/localiser_gitbash.png)
   <figcaption>ici j'ai demandé où gitbash se "situe" puis je l'ai "placé" dans mon dossier copie local du repository github. Quand je lui redemande où il se situe, il nous indique qu'il est dans le dossier demandé</figcaption>
@@ -100,14 +100,26 @@ Voici quelques commandes utiles
 
 - **pwd** → Affiche le chemin complet du répertoire actuel dans lequel vous travaillez.
 
-- **git status**
-→ Montre fichiers modifiés, en attente de commit, non suivis, etc.
-
 - **git remote add origin https://github.com/electro-cafe/electro-cafe.github.io.git**
 → Lie votre dépôt local à un dépôt distant sur GitHub appelé origin.
 
+- **cd "folderpath"**
+→ git bash will locate on the folder you give him the path.
+
+- **git status**
+→ Montre fichiers modifiés, en attente de commit, non suivis, etc.
+
 - **git pull origin main**
 → Récupère la dernière version sur github et met à jour notre dossier local.
+
+- **git add .**
+→ Ajoute tous les fichiers modifiés et nouveaux fichiers au prochain commit.
+
+- **git commit -m "xxx"**
+→ défini le message décrivant les changements du commit.
+
+**git push origin main**
+→ Envoie (push) le commit vers GitHub.
 
 <figure markdown="span">
   ![push to git](mkdocs/gitbash_pull.png)

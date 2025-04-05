@@ -8,7 +8,7 @@ const int kSwitchPinForward = 45;  // White wire (switch signal)
 const int kSwitchPinBackward = 47;  // Brown wire (switch signal)
 
 int kUpdateSpeed = 8; //increase for faster rainbow
-uint8_t kPausedHue = 0;  // it will store the hue value when switch is in neutral position
+uint8_t kHue = 0;  // it will store the hue value when switch is in neutral position
 
 
 Adafruit_NeoPixel pixels(kNumberOfLed, kPin, NEO_GRB + NEO_KHZ800); //create an object (instance of a class) named pixels of type Adafruit_NeoPixel.
@@ -65,14 +65,11 @@ void InitializePixelRed() {
   delay(DELAYVAL);
 }
 
-uint16_t getHue() { ///////////////////////pas sur
-  pixels.ColorHSV();
-  return hue;
-}
 
 void showRainbow() {
   for (int i = 0; i < 256; i++) {
-    pixels.rainbow(kPausedHue + i); // Start rainbow effect based on paused hue. Increase value
+    kHue = kHue + 256 % 65536; //modulo (what remains after division) to loop hue back to 0 when it reach 65536. adding 256 each step because I want a full loop in 256 step. 256*256 = 65536
+    pixels.rainbow(kHue); // Start rainbow effect based on paused hue. Increase value
     pixels.show();  // Update LED strip
     delay(10); // Small delay to slow down the rainbow effect
   }
@@ -81,7 +78,8 @@ void showRainbow() {
 
 void showRainbowReverse() {
   for (int i = 0; i < 256; i++) {
-    pixels.rainbow(kPausedHue - i); // Start rainbow effect based on paused hue. Decrease value
+    kHue = kHue - 256 % 65536;
+    pixels.rainbow(kHue); // Start rainbow effect based on paused hue. Decrease value
     pixels.show();  // Update LED strip
     delay(10); // Small delay to slow down the rainbow effect
   }
@@ -91,7 +89,6 @@ void loop() {
 
 const bool switchStateLeft = digitalRead(kSwitchPinForward) == LOW;  // determine the position of the button by reading the state of the pin is LOW when switch connect it to gnd
 const bool switchStateRight = digitalRead(kSwitchPinBackward) == LOW;
-
 
   if (switchStateLeft) { // If the switch is in Left position kpin 45 reads LOW 
 
@@ -108,7 +105,7 @@ const bool switchStateRight = digitalRead(kSwitchPinBackward) == LOW;
     printPixelData();  // Debug output
     delay(DELAYVAL/kUpdateSpeed);
   } else {
-    uint8 kPausedHue = getHue();
+
     delay(DELAYVAL); //do nothing
   }
 }

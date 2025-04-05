@@ -251,3 +251,16 @@ une **borne** c'est le point de connexion d'un composant électrique.
 ## 🌐 Ressources 
 Complément d'information: [université Lille 1](https://physique-enligne.univ-lille.fr/electrocinetique/co/chapitre1_1_1.html)  
 youtube [Profcoudert](https://www.youtube.com/watch?v=hFzQDGhtpXA)
+
+
+## ⚠️⚡ court circuit  
+Lorsque le courant circule de l'alimentation au GND (ground / neutre) il n'y a rien pour utiliser la puissance sur sa route, cette pruissance est transformé en chaleur extrème et détruit le composant en un rien de temps.
+  $$
+  I = \frac{U}{R}
+  $$
+
+  Si **R = 0.1** c'est comme faire 
+  $$
+  I = U \cdot 10
+  $$  
+  On comprend que plus R est petit plus on risque de divisé par 0 ce qui revient à **multiplier par l'infini** donc d'avoir un courant électrique d'une intencité monstrueuse
