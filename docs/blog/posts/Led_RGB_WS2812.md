@@ -113,8 +113,11 @@ Dans la pratique l'Esp32 a des **résistance interne**. Il faut par contre défi
 
 .
 
-Voici comment cabler notre interupteur 3 points en pull down
+Voici comment cabler notre interupteur 3 points en pull down si l'on n'utilise pas de pull down interne  
 ![3 point switch buton pull down](mkdocs/bouton_3_points.png)  
+
+Voici le schéma de montage 
+![schéma montage](mkdocs/schema_montage_LS2812_switch_button.png)  
 
 ##Diviseur de tension
 notre montage resemble à un diviseur de tension

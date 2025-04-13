@@ -46,7 +46,12 @@ Ils apparaissent avec la mention brouillon
 
 Dans le terminal faire **ctrl + c** pour mettre fin à la synchronisation du site en local.
 
-Astuce: **flèche vers le haut** pour parcourir l'historique des commandes entrées dans le terminal.
+Astuce: **flèche vers le haut** pour parcourir l'historique des commandes entrées dans le terminal.  
+
+## categories, tags et slug
+Grace à l'extension mkdocs-blog, on peut trier les articles avec une **categorie** et un **tags**, si l'on veut en ajouter il faut les définir dans le fichier mkdocs.yml  
+Le **slug** est la dernière partie de l'url. On est libre de metre le texte que l'on souhaite tant que l'on remplace les espaces par des -  
+![slug Mkdocs](mkdocs/mkdocs_slug.png)
 
 ## insérer des images dans un article
 on va créer un dossier contenant les images **au même niveau que les articles du blog**  ici nommé mkdocs  
