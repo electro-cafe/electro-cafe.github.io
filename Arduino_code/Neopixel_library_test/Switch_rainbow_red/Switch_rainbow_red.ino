@@ -1,14 +1,31 @@
+//9.4.25 
+//I struggled with the hue parameter of the rainbow method. turns out I can find it's imblementation body on my computer
+// under Documents\Arduino\libraries\Adafruit_NeoPixel\Adafruit_NeoPixel.cpp or on github also in Adafruit_NeoPixel.cpp
+
+//void Adafruit_NeoPixel::rainbow(uint16_t first_hue, int8_t reps,
+//  uint8_t saturation, uint8_t brightness, bool gammify) {
+//  for (uint16_t i=0; i<numLEDs; i++) {
+//    uint16_t hue = first_hue + (i * reps * 65536) / numLEDs;
+//    uint32_t color = ColorHSV(hue, saturation, brightness);
+//    if (gammify) color = gamma32(color);
+//    setPixelColor(i, color);
+//  }
+//}
+
+//turns out it only asign a gradient of color along the pixel chain x amount of time, there is no animation
+//we trick the animation by calling rainbow in a loop and ofseting each time the first_hue
+
 #include <Adafruit_NeoPixel.h>
 
 const int kPin = 4; // Pin connected to the LED strip
-const int kNumberOfLed = 1
+const int kNumberOfLed = 2
 ; // Number of LEDs
 
 const int kSwitchPinForward = 45;  // White wire (switch signal)
 const int kSwitchPinBackward = 47;  // Brown wire (switch signal)
 
-int kUpdateSpeed = 8; //increase for faster rainbow
-uint8_t kPausedHue = 0;  // it will store the hue value when switch is in neutral position
+int kUpdateSpeed = 50; //increase for faster rainbow
+uint8_t kHue = 0;  // it will store the hue value when switch is in neutral position
 
 
 Adafruit_NeoPixel pixels(kNumberOfLed, kPin, NEO_GRB + NEO_KHZ800); //create an object (instance of a class) named pixels of type Adafruit_NeoPixel.
@@ -31,6 +48,7 @@ void setup() { //this is a mandatory function of type void that runs once before
   
   //good practice to run those 3 functions
   pixels.begin(); // set the pin given in pixels argument as an output.
+  pixels.setBrightness(5); // dim the light, scale 0 to 255.
   pixels.clear(); // Clear all pixels 
   pixels.show();  // update the pixel state.
   InitializePixelRed(); //set pixel red to begin
@@ -61,30 +79,28 @@ void InitializePixelRed() {
   pixels.setPixelColor(i, pixels.Color(150, 0, 0)); //first argument = number of led in the chain, second argument = rgb value.
   }
   pixels.show();  // Update LED strip
+  Serial.print("set led red");
   printPixelData(); // Debug output
   delay(DELAYVAL);
 }
 
-uint16_t getHue() { ///////////////////////pas sur
-  pixels.ColorHSV();
-  return hue;
-}
 
 void showRainbow() {
-  for (int i = 0; i < 256; i++) {
-    pixels.rainbow(kPausedHue + i); // Start rainbow effect based on paused hue. Increase value
+  
+    kHue++;//increment hue
+    pixels.rainbow(kHue*256); // Start rainbow effect based on paused hue. 
     pixels.show();  // Update LED strip
-    delay(10); // Small delay to slow down the rainbow effect
-  }
+    delay(DELAYVAL/kUpdateSpeed); // Small delay to slow down the rainbow effect
 }
 
 
 void showRainbowReverse() {
-  for (int i = 0; i < 256; i++) {
-    pixels.rainbow(kPausedHue - i); // Start rainbow effect based on paused hue. Decrease value
+  
+  
+    kHue--;
+    pixels.rainbow(kHue*256); // Start rainbow effect based on paused hue. we have to multiply by 256 as it expect a 
     pixels.show();  // Update LED strip
-    delay(10); // Small delay to slow down the rainbow effect
-  }
+    delay(DELAYVAL/kUpdateSpeed); // Small delay to slow down the rainbow effect
 }
 
 void loop() {  
@@ -92,15 +108,14 @@ void loop() {
 const bool switchStateLeft = digitalRead(kSwitchPinForward) == LOW;  // determine the position of the button by reading the state of the pin is LOW when switch connect it to gnd
 const bool switchStateRight = digitalRead(kSwitchPinBackward) == LOW;
 
-
-  if (switchStateLeft) { // If the switch is in Left position kpin 45 reads LOW 
+  if (switchStateLeft) { // If the switch is in Left position kpin 47 reads LOW 
 
     showRainbow();
     pixels.show();  // Update LED strip
     Serial.println("reverse Rainbow activated");
     printPixelData();  // Debug output
     delay(DELAYVAL/kUpdateSpeed);
-  } else if (switchStateRight) { // If the switch is in Right position kpin 47 reads LOW
+  } else if (switchStateRight) { // If the switch is in Right position kpin 45 (white thread) reads LOW
  
     showRainbowReverse();
     pixels.show();  // Update LED strip
@@ -108,7 +123,7 @@ const bool switchStateRight = digitalRead(kSwitchPinBackward) == LOW;
     printPixelData();  // Debug output
     delay(DELAYVAL/kUpdateSpeed);
   } else {
-    uint8 kPausedHue = getHue();
+
     delay(DELAYVAL); //do nothing
   }
 }
