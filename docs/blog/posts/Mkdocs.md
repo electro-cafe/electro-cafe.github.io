@@ -46,7 +46,12 @@ Ils apparaissent avec la mention brouillon
 
 Dans le terminal faire **ctrl + c** pour mettre fin à la synchronisation du site en local.
 
-Astuce: **flèche vers le haut** pour parcourir l'historique des commandes entrées dans le terminal.
+Astuce: **flèche vers le haut** pour parcourir l'historique des commandes entrées dans le terminal.  
+
+## categories, tags et slug
+Grace à l'extension mkdocs-blog, on peut trier les articles avec une **categorie** et un **tags**, si l'on veut en ajouter il faut les définir dans le fichier mkdocs.yml  
+Le **slug** est la dernière partie de l'url. On est libre de metre le texte que l'on souhaite tant que l'on remplace les espaces par des -  
+![slug Mkdocs](mkdocs/mkdocs_slug.png)
 
 ## insérer des images dans un article
 on va créer un dossier contenant les images **au même niveau que les articles du blog**  ici nommé mkdocs  
@@ -90,7 +95,7 @@ Il va falloir utiliser [gitbash](https://git-scm.com/downloads).
 
 Il faut dire à gitbash ou est situé notre dossier local avec cette commande:  
  **cd /c/Users/thoma/Documents/Github/electro-cafe.github.io**    
- s
+ 
 <figure markdown="span">
   ![push to git](mkdocs/localiser_gitbash.png)
   <figcaption>ici j'ai demandé où gitbash se "situe" puis je l'ai "placé" dans mon dossier copie local du repository github. Quand je lui redemande où il se situe, il nous indique qu'il est dans le dossier demandé</figcaption>
@@ -100,14 +105,26 @@ Voici quelques commandes utiles
 
 - **pwd** → Affiche le chemin complet du répertoire actuel dans lequel vous travaillez.
 
-- **git status**
-→ Montre fichiers modifiés, en attente de commit, non suivis, etc.
-
 - **git remote add origin https://github.com/electro-cafe/electro-cafe.github.io.git**
 → Lie votre dépôt local à un dépôt distant sur GitHub appelé origin.
 
+- **cd "folderpath"**
+→ git bash will locate on the folder you give him the path.
+
+- **git status**
+→ Montre fichiers modifiés, en attente de commit, non suivis, etc.
+
 - **git pull origin main**
 → Récupère la dernière version sur github et met à jour notre dossier local.
+
+- **git add .**
+→ Ajoute tous les fichiers modifiés et nouveaux fichiers au prochain commit.
+
+- **git commit -m "xxx"**
+→ défini le message décrivant les changements du commit.
+
+**git push origin main**
+→ Envoie (push) le commit vers GitHub.
 
 <figure markdown="span">
   ![push to git](mkdocs/gitbash_pull.png)

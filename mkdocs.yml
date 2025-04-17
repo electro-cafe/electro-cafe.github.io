@@ -34,7 +34,9 @@ plugins:
       categories_allowed:
         - Formules
         - Information
+        - Informatique
         - Electronique
+        - ESP32
         - 3D
         - Divers
         - Mkdocs
@@ -42,6 +44,7 @@ plugins:
         - Composants
         - Logiciels
         - Systeme de communication
+        - Math
       authors_profiles: true
       pagination_per_page: 5
       archive_pagination_per_page: 10

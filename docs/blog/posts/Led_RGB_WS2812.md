@@ -12,7 +12,7 @@ authors:
 slug: Led RGB WS2812
 ---
 
-# Led RGB WS2812
+# Led RGB WS2812 et 3 point switch buton
 
 Cet article présente la mise en place de l'IDE arduino pour contrôler une led RGB type WS2812.  
 
@@ -83,4 +83,53 @@ chaque element de ws2812 reçoit 5v car elles sont en parallèle. si elles étai
 >  $$
     \frac {\text{tension totale}}{\text{nombre d'élément}} 
   $$
+
+## Utilisation d'un bouton 3 points
+
+Le but est de modifier le comportement de la led en fonction de la position du bouton 3 points.  
+Il va falloir définir une fonction pour chaque position du bouton et câbler les éléments correctement.  
+On va utiliser asigner une pin à un booléan, si elle lit une valeur de courant élevé (HIGH) le bool est true, si elle lit une valeur basse (LOW) il est false.
+Il existe un seuil à partir duquel la valeur est HIGH où LOW on peut le consulter page 53 de la [documentation de l'Esp32 par Espressif]( https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf)
+Pour 3.3V entre **75 - 100%** du voltage on lit **HIGH**, entre **0 - 25%** on lit **LOW**.    
+
+Si la pin n'est relié à rien la présence de champ electromagnétique peut influencer la valeur lue par le microprocesseur. On dit que la valeur est **flottante**.  
+  
+![pin read floating value](mkdocs/valeur_flottante.png)  
+.
+
+On peut faire un montage avec une résistance après l'alimentation, on parle de **pull up** car on tire la tension vers le haut dans la lecture de la pin lorsque le circuit est ouvert
+![montage resistance pull up](mkdocs/pull_up_resistance.png) 
+. 
+
+
+Où mettre la résistance avant l'alimentation, on parle de **pull down** car on tire la tension vers le bas dans la lecture de la pin lorsque le circuit est ouvert
+![montage resistance pull down](mkdocs/pull_down_resistance.png)    
+.
+ 
+
+Dans la pratique l'Esp32 a des **résistance interne**. Il faut par contre définir si la pine est au bénéfice d'une résistance pull up où pull down.
+
+![résistance interne](mkdocs/resistance_interne.png)  
+
+.
+
+Voici comment cabler notre interupteur 3 points en pull down si l'on n'utilise pas de pull down interne  
+![3 point switch buton pull down](mkdocs/bouton_3_points.png)  
+
+Voici le schéma de montage 
+![schéma montage](mkdocs/schema_montage_LS2812_switch_button.png)  
+
+##Diviseur de tension
+notre montage resemble à un diviseur de tension
+
+
+![schema diviseur de tension](mkdocs/diviseur_De_tension.png)  
+.
+
+Voici comment la 1ère et la 2ème résistance influence la tension intermédiaire
+![influence résistances dans un diviseur de tension](mkdocs/influence_resistance_diviseur_tension.png)  
+.
+
+Démonstration de la formule du diviseur de tension
+![démonstration formule diviseur de tension](mkdocs/demonstration_formule_diviseur_tension.png)  
 
