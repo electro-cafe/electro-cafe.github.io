@@ -10,9 +10,9 @@ authors:
 slug: Mkdocs
 ---
 
-# Mkdocs presentation et fonctionnement
+# Mkdocs, Github et terminal
 
-Cet article présente et explique comment ajouter des articles dans Mkdocs.  
+Cet article présente et explique comment ajouter des articles dans Mkdocs puis envoyer les changements vers Github à l'aide du terminal  
 
 <!-- more -->
 
@@ -60,6 +60,15 @@ P.S. Précédement le dossier était plus à la racine et je devais naviguer com
   ![push to git](mkdocs/dossier_images.png)
   <figcaption>à gauche le dossier mkdocs contenant les images. à droite l.30 l'implémentation des images</figcaption>
 </figure>
+
+## Créer un nouvel article
+Il suffit de dupliquer un article, changer et lui donner le nom que l'on souhaite.
+Au sein de l'article on modifie les tags et catégorie pour mieux le classer.  
+Si l'on souhaite lui attribuer une nouvelle catégorie il faut ajouter cette catégorie dans le fichier mkdocs.yml.  
+![ajout catégorie fichier .yml](mkdocs/mkdocs_categories.png)    
+  
+⚠️ l'article doit être mis dans le dossier **post** sinon il n'est pas visible.  
+![dossier des articles](mkdocs/mkdocs_blog_post.png)
 
 
 ## Publier changements sur Github
@@ -130,3 +139,48 @@ Voici quelques commandes utiles
   ![push to git](mkdocs/gitbash_pull.png)
   <figcaption>ici on voit que mon dossier local est mis à jour selon la dernière version sur github</figcaption>
 </figure>
+
+## terminal
+Le terminal permet d'executer des programmes ou scripts, de rechercher et déplacer des fichiers de manière précise, installer ou mettre à jour des logiciels.  
+Sur windows il en existe plusieur:   
+- **L'invite de commande**: terminal de base de windows, un peu ancien et limité.  
+- **Powershell**: plus moderne, puissant, avec sa propre syntaxe.  
+- **Git Bash**: une version de bash (le terminal de Linux/Mac) installée avec Git pour Windows.  
+
+Voici quelques commandes utiles:    
+
+|     | **Fonction** | **abréviation** | 
+|--------------|----------------------------|----------------------------------------------------------|
+| **pwd**  | 	Affiche le chemin du dossier actuel  | Print Working Directory | 
+| **ls** | 	Liste les fichiers et dossiers dans le dossier actuel | list |  
+| **cd** | 	Change de dossier | change directory |  
+| **touch** | 	Crée un fichier vide |   |  
+| **rm** | 	Supprime un fichier | remove |  
+| **mv** | 	Déplace ou renomme un fichier ou dossier | move |  
+| **cp** | 	Copie un fichier ou dossier | copy |  
+| **grep** | 	Recherche dans un fichier/dossier selon expression régulière |   |  
+| **echo** | 	affiche un message ou variable dans le terminal.  ex: nombre de fichier trouvé |  |  
+
+---
+
+et contrôles utiles:
+
+|     | **Fonction** | **abréviation** | 
+|--------------|----------------------------|----------------------------------------------------------|
+| **Ctrl + A**  | 	Aller au début de la ligne  |  | 
+| **Ctrl + E** | 	Aller à la fin de la ligne |  |  
+| **Ctrl + C** | 	Annuler/interrompre une commande |  |  
+| **tab** | 	Auto-complétion des fichiers/commandes |   |  
+| **Ctrl + U** | 	Supprime tout ce qui est à gauche du curseu | |  
+| **Ctrl + k** | 	Supprime tout ce qui est à droite du curseu | |  
+| **↑ / ↓** | 		Naviguer dans l’historique des commandes |  |  
+| **..** | 	remonte d'un  dossier |   | 
+
+
+pour la recherche de fichier, les **expressions régulières** -Regex- permettent une recherche très fine. C'est un peu comme faire une recherche google en excluant certains termes, mais en plus puissant.
+
+## poetry
+C'est gestionnaire de projet et de dépendances Python, il permet l'installation de librairies ainsi qu'un contrôl précis des versions des bibliothèques utilisées. Peut-être qu'une librairie (collection de fonctions) a été mise à jour et qu'elle ne possède plus les fonctionalités dont l'on a besoin.  
+Poetry permet également de créer des environnement virtuel pour que le projet n’entre pas en conflit avec d’autres projets. Un **environnement virtuel est un environement isolé**, ainsi les commandes executés au sein de cet environement ne viendront pas polluer le système Python global.   
+Afin d'installer poetry il a fallu installer **Pyp.py** -l'installateur officiel de librairies de python- et **Pyp.X**, un programme qui permet d’installer et exécuter des programmes Python dans un environnement virtuel (au sein d'un dossier .Venv).
+
