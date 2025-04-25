@@ -15,7 +15,11 @@
 //turns out it only asign a gradient of color along the pixel chain x amount of time, there is no animation
 //we trick the animation by calling rainbow in a loop and ofseting each time the first_hue
 
+//22.4.25 
+//I'll add the stepper code from exemple and adapt it
+
 #include <Adafruit_NeoPixel.h>
+#include <Stepper.h>
 
 const int kPin = 4; // Pin connected to the LED strip
 const int kNumberOfLed = 2
@@ -27,9 +31,16 @@ const int kSwitchPinBackward = 47;  // Brown wire (switch signal)
 int kUpdateSpeed = 50; //increase for faster rainbow
 uint8_t kHue = 0;  // it will store the hue value when switch is in neutral position
 
+const int kStepsPerRevolution = 2048;  // change this to fit the number of steps per revolution of motor
+
+int kMotorSpeed = 60;
+
+
 
 Adafruit_NeoPixel pixels(kNumberOfLed, kPin, NEO_GRB + NEO_KHZ800); //create an object (instance of a class) named pixels of type Adafruit_NeoPixel.
 //third argument is the pixel type. You choose it from a list furnished by Adafruit_NeoPixel.h
+
+Stepper myStepper(kStepsPerRevolution, 15, 16, 17, 18); // initialize the stepper library on pins 8 through 11:
 
 #define DELAYVAL 1000 //the keyword #define is not a type such as int. 
 //It tells to replace every instances of DELAYVAL (a name we choose) by 1000 before the code is compiled. 
@@ -52,6 +63,8 @@ void setup() { //this is a mandatory function of type void that runs once before
   pixels.clear(); // Clear all pixels 
   pixels.show();  // update the pixel state.
   InitializePixelRed(); //set pixel red to begin
+
+  myStepper.setSpeed(kMotorSpeed);
 }
 
 // Print pixel rgb value for debugging
@@ -115,6 +128,7 @@ const bool switchStateRight = digitalRead(kSwitchPinBackward) == LOW;
     Serial.println("reverse Rainbow activated");
     printPixelData();  // Debug output
     delay(DELAYVAL/kUpdateSpeed);
+    myStepper.step(kStepsPerRevolution);
   } else if (switchStateRight) { // If the switch is in Right position kpin 45 (white thread) reads LOW
  
     showRainbowReverse();
@@ -122,6 +136,7 @@ const bool switchStateRight = digitalRead(kSwitchPinBackward) == LOW;
     Serial.println("reverse Rainbow activated");
     printPixelData();  // Debug output
     delay(DELAYVAL/kUpdateSpeed);
+    myStepper.step(-kStepsPerRevolution);
   } else {
 
     delay(DELAYVAL); //do nothing
