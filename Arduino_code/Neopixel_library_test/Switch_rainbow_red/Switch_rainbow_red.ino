@@ -31,8 +31,8 @@ const int kSwitchPinBackward = 47;  // Brown wire (switch signal)
 int kUpdateSpeed = 50; //increase for faster rainbow
 uint8_t kHue = 0;  // it will store the hue value when switch is in neutral position
 
-const int kStepsPerRevolution = 2048;  // change this to fit the number of steps per revolution of motor
-
+const int kStepsPerRevolution = 400;  // change this to fit the number of steps per revolution of motor
+const int kStepIncrement = 60;
 int kMotorSpeed = 60;
 
 
@@ -40,7 +40,9 @@ int kMotorSpeed = 60;
 Adafruit_NeoPixel pixels(kNumberOfLed, kPin, NEO_GRB + NEO_KHZ800); //create an object (instance of a class) named pixels of type Adafruit_NeoPixel.
 //third argument is the pixel type. You choose it from a list furnished by Adafruit_NeoPixel.h
 
-Stepper myStepper(kStepsPerRevolution, 15, 16, 17, 18); // initialize the stepper library on pins 8 through 11:
+Stepper myStepper(kStepsPerRevolution, 15, 17, 16, 18); // initialize the stepper library on pins 15 through 18. Important note :
+//the argument order doesn't match the pin order, this is because inside the steper the 4 coil are not wired in a logical order.
+//to gain space they wire in order 1 3 2 4 so we have to give the argument following this order or cross the wires
 
 #define DELAYVAL 1000 //the keyword #define is not a type such as int. 
 //It tells to replace every instances of DELAYVAL (a name we choose) by 1000 before the code is compiled. 
@@ -128,7 +130,7 @@ const bool switchStateRight = digitalRead(kSwitchPinBackward) == LOW;
     Serial.println("reverse Rainbow activated");
     printPixelData();  // Debug output
     delay(DELAYVAL/kUpdateSpeed);
-    myStepper.step(kStepsPerRevolution);
+    myStepper.step(kStepIncrement);
   } else if (switchStateRight) { // If the switch is in Right position kpin 45 (white thread) reads LOW
  
     showRainbowReverse();
@@ -136,7 +138,7 @@ const bool switchStateRight = digitalRead(kSwitchPinBackward) == LOW;
     Serial.println("reverse Rainbow activated");
     printPixelData();  // Debug output
     delay(DELAYVAL/kUpdateSpeed);
-    myStepper.step(-kStepsPerRevolution);
+    myStepper.step(-kStepIncrement);
   } else {
 
     delay(DELAYVAL); //do nothing

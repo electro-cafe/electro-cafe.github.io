@@ -52,3 +52,20 @@ $$
 $$
 
 > divisier par une fraction revient à multiplier par son inverse
+
+## factorielle
+
+la factorielle c'est multiplier un nombre par chaque membre de la suite de nombre allant de 1 au nombre en question. 
+Elle se note n!   
+  
+3! = 1 * 2 * 3  
+voici la version dévelloppée :  
+fact(3) = 3 * fact(2)   
+fact(2) = 2 * fact(1)  
+fact(1) = 1 * fact(0)  
+fact(0) = 1  
+
+l'on peut l'écrire **fact(n)** où **n!**  
+c'est une fonction **récursive** (= qui s'appelle elle même) car fact(n) = n * fact(n-1) on déclare la factorielle avec la factorielle. fact(n-1) = n-1 * fact(n-1-1) puis fact(n-1-1) = n-1-1 * fact(n-1-1-1).  
+Quand s'arrêter ? lorsqu'on atteint fact(0), 0! = 1
+La factorielle augmente plus vite que les puissances.

@@ -29,6 +29,32 @@ Il se compose entre autre d'un **redresseur** (où diode) qui ne laisse passer q
 ![diode et sa représentation schématique](mkdocs/diode.jpg)  
 Ce composant permettant la circulation du courant que dans un sens (de la longue pate à la courte)
 
+## Led WS2812 
+![PCB](mkdocs/ws2812.png)  
+les led neopixel WS2812 peuvent être chainées ensemble. leur librairie comprend une fonction rainbow() qui étale les couleurs de l'arc-en-ciel le long de la chaine (sans animer leur défilement).
+
+## PCB
+![PCB](mkdocs/PCB.png)   
+printed circuit board. le support reliant les composant électroniques à l'aaide de circuit imprimés   
+
+## step moteur 28byj-48   
+![PCB](mkdocs/28byj_48_stepper_motor.png)    
+composé de **4 coils** produisant un champ électromagnétique et faisant tourné le moteur sur un maximum de **2048 step**.   
+L'ordre d'activation des coils est 1 3 2 4. sûrement pour des raisons pratiques au niveau de la conception du moteur. Cela signifie qu'il faut soit cabler les pin en inversant la 2 et la 3, soit donner les arguments pin au constructeur en dans l'ordre 1 3 2 4.  
+  
+Puissance et consomation:   
+5V, 50Ω, on peut calculer l'ampérage ainsi U = R * I -> 5 = 50 * 0.1. U = 100mA  
+Et la puissance comme ceci: P=U * I -> 0.5 = 5 * 0.1. P = 0.5W
+Mais tout ça c'est **pour un seul coil**, comme il en utilise deux en même temps il faut doubler le résultat
+donc le **moteur** a un **ampérage** d'environ **240mA** nécessitant une puissance d'environ 1W.
+
+
+## capacitor
+![PCB](mkdocs/capacitor.png)   
+**Stock l'énergie** et la **redistribue**. Après avoir été chargé, son voltage est égale à celui de sa source. L'énergie qu'il stock, où charge par unité de voltage est nommée **capacitance**, plus sa capacité est élevée plus longtemps il peut fournir de l'énergie. L'**unité de la capacitance** sont les **Farad**, en électronique on parle de micro, nano et pico -farads. Le capacitor est composé de deux plaques conductrices, entre elle il y a une couche isolante résistant à un certain voltage indiqué sur le capacitor. Il ne faut pas le dépasser. Un capacitor stock la charge électrique sans l'énergie électrique en énergie chimique comme le fait une batrie. 
+
+## résistance
+
 ## Multimètre 
 ![multimètre](mkdocs/multimetre.jpg)  
 Permet de mesurer le potentiel (courant alternatif, courant continu), la résistance et l'ampérage (intensité).  
@@ -45,3 +71,11 @@ Permet de mesurer le potentiel (courant alternatif, courant continu), la résist
 
 ## interrupteur 3 point
 ![multimètre](mkdocs/interupteur_3_points.png) 
+
+## tableau composants/unité/symbole
+| **Composant**    | ***Unité** | **Symbole** | 
+|--------------|----------------------------|----------------------------------------------------------|
+| **Capacitor**  | xxx|  ![capacitor_symbol](mkdocs/capacitor_symbol.png)    | 
+| **resistance** |xxx  |      ![resistor symbol](mkdocs/resistor_symbol.png)      |   
+| **inductor**  | xxx|  ![inductor symbol](mkdocs/inductor_symbol.png)    | 
+| **diode** |xxx  |      ![diod symbol](mkdocs/Diod_symbol.png)      |   
