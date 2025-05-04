@@ -53,6 +53,17 @@ donc le **moteur** a un **ampérage** d'environ **240mA** nécessitant une puiss
 ![PCB](mkdocs/capacitor.png)   
 **Stock l'énergie** et la **redistribue**. Après avoir été chargé, son voltage est égale à celui de sa source. L'énergie qu'il stock, où charge par unité de voltage est nommée **capacitance**, plus sa capacité est élevée plus longtemps il peut fournir de l'énergie. L'**unité de la capacitance** sont les **Farad**, en électronique on parle de micro, nano et pico -farads. Le capacitor est composé de deux plaques conductrices, entre elle il y a une couche isolante résistant à un certain voltage indiqué sur le capacitor. Il ne faut pas le dépasser. Un capacitor stock la charge électrique sans l'énergie électrique en énergie chimique comme le fait une batrie. 
 
+## Batterie
+![multimètre](mkdocs/lipo_battery.png)  
+Ici on a une batterie Li-Po (pour lithium-polymère), rechargeable, légère. La capacité d'une batterie s'exprime en ampere-heure (Ah) où en miliampere-heure. Cela indique la quantité de charge electrique que la batterie peut stoker ainsi que le temps qu'elle peut fournir de l'énergie. Si elle fournie plus d'énergie elle tiendra moins longtemps.  
+1 Ah =  3600 coulombs
+
+> 1 ampère = 1 coulomb / seconde    
+
+Une batterie de 10 Ah peut fournir 1 ampère pendant 10h ou 10 ampère pendant une heure.
+
+
+
 ## résistance
 
 ## Multimètre 
@@ -73,9 +84,17 @@ Permet de mesurer le potentiel (courant alternatif, courant continu), la résist
 ![multimètre](mkdocs/interupteur_3_points.png) 
 
 ## tableau composants/unité/symbole
+certains composant ont plusieurs unités, j'ai représenté que les plus importantes  
+
 | **Composant**    | ***Unité** | **Symbole** | 
 |--------------|----------------------------|----------------------------------------------------------|
-| **Capacitor**  | xxx|  ![capacitor_symbol](mkdocs/capacitor_symbol.png)    | 
-| **resistance** |xxx  |      ![resistor symbol](mkdocs/resistor_symbol.png)      |   
-| **inductor**  | xxx|  ![inductor symbol](mkdocs/inductor_symbol.png)    | 
-| **diode** |xxx  |      ![diod symbol](mkdocs/Diod_symbol.png)      |   
+| **Capacitor**  | farad|  ![capacitor_symbol](mkdocs/capacitor_symbol.png)    | 
+| **resistance** |ohms  |      ![resistor symbol](mkdocs/resistor_symbol.png)      |   
+| **inductor**  | henry|  ![inductor symbol](mkdocs/inductor_symbol.png)    | 
+| **diode** | - |      ![diod symbol](mkdocs/Diod_symbol.png)      |   
+| **diode** | - |      ![diod symbol](mkdocs/led_symbol.png)      |  
+| **motor** | torque |      ![diod symbol](mkdocs/motor_symbol.png)      |   
+| **battery** | ampere-hour |      ![diod symbol](mkdocs/battery_symbol.png)      |   
+| **bouton** | - | ![diod symbol](mkdocs/bouton_symbol.png) |  
+| **switch** | - | ![diod symbol](mkdocs/switch_symbol.png) |  
+| **3 point switch** | - | ![diod symbol](mkdocs/3_points_switch_symbol.png) |  
