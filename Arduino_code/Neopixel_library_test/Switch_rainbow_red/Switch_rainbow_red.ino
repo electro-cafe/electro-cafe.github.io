@@ -31,9 +31,9 @@ const int kSwitchPinBackward = 47;  // Brown wire (switch signal)
 int kUpdateSpeed = 50; //increase for faster rainbow
 uint8_t kHue = 0;  // it will store the hue value when switch is in neutral position
 
-const int kStepsPerRevolution = 400;  // change this to fit the number of steps per revolution of motor
-const int kStepIncrement = 60;
-int kMotorSpeed = 60;
+const int kStepsPerRevolution = 2048;  // change this to fit the number of steps per revolution of motor
+const int kStepIncrement = 2;
+int kMotorSpeed = 15; //max 15
 
 
 
@@ -127,20 +127,20 @@ const bool switchStateRight = digitalRead(kSwitchPinBackward) == LOW;
 
     showRainbow();
     pixels.show();  // Update LED strip
-    Serial.println("reverse Rainbow activated");
-    printPixelData();  // Debug output
-    delay(DELAYVAL/kUpdateSpeed);
+    // Serial.println("reverse Rainbow activated");
+    // printPixelData();  // Debug output
+    // delay(DELAYVAL/kUpdateSpeed);
     myStepper.step(kStepIncrement);
   } else if (switchStateRight) { // If the switch is in Right position kpin 45 (white thread) reads LOW
  
     showRainbowReverse();
     pixels.show();  // Update LED strip
-    Serial.println("reverse Rainbow activated");
-    printPixelData();  // Debug output
-    delay(DELAYVAL/kUpdateSpeed);
+    // Serial.println("reverse Rainbow activated");
+    // printPixelData();  // Debug output
+    // delay(DELAYVAL/kUpdateSpeed);
     myStepper.step(-kStepIncrement);
   } else {
 
-    delay(DELAYVAL); //do nothing
+    // delay(DELAYVAL); //do nothing
   }
 }
