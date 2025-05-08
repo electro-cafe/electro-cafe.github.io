@@ -144,3 +144,11 @@ const bool switchStateRight = digitalRead(kSwitchPinBackward) == LOW;
     // delay(DELAYVAL); //do nothing
   }
 }
+
+//les objets crée à l'aide du constructeur possèdent automatiquement (inside non-static member functions) le pointeur nommé "this" qui référence l'objet crée. c'est pour ça qu'on peut accéder aux méthodes hérités de sa classe parent avec this->heritedFunction();
+// depuis l'extérieur de l'objet pour acceder à ses attributs méthodes on va utiliser. et depuis l'objet lui même pour accéder à ses attributs méthodes on va utiliser-> 
+
+//this->number_of_steps ne va affecter que l'attribut de cet objet. ça va pas le changer dans la class ou les autres objets. donc ce n'est pas une valeur partagée. 
+//Si l'on voulait que l'attribut soit partagé  entre tous les objets il fallait utiliser static 
+
+//member of an object =
