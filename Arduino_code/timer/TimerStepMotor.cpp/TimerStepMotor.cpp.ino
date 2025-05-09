@@ -16,8 +16,8 @@ Stepper::Stepper(int numberOfSteps, int motorPin1,int motorPin2,int motorPin3,in
 {
   this->stepNumber = 0;   // which step the motor is on
   this->direction = 0;    // motor direction
-  this->numberOfSteps = numberOfSteps;  // timestamp in us of the last step taken
-  this->lastStepTime = 0; // total number of steps for this motor
+  this->numberOfSteps = numberOfSteps;  // total number of steps for this motor
+  this->lastStepTime = 0; // timestamp in us of the last step taken 
 
   // Arduino pins for the motor control connection:     
   this->motorPin1 = motorPin1;  
@@ -51,7 +51,7 @@ void Stepper::step(int numberOfSteps)
   {
     unsigned long now = micros();  //cest une fonction de la librairie arduino qui renvoie le temps écoulé depuis le démarrage en microseconde = 1'000 millième de seconde.
     // move only if the appropriate delay has passed:
-    if (now - this->lastStepTime >= this->stepDelay)
+    if (now - this->lastStepTime >= this->stepDelay) //si le temps écoulé depuis le démarage - le temps depuis le dernier step est plus grand ou égale au temps entre 2 step
     {
       // get the timeStamp of when you stepped:
       this->lastStepTime = now;
