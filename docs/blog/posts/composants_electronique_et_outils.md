@@ -80,8 +80,26 @@ Permet de mesurer le potentiel (courant alternatif, courant continu), la résist
 - mesure **en série**: on ouvre la boucle pour faire passer le courant au travers du multimètre. (le multimètre est intégré à la boulce) 
 - mesure **en parallèle**: on vient prendre la mesure avant et après un élément de la boucle. le multimètre crée une nouvelle boucle.
 
+## Oscilloscope
+Permet de mesurer l'intensité du courant sous forme de graphe, utile pour lire les PWM.  
+Ici le modèle BSide09.  
+![illoscope_probe_connection](mkdocs/oscilloscope_probe_connection.jpg)   
+le probe vient se connecter sur le dessus de l'appareil. On peut en avoir jusqu'à deux. 
+![oscilloscope probe](mkdocs/oscilloscope_probe.jpg)  
+le probe est équipé d'une pince crocodile que l'on doit **connecter au GND avant de connecter le probe** au signal.
+![oscilloscope_probe_end](mkdocs/oscilloscope_probe_end.jpg)    
+probe connecté au GND et au signal
+![oscilloscope_screen](mkdocs/oscilloscope_screen.jpg)  
+On peut lire le signal sur l'écran. Lorsque l'on est dans l'onglet **Volt/Time**, les flèches bleus servent à changer l'échelle du temps (horizontal) et de l'ampérage (vertical).  
+Mode = alterne entre multimètre et oscilloscope.  
+F1, F2, F3, F4 = change d'onglet  
+CH1/2 = alterne entre la probe 1 et 2 si connecté.  
+Move = déplacé le graph.  
+Trigger = XXX  
+Save = prende un screenshot  
+
 ## interrupteur 3 point
-![multimètre](mkdocs/interupteur_3_points.png) 
+![interupteur_3_points](mkdocs/interupteur_3_points.png) 
 
 ## tableau composants/unité/symbole
 certains composant ont plusieurs unités, j'ai représenté que les plus importantes  
