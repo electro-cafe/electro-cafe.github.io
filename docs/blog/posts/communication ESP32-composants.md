@@ -46,7 +46,7 @@ Types de bus courants
 I2C (Inter-Integrated Circuit) : Utilisé pour connecter plusieurs composants avec seulement deux fils :
 
 SDA (Serial Data Line) : pour envoyer et recevoir des données.
-
+poetr
 SCL (Serial Clock Line) : pour synchroniser l'envoi des données.
 
 SPI (Serial Peripheral Interface) : Plus rapide que l'I2C, mais nécessite plus de fils.

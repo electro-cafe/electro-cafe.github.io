@@ -22,6 +22,6 @@ Afin de partager notre passion, nous avons décidé de créer ce site pour
 partager nos découvertes, nos projets et nos idées. Nous espérons que
 vous trouverez ici des informations utiles et intéressantes.
 
-N'hésitez pas à nous contacter si vous avez des questions ou des suggestions.
+N'hésitez pas à nous contacter si vous avez des questions ,suggestions ou si ce blog vous a été utile.
 
 Bonne lecture!

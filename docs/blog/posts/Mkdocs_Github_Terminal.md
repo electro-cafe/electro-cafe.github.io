@@ -36,6 +36,9 @@ Le terminal nous permet de simuler notre page en local.
 Pour ce faire taper **poetry run mkdocs serve** puis enter, la ligne de commande s'exécute. avec ctrl + clic sur le lien ça ouvre la page web en local:
 
 ![commande pour lancer le site en local](mkdocs/commande_run_server.png)
+  
+⚠️ il faut avoir ouvert VSC depuis le dossier contenant le fichier .yml pour que ça fonctionne. Si j'ouvre un article du blog la commande ne fonctionnera pas car le terminal executera la commande depuis un dossier enfant du dossier contenant le .yml. Le plus simple est d'ouvrir VSC puis fichier -> ouvrir un dossier:  
+![terminal situé au bon endroit](mkdocs/VSC_poetry.png)  
 
 On peut ajouter nos fichiers dans le dossier draft. Il ne sont visible qu'en local. 
 Ils apparaissent avec la mention brouillon

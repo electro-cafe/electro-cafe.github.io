@@ -24,12 +24,16 @@ Cet article explique les différents éléments du language C++
 **méthode** = fonction d'une classe.  
 **attribut** = variable dans une classe.  
 **constructeur** = méthode d'une classe instanciant un objet.  
+**member** = méthodes et attributs d'un objet hérité de la classe parent
   
 **variable globale** = une variable déclaré à l'extérieur d'une classe où fonction. Utilisable partout dans le code cpp (mais seulement le fichier cpp où elle est déclarée). Stocké dans data. Stocké dans bss si non initialisée.    
 **variable locale** = une variable déclarée dans une fonction. Elle n'existe pas en dehors de la fonction. Lorsque la fonction se termine elle est détruite.  
 **variable globale static** = visible que dans le fichier cpp où elle est déclarée.  
-**variable locale static** = n'est pas stocké dans la stack mais avec les variables globales. Elle est **visible que dans la fonction dans laquelle elle est déclarée**. Conserve sa valeur entre deux appels.   
-**variable dynamique** = crée quand on appelle quelquechose avec **new**. n'existe pas à la compilation, sera cére lors de l'execution du code. Stocké dans la **Heap**, n'est pas effacée automatiquement, il faut appeller un delete pour l'effacer. 
+**variable locale static** = n'est pas stocké dans la stack mais avec les variables globales. Elle est **visible que dans la fonction dans laquelle elle est déclarée** et **conserve sa valeur entre deux appels**.   
+**variable dynamique** = crée quand on appelle quelquechose avec **new**. n'existe pas à la compilation, sera cére lors de l'execution du code. Stocké dans la **Heap**, n'est pas effacée automatiquement, il faut appeller un delete pour l'effacer.   
+  
+**long** = int de minimum 32 bites. max 64. ça peut être intéressant d'utiliser un long à la place d'un int pour plus de précision. les int font max 32 bites, min 16. ça dépend du plateforme -microprocesseur-.  
+**unsigned** = valeur non signée, c'est à dire strictement positive (pas de signe négatif). unsigned int = unsigned, on est pas obligé d'écrire int. On ne peut pas avoir d'unsigned float car les floats gprent le signe via le standard IEEE 754. Il n'y a pas d'unsigned double.
 
 ## les 3 "etats" d'une fonction
 **déclaration** = dit au compileur quelles fonctions, variable et classes existent. quand on déclare une classe on déclare également ses méthodes et attributs à l'intérieur  
@@ -324,3 +328,36 @@ int main() {
     return 0;
 }
 ```
+
+
+//les objets crée à l'aide du constructeur possèdent automatiquement (inside non-static member functions) le pointeur nommé "this" qui référence l'objet crée. c'est pour ça qu'on peut accéder aux méthodes hérités de sa classe parent avec this->heritedFunction();
+// depuis l'extérieur de l'objet pour acceder à ses attributs méthodes on va utiliser. et depuis l'objet lui même pour accéder à ses attributs méthodes on va utiliser-> 
+
+//this->number_of_steps ne va affecter que l'attribut de cet objet. ça va pas le changer dans la class ou les autres objets. donc ce n'est pas une valeur partagée. 
+//Si l'on voulait que l'attribut soit partagé  entre tous les objets il fallait utiliser static 
+  ![shadowing variable](mkdocs/wrong_variable_shadowing_in_object.png)
+
+//Stepper::Stepper(...) {
+  // corps du constructeur
+}
+// cCela ne crée pas un objet. Ça définit comment construire un objet.
+
+//Stepper MyStepper1(200, 2, 3, 4, 5); -----> création d'objet
+et pas Stepper::MyStepper1(200, 2, 3, 4, 5);
+
+à l'intérieur de l'objet : this->setSpeed(100);
+à l'extérieur de l'objet: MySteper1.setSpeed(100);
+
+Stepper::setSpeed(...) 
+définition de la méthode setSpeed de la class stepper. cette définition sera partagée par tous les objets mais chacun l'exécutera avec ses propres attributs.
+mais tous les objets partagent la même méthode setspeed comme on l'a définie ?
+Oui ✅, tous les objets partagent le code de la méthode setSpeed(), mais chacun l’exécute pour lui-même, avec ses propres données internes (attributs).
+
+## Data type
+
+**int** = XXXX
+**float** = XXXX voir si l'article sur comment l'ordinateur gère els nombre peut être assigné ici et faire des liens entre eux  
+**char** = XXXX  
+**char** = XXXX
+etc
+

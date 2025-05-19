@@ -46,7 +46,22 @@ Puissance et consomation:
 5V, 50Ω, on peut calculer l'ampérage ainsi U = R * I -> 5 = 50 * 0.1. U = 100mA  
 Et la puissance comme ceci: P=U * I -> 0.5 = 5 * 0.1. P = 0.5W
 Mais tout ça c'est **pour un seul coil**, comme il en utilise deux en même temps il faut doubler le résultat
-donc le **moteur** a un **ampérage** d'environ **240mA** nécessitant une puissance d'environ 1W.
+donc le **moteur** a un **ampérage** d'environ **240mA** nécessitant une puissance d'environ 1W.  
+
+Les moteurs peuvent être **unipolaire** où **bipolaire**, ce qui porte ä confusion c'est qu'un moteur unipolaire a 2 coils lä où le bipolaire en a 1. en fait bi et uni font référence au sens du courant possible dans 1 coil.  
+![Schema_moteur_bi_uni_polaire](mkdocs/uni_vs_bi_polaire.png)   
+Si le courant peut voyager de gauche à doite où de droite à gauche dans un moteur bipolaire c'est grace à un pont H ou H-bridge en anglais.  
+![Hbridge](mkdocs/Hbridge.png)   
+
+Lorsque le courant parcourt un câble, il crée un champ magnétique autour de celui-ci (comme les anneaux de saturnes) lorsque l'on enroule le câble afin de former un coil, les champs magnétiques en chaque portion du câble s'aditionnent. On utilise la **règle de la main droite** pour **déterminer le Nord**. Si l'on prend le coil en remplissant ces **deux conditions**:  
+>pouce pointant du Vin au Vout  
+>doits pointant dans le sens du courant le long des coils      
+
+Alors le pouce indique le Nord.    
+Si on utilise la main droite et remplissons les 2 conditions, alors le pouce pointe vers le Sud.    
+  
+**⚠️ Attention** ce n'est pas parce que l'alimentation est à gauche du coil que le nord est à droite. ça dépend du sens de bobinage:  
+![Scas possible coil](mkdocs/champ_magnetique.png)     
 
 
 ## capacitor
