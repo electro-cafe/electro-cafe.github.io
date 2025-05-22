@@ -18,14 +18,15 @@ Prise en main de Kicad.
 
 ## menu principale  
 
-On retrouve:  
-> Editeur de Schéma = la visualisation théorique de notre système  
-> Editeur de Symbole = création d'éléments à intégrer au Schéma lorsqu'ils n'existent pas dans la bibliothèque du soft.
-> Editeur de PCB KiCad = édition du circuit imprimé reliant les composants.
-> Editeur d'empreinte = délimitation des footprint des composants et paramètrage de leur propriétés.
-> Editeur de fichier Gerber = ?? Les fichiers Gerber sont les fichiers d'export utiles au fabricant.
-> Convertisseur d'Image = permet de passer une image en composant schématique pour l'intégrer au PCB (décoration)
-> Gestionnaire de Plugin = sert à installer les extensions.    
+On retrouve:    
+
+- Editeur de Schéma = la visualisation théorique de notre système  
+- Editeur de Symbole = création d'éléments à intégrer au Schéma lorsqu'ils n'existent pas dans la bibliothèque du soft  
+- Editeur de PCB KiCad = édition du circuit imprimé reliant les composants
+- Editeur d'empreinte = délimitation des footprint des composants et paramètrage de leur propriétés
+- Editeur de fichier Gerber = ?? Les fichiers Gerber sont les fichiers d'export utiles au fabricant
+- Convertisseur d'Image = permet de passer une image en composant schématique pour l'intégrer au PCB (décoration)
+- Gestionnaire de Plugin = sert à installer les extensions    
 
 ![Kicad_main_Menu](mkdocs/Kicad_main_Menu.png) 
 
