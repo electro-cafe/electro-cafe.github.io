@@ -24,6 +24,9 @@ Les ordinateurs fonctionnent en **courant continu**. Comme en europe nos prises 
 
 Il se compose entre autre d'un **redresseur** (où diode) qui ne laisse passer que la partie positive du courant alternatif et d'un **condensateur** qui va **lisser** le courant.
 
+## SMD vs THT
+appellation des composants selont si ils sont soudés sur le PCB où si leurs pin traversent le PCB.
+![diode et sa représentation schématique](mkdocs/SMD_vs_THT.png)  
   
 ## Diode 
 ![diode et sa représentation schématique](mkdocs/diode.jpg)  
