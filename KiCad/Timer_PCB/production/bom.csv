@@ -1,0 +1,7 @@
+﻿Designator,Footprint,Quantity,Value,LCSC Part #
+CONDENSATEUR1,C_Disc_D3.0mm_W2.0mm_P2.50mm,1,10uF,
+CONDENSATEUR2,C_Disc_D3.0mm_W2.0mm_P2.50mm,1,100nF,
+"D1, D2, D3, D4, D5, D6, D7, D8, D9",LED_WS2812_PLCC6_5.0x5.0mm_P1.6mm,9,WS2812,
+J1,JST_EH_B5B-EH-A_1x05_P2.50mm_Vertical,1,JST_05,
+U1,SOIC-16_4.55x10.3mm_P1.27mm,1,ULN2003,C7512
+U2,S3 Mini,1,~,

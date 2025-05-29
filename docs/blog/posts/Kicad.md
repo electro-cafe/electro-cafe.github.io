@@ -33,16 +33,34 @@ On retrouve:
 ## Editeur de Schéma  
 
 C'est ici que l'on dessine le schéma de notre PCB, on ajoute les composants et indique comment ils sont reliés entre eux.    
+Pour commencer on peut choisir le format de notre plan (A4 / A3 / ...) et son titre dans **fichier**-> **Ajustage page**  
+
+![Kicad_main_Menu](mkdocs/Kicad_format_titre_page.png)     
+![Kicad_main_Menu](mkdocs/Kicad_Ajustage_page.png)  
+
 
 SHORTCUT:    
+**esc** = outil sélection de base.
+**box select** gauche à droite = sélectionne les objets complètement sélectionnés.  
+**box select** droite à gauche = sélectionne les objets partiellements sélectionnés.    
+**ctrl** + **left clic**= toggle selection state.  
+**shift** + **left clic** = add to selection.  
+**ctrl** + **left clic** = remove from selection.  
 **ctrl** + **F1** = Affiche la liste des raccourcis.    
 **mouse over component** + **m** = move component sans les wires.
 **mouse over component** + **g** = move component avec les wires.
 **r** = rotate component.  
 **w** = switch to wiring mode.  
+En wiring mode : **double clic** = finish drawing (!esc = cancel drawing)
 
-Avec un **double clic sur un composant**, on défini leur propriété et charge leur empreinte 
+EMPREINTE / FOOTPRINT  
+Avec un **double clic sur un composant**, on défini leur propriété et charge leur empreinte.
+L'empreinte détermine comment le robo qui va crée notre PCB doit préparer les zone sur lesquelles il va souder les composants. Elles contiennent les "cooper pads" qui matchent avec les pins du composant. 
 ![Kicad_main_Menu](mkdocs/Kicad_Propriete_Symbol.png)   
+
+On peut aussi utiliser l'éditeur d'empreinte et ses filtres.  
+Au milieu nos composant, à droite les empreintes dispo selon filtres.
+![alt text](mkdocs/Kicad_assigner_empreinte.png)
 
 L'outil **trace** et bus permettent de réaliser les connexions.  
 
@@ -73,7 +91,9 @@ Pour se simplifier la vie au niveau des connections du GND et de l'alimentation 
 Exemple schéma symboles placés:
 ![alt text](mkdocs/Kicad_GND_5v.png)    
 
-//////Il reste à définir les zones d'exclusion autour des pin, ce sont des zones où aucun autre composant ne doit être placé.  
+Controle des règles électriques afin de savoir si il y a des erreurs.    
+![alt text](mkdocs/Kicad_control_regle_electrique.png)    
+//////Il reste à définir les zones d'exclusion autour des pin, ce sont des zones où aucun autre composant ne doit être placé. ces zones seront fait decuivre et serviront de base pour souder le composant.  
 
 Une fois les zones symboles en place, les connexions effectuées, il faut trouver chaque composant sur le site [JLC PCB part](https://jlcpcb.com/parts/all-electronic-components) où [LCSC],(https://lcsc.com/) récupérer le numéro d'article et son package (=footprint/empreinte) afin de terminer la partie schématique. Ces deux site appartiennent au producteur de PCB à qui l'on va fournir les fichiers finaux. Il récupérera les composants dans ces stocks, les souderas sur le PCB et créera le circuit imprimé reliant les composants. 
 
@@ -88,4 +108,84 @@ nr part et package.
 
 Il faut maintenant ajouter ces 2 infos dans le symbol. Pour ce faire on double clique sur le composant pour faire apparaître l'éditeur de sympole et clique sur le **+** pour ajouter un champ qu'on nomme **LCSC** et on y met le **JLCPCB part #**. Dans **empreinte** on entre ce qu'on a trouvé comme **Package**   
 ![alt text](mkdocs/Kicad_LCSC_nr.png) 
+  
 
+BILL OF MATERIALS  
+c'est notre liste de course, abrégé **BOM** ça dit au fabricant du PCB quels composant prendre dans ses stock.  
+![alt text](mkdocs/Kicad_BOM.png)      
+
+On peut voir plus modifier les préférence de la BOM dans l'onglet Editer. Cliquer sur exporter pour créer le fichier.
+![alt text](mkdocs/Kicad_BOM_detail.png)      
+
+##   Editeur de PCB
+
+C'est ici que l'on va définir la taille du PCB, définir l'emplacement des composants et relier les composants entre eux via les pistes (tracks en anglais).
+accessible soit depuis le menu principale, soit depuis l'éditeur de schématique avec l'icone verte
+> - fig 1
+![alt text](mkdocs/Kicad_editeur_PCB.png) 
+    
+      
+> - fig 2  
+![alt text](mkdocs/Kicad_editeur_PCB_2.png) 
+
+SHORTCUT:    
+
+**x** = outil trace.  
+**alt** + **3** = visu 3D  
+**f** = flip component to the opposite side of PCB
+**v** = insert un via   
+
+VOCABULAIRE / ABREVIATION:  
+  
+**f.Cu** = Front Cooper -> face sup du PCB.  
+**B.Cu** = Back Cooper -> face inf du PCB. 
+**Ratsnest** = ligne bleu indiquant les connexion du schématic que l'on a pas encore tracé sur le PCB.  
+**Through hole pad** = trous conducteur faisant partie de l'empreinte et permettant de connecté le dessus et le dessous du PCB.  
+**Via** = trous conducteur permettant de connecté le dessus et le dessous du PCB.
+
+
+Avant toute chose on va définir le format de la page: **File** -> **Page Settings/Ajustage page**.
+Puis les caractéristiques (nbr couches) de notre PCB: **File** -> **Board Setup/Option du CI**. C'est ici qu'on défini le stackup = empilement de couches de PCB.
+C'est également là qu'on pourra définir les **Net Classes** où règle d'Equipots en français, ce sont des groupes de réseaux de signaux qui peuvent être associés à des règles de conception spécifiques, comme la largeur de piste ou l'espacement entre pistes.
+
+Overview des outils et fonctionalités.  
+Il faut plus voir les calques comme des filtres, les différentes couches du PCB sont dans objet (voir plus bas "Issue"). 
+![alt text](mkdocs/Kicad_editeur_PCB_overview.png)   
+
+Pour l'instant on a que les composants et leur footprint. Pour **ajouter le PCB** il faut le dessiner dans le **calque Edge.Cuts**
+Avec l'outil rectangle on dessine son contour. si on double clic avec la flèche noir sur le rectangle on peut définir précisément sa taille
+![alt text](mkdocs/Kicad_editeur_PCB_draw_PCB.png)   
+
+On peut changer la **snap grid** pour que les éléments soient magnétisés différement au fond
+![alt text](mkdocs/Kicad_editeur_PCB_Snap_Grid.png)   
+
+Comme on se trouve sur une **surface composée de plusieurs couches**, on peut déterminer sur laquelle notre piste où portion de notre piste va passer. Lors du dessin de la piste faire un clic droit où presser **v**  
+![alt text](mkdocs/Kicad_editeur_PCB_trace_layer.png)  
+  
+Un objet placé sur le **dessus** est généralement **rouge**, il est **bleu** lorsqu'il est placé en **dessous** du PCB.  
+![alt text](mkdocs/Kicade_up_down.png) 
+
+Il est temps de relier les pads des différents composants qui doivent être connectés entre eux. Tant qu'il y a des ratsnest c'est qu'il y a des connexion à faire. On peut voir en bas à droite des stat intéressantes à ce sujet:  
+![alt text](mkdocs/Kicad_stat.png) 
+Utiliser l'outil pour rellier les composants avec une piste conductrice. 
+![alt text](mkdocs/Kicad_route_piste_tool.png) 
+
+On peut créer une grande zonne connecté au GND. Elle évitera automatiquement les autres connexions que GND. L'avantage de cette zonne étendue est la réduction de l'impédance, réduction du bruit électrique, simplicité de routage et amélioration thermique.
+///////ajouter marche à suivre Placing Copper Zones
+
+Afin de s'assurer que tout est en ordre, un peu comme pour le schématique on peut utiliser l'outil de vérification (Design rule chechink aka DRC):  
+![alt text](mkdocs/Kicad_design_rule_checking.png)
+
+On peut avoir un aperçu de notre PCB en 3D avec **affichage** -> **visu 3D**
+
+Une fois le PCB termnié on va **générer le fichier Gerber** 
+![alt text](mkdocs/Kicad_editeur_PCB_generate_Gerber_file.png)  
+Ensuite il faut cliquer sur **plot** et **Generate Drill Files** -> **Generate Drill Files** puis **close**. On vient de créer les instruction de manufacture de notre PCB.
+
+  
+
+Issue: no component on PCB editor:
+![alt text](mkdocs/Kicad_editeur_PCB_issue.png)  
+Il faut activer la vue de la bonne couche du PCB:
+![alt text](mkdocs/Kicad_editeur_PCB_level.png)  
+##   manage and control Gerber files

@@ -29,8 +29,21 @@
       "zones": true
     },
     "visible_items": [
+      "vias",
+      "footprint_anchors",
       "ratsnest",
       "grid",
+      "footprints_front",
+      "footprints_back",
+      "tracks",
+      "drc_errors",
+      "drawing_sheet",
+      "pads",
+      "zones",
+      "drc_warnings",
+      "drc_exclusions",
+      "locked_item_shadows",
+      "conflict_shadows",
       "shapes"
     ],
     "visible_layers": "ffffffff_ffffffff_ffffffff_ffffffff",
