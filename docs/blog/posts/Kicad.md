@@ -145,7 +145,26 @@ VOCABULAIRE / ABREVIATION:
 
 
 Avant toute chose on va définir le format de la page: **File** -> **Page Settings/Ajustage page**.
-Puis les caractéristiques (nbr couches) de notre PCB: **File** -> **Board Setup/Option du CI**. C'est ici qu'on défini le stackup = empilement de couches de PCB.
+Puis les caractéristiques (nbr couches) de notre PCB: **File** -> **Board Setup/Option du CI** -> **Couchess Physiques**. C'est ici qu'on défini le stackup = empilement de couches de PCB. On va en mettre 4, celles du haut et du bas sont pour les composants. On va mettre une masse GND et power sur les 2 du milieu.  
+![alt text](mkdocs/Kicad_PCB_layer.png)
+
+On va sélectionner le layer juste sous la couche supérieur.
+![kicad layer interne pcb](mkdocs/Kicad_layer_interne.png)  
+
+Puis l'outil de traçage de zone remplie  
+![kicad layer interne pcb](mkdocs/Kicad_zone_remplie.png)
+
+au 1er clic une fenêtre s'ouvre et nous demande de choisir ce que la zone représentera. ici GND  
+![kicad layer interne pcb](mkdocs/Kicad_option_zone_remplie.png)
+
+Une fois le tracé dessiné il faut encore le remplir car il est vide. On utilise soit **b** soit **edition**->**remplissage des zones**
+![kicad layer interne pcb](mkdocs/Kicad_fill_zone.png)
+![kicad layer interne pcb](mkdocs/Kicad_remplissage_des_zones.png)
+
+C'est un outil intéligent qui va éviter le contact avec les track de cuivre si il y en a sur la zone. à chaque mise à jour du schématic ou des tracé il faut utiliser **b** pour mettre à jour les zones remplies. 
+Ici comme notre zone GND occupe tout notre 2ème layer. le but c'est d'utiliser des via pour créer le contact avec le GND. ça permet une optimisation de place sur les couches dédiées aux composants. Pour **établir la connexion des via** à la zone GND, **double clic sur le via**, et sélectionner GND où 5V dans le **dropdown Net name**. Une fois de plus, à chaque modification il faut faire **b** pour mettre à jour la zone remplie. Comme on le voit ici, le via est connecté.
+![kicad layer interne pcb](mkdocs/Kicad_Via_connexion.png)
+
 C'est également là qu'on pourra définir les **Net Classes** où règle d'Equipots en français, ce sont des groupes de réseaux de signaux qui peuvent être associés à des règles de conception spécifiques, comme la largeur de piste ou l'espacement entre pistes.
 
 Overview des outils et fonctionalités.  
