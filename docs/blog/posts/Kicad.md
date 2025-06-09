@@ -97,11 +97,21 @@ Controle des règles électriques afin de savoir si il y a des erreurs.
 
 Une fois les zones symboles en place, les connexions effectuées, il faut trouver chaque composant sur le site [JLC PCB part](https://jlcpcb.com/parts/all-electronic-components) où [LCSC],(https://lcsc.com/) récupérer le numéro d'article et son package (=footprint/empreinte) afin de terminer la partie schématique. Ces deux site appartiennent au producteur de PCB à qui l'on va fournir les fichiers finaux. Il récupérera les composants dans ces stocks, les souderas sur le PCB et créera le circuit imprimé reliant les composants. 
 
-Afin de trouver notre pièce il faut indiquer son type puis utiliser les nombreux filtre pour faire apparaître que les pièces qui nous intéressent. c'est fastidieux, suivant quoi il faut consulter des doc où mesurer pour avoir plus d'infos à entrer dans les filtres.
-![alt text](mkdocs/JLC_PCB_search_1.png) 
+Afin de trouver notre pièce il faut indiquer son type puis utiliser les nombreux filtre pour faire apparaître que les pièces qui nous intéressent. c'est fastidieux, suivant quoi il faut consulter des doc où mesurer pour avoir plus d'infos à entrer dans les filtres. Voici quelques termes afin de mieux s'y retrouver dans la nomenclature des composants.
+
+VOC:    
+**SMD - SMT** = surface mount. Pin soudé sur PCB.  
+**TH - THT** = through hole. Pin traversante.  
+**DIP** = Dual inline package / 2x TH.  
+**AWG** American wire gauge, système de mesure de diamètre de câble.  
+**V** = vertical.  
+**R - RA** = horizontal / right angle.    
+
+ ![alt text](mkdocs/JLC_PCB_search_1.png) 
 
 filtre:
 ![alt text](mkdocs/JLCPCB_filtre.png) 
+
 
 nr part et package.
 ![alt text](mkdocs/JLC_PCB_Part.png) 
@@ -110,12 +120,25 @@ Il faut maintenant ajouter ces 2 infos dans le symbol. Pour ce faire on double c
 ![alt text](mkdocs/Kicad_LCSC_nr.png) 
   
 
+Après avoir déplacé des symboles, leur nom (U1, U2, etc) ne sont plus dans un ordre logique et ça peut compliquer notre compréhension du schéma. On peut **renommer les composants dans l'ordre** dans **outils** -> **annotation de la schématique**
+![alt text](mkdocs/Kicad_anotation_schematique.png)
+On choisi si on trie de gauche à droite où haut en bas dans la section ordre.
+![alt text](mkdocs/Kicad_anotation_schematique_2.png)   
+
+
 BILL OF MATERIALS  
 c'est notre liste de course, abrégé **BOM** ça dit au fabricant du PCB quels composant prendre dans ses stock.  
 ![alt text](mkdocs/Kicad_BOM.png)      
 
 On peut voir plus modifier les préférence de la BOM dans l'onglet Editer. Cliquer sur exporter pour créer le fichier.
 ![alt text](mkdocs/Kicad_BOM_detail.png)      
+
+Pour **visualiser la BOM** et changer les propiétés des éléments, on utilise l'**icône de spreadsheet** (nommée éditer champs des symboles) on a aussi la possibilité d'**exclure de la BOM**:
+![alt text](mkdocs/Kicad_vue_composants.png)   
+ 
+On peut aussi exclure un élément de la BOM en doublecliquant sur son symbol dans le schématic.
+![alt text](mkdocs/Kicad_exclure_BOM.png)      
+ 
 
 ##   Editeur de PCB
 
@@ -148,7 +171,7 @@ Avant toute chose on va définir le format de la page: **File** -> **Page Settin
 Puis les caractéristiques (nbr couches) de notre PCB: **File** -> **Board Setup/Option du CI** -> **Couchess Physiques**. C'est ici qu'on défini le stackup = empilement de couches de PCB. On va en mettre 4, celles du haut et du bas sont pour les composants. On va mettre une masse GND et power sur les 2 du milieu.  
 ![alt text](mkdocs/Kicad_PCB_layer.png)
 
-On va sélectionner le layer juste sous la couche supérieur.
+On va sélectionner le layer juste sous la couche supérieur.  
 ![kicad layer interne pcb](mkdocs/Kicad_layer_interne.png)  
 
 Puis l'outil de traçage de zone remplie  
@@ -186,11 +209,15 @@ Un objet placé sur le **dessus** est généralement **rouge**, il est **bleu** 
 
 Il est temps de relier les pads des différents composants qui doivent être connectés entre eux. Tant qu'il y a des ratsnest c'est qu'il y a des connexion à faire. On peut voir en bas à droite des stat intéressantes à ce sujet:  
 ![alt text](mkdocs/Kicad_stat.png) 
-Utiliser l'outil pour rellier les composants avec une piste conductrice. 
+Utiliser l'outil pour rellier les composants avec une piste conductrice.   
 ![alt text](mkdocs/Kicad_route_piste_tool.png) 
 
-On peut créer une grande zonne connecté au GND. Elle évitera automatiquement les autres connexions que GND. L'avantage de cette zonne étendue est la réduction de l'impédance, réduction du bruit électrique, simplicité de routage et amélioration thermique.
-///////ajouter marche à suivre Placing Copper Zones
+Il est important de configurer la **largeur des pistes**. Une fois de plus on se rend dans **fichier** -> **Option du CI** -> **règles de conception** -> **taille prédéfinies**.  
+Avec **w** on peut parcourir les différentes tailles de pistes.  
+On utilise **0.4** pour les connexion **signal** et **0.7** pour l'**alimentation**.
+![alt track size](mkdocs/Kicad_taille_predefinies.png) 
+![alt track size](mkdocs/Kicad_track_size.png) 
+
 
 Afin de s'assurer que tout est en ordre, un peu comme pour le schématique on peut utiliser l'outil de vérification (Design rule chechink aka DRC):  
 ![alt text](mkdocs/Kicad_design_rule_checking.png)
@@ -201,7 +228,9 @@ Une fois le PCB termnié on va **générer le fichier Gerber**
 ![alt text](mkdocs/Kicad_editeur_PCB_generate_Gerber_file.png)  
 Ensuite il faut cliquer sur **plot** et **Generate Drill Files** -> **Generate Drill Files** puis **close**. On vient de créer les instruction de manufacture de notre PCB.
 
-  
+Avec les différents calques, les différentes couches et tous les symboles il peut être difficile de sélectionner ce que l'on veut. Pour ça il y a les **filtres de sélection** en bas à droite.
+![alt text](mkdocs/Kicad_filtre.png)  
+
 
 Issue: no component on PCB editor:
 ![alt text](mkdocs/Kicad_editeur_PCB_issue.png)  
