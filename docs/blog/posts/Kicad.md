@@ -73,7 +73,9 @@ Icone **non connexion**
 Afin d'éviter d'avoir des connexions partout comme ci dessous voir pire, on utilise les labels paramétrés en entrée et sortie.
 ![Kicad wire](mkdocs/Kicad_wire.png)      
 Quand on double clic sur un **label** on peut **choisir** si il s'agit d'une **entrée** ou d'une **sortie**  
-![Kicad label](mkdocs/label_entree.png)  
+![Kicad label](mkdocs/label_entree.png)    
+Attention à ne pas se faire avoir. ce n'est pas le sens de la flèche qui détermine si c'est une entrée où une sortie mais si elle est relié par sa tête où son pied
+![Kicad label](mkdocs/Kicad_label_IO.png)    
 Les **entrées et sorties ayant le même nom sont connectées entre elles**.   
 ![Kicad label](mkdocs/Kicad_label.png)   
 Une sortie peut être connectée à plusieurs entrées mais plusieurs sorties ne peuvent pas être conectés à une entrée.  
@@ -221,6 +223,10 @@ On utilise **0.4** pour les connexion **signal** et **0.7** pour l'**alimentatio
 
 Afin de s'assurer que tout est en ordre, un peu comme pour le schématique on peut utiliser l'outil de vérification (Design rule chechink aka DRC):  
 ![alt text](mkdocs/Kicad_design_rule_checking.png)
+Cette option est aussi accessible sous **Inspecter**->**Contrôle des règles de conception**
+
+Mon projet est synchronisé sur Github, afin de pousser la version local sur git il faut qu'elle passe les **github actions** que l'on a définies. Cela permet d'agir comme un filtre et de bloquer la synchronisation de fichiers non valides sur git. Pour ce faire le dossier doit contenir des dossier **.rpt**, il s'agit de rapport d'erreur du DRC et de l'ERC.
+![alt text](mkdocs/Kicad_save_rpt_file.png)
 
 On peut avoir un aperçu de notre PCB en 3D avec **affichage** -> **visu 3D**
 
@@ -235,5 +241,17 @@ Avec les différents calques, les différentes couches et tous les symboles il p
 Issue: no component on PCB editor:
 ![alt text](mkdocs/Kicad_editeur_PCB_issue.png)  
 Il faut activer la vue de la bonne couche du PCB:
-![alt text](mkdocs/Kicad_editeur_PCB_level.png)  
+![alt text](mkdocs/Kicad_editeur_PCB_level.png)    
+
+## Ajout d'image
+Dans l'onglet **convertisseur d'images** charger une image puis définir sa taille et l'enregistrer en tant qu'empreinte silkscreen (elle sera imprimé en blanc) et l'exporter.
+![alt text](mkdocs/Kicad_image.png)    
+Dans l'éditeur de projet, sous **préférences** -> **configurer les librairies d'Empreintes**, onglet **librairie spécifique au projet** on va charger le dossier dans lequel on a enregistré nos images.
+![alt text](mkdocs/Kicad_charger_image.png)  
+![alt text](mkdocs/Kicad_ajout_library_image.png)  
+Pour importer l'image il faut utiliser l'outil symbole, chercher notre dossier d'image et placer l'image choisi comme n'importe quel symbol.  
+![alt text](mkdocs/Kicad_empreinte_icon.png)   
+![alt text](mkdocs/Kicad_custom_image.png)     
+
 ##   manage and control Gerber files
+

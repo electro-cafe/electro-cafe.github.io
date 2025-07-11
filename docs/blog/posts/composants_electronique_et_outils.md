@@ -24,9 +24,6 @@ Les ordinateurs fonctionnent en **courant continu**. Comme en europe nos prises 
 
 Il se compose entre autre d'un **redresseur** (où diode) qui ne laisse passer que la partie positive du courant alternatif et d'un **condensateur** qui va **lisser** le courant.
 
-## SMD vs THT
-appellation des composants selont si ils sont soudés sur le PCB où si leurs pin traversent le PCB.
-![diode et sa représentation schématique](mkdocs/SMD_vs_THT.png)  
   
 ## Diode 
 ![diode et sa représentation schématique](mkdocs/diode.jpg)  
@@ -56,8 +53,7 @@ Les moteurs peuvent être **unipolaire** où **bipolaire**, ce qui porte ä conf
 Si le courant peut voyager de gauche à doite où de droite à gauche dans un moteur bipolaire c'est grace à un pont H ou H-bridge en anglais.  
 ![Hbridge](mkdocs/Hbridge.png)   
 
-Lorsque le courant parcourt un câble, il crée un champ magnétique autour de celui-ci (comme les anneaux de saturnes) lorsque l'on enroule le câble afin de former un coil, les champs magnétiques en chaque portion du câble s'aditionnent. On utilise la **règle de la main droite** pour **déterminer le Nord**. Si l'on prend le coil en remplissant ces **deux conditions**:  
->pouce pointant du Vin au Vout  
+Lorsque le courant parcourt un câble, il crée un champ magnétique autour de celui-ci (comme les anneaux de saturnes) lorsque l'on enroule le câble afin de former un coil, les champs magnétiques en chaque portion du câble s'aditionnent. On utilise la **règle de la main droite** pour **déterminer le Nord**. Si l'on prend le coil en main en remplissant cette **condition**:  
 >doits pointant dans le sens du courant le long des coils      
 
 Alors le pouce indique le Nord.    
