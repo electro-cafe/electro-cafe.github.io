@@ -3,8 +3,10 @@ date:
   created: 2025-05-19
 categories:
   - Logiciels
+  - PCB
 tags:
   - Logiciels
+  - PCB
 authors:
   - thomas
 slug: software_Kikad 
@@ -173,6 +175,12 @@ Avant toute chose on va définir le format de la page: **File** -> **Page Settin
 Puis les caractéristiques (nbr couches) de notre PCB: **File** -> **Board Setup/Option du CI** -> **Couchess Physiques**. C'est ici qu'on défini le stackup = empilement de couches de PCB. On va en mettre 4, celles du haut et du bas sont pour les composants. On va mettre une masse GND et power sur les 2 du milieu.  
 ![alt text](mkdocs/Kicad_PCB_layer.png)
 
+Il faut définir la taille du PCB, pour ce faire on sélectionne l'outil **tracé rectangulaire**, on se met sur la couche **Edge.Cut** et on délimiter notre PCB.   
+![alt text](mkdocs/Kicad_Edge_cut.png)   
+On peut faire un clic droit sur le tracé: Modification forme -> arrondi lignes pour avoir des coins rond.
+![alt text](mkdocs/Kicad_arondi_angle_PCB.png)  
+
+
 On va sélectionner le layer juste sous la couche supérieur.  
 ![kicad layer interne pcb](mkdocs/Kicad_layer_interne.png)  
 
@@ -253,5 +261,6 @@ Pour importer l'image il faut utiliser l'outil symbole, chercher notre dossier d
 ![alt text](mkdocs/Kicad_empreinte_icon.png)   
 ![alt text](mkdocs/Kicad_custom_image.png)     
 
-##   manage and control Gerber files
-
+##   Fabrication Toolkit
+Disponible depuis l'éditeur de PCB, le bouton Fabrication Toolkit, permet de générer les fichiers nécessaire à la réalisation du PCB par JLCPCB. Cela comprent le fichier Gerber (trace des circuits), le fichier drill (plan de perçage) et le fichier position (position des composants).
+![alt text](mkdocs/Kicad_generer_fichier_fabrication.png)     

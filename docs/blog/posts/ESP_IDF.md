@@ -48,4 +48,8 @@ Afin de voir le code s'executer (ici un hello world qui tourne en boucle) il fau
 ![extension ESP-IDF](mkdocs/ESP_IDF_code_running.png) 
 
 ## ESP Registry
-C'est un [site](https://components.espressif.com/) permettant de télécharger des bibliothèques pour faire fonctionner des composants comme les leds WS2812
+C'est un [site](https://components.espressif.com/) permettant de télécharger des bibliothèques pour faire fonctionner des composants comme les leds WS2812.
+Il faut copier la commande dans le terminal d'ESP IDF (ctrl + shift +p) où ajouter > avant la commande dans la barre de recherche
+![extension ESP-IDF](mkdocs/ESP_IDF_Registry.png) 
+
+XXXcompléter doc et expliquer ou se téléchargent les fichiers avec la commande add-dependency
