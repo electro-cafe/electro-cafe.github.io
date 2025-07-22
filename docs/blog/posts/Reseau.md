@@ -47,6 +47,16 @@ Au sein d'un réseau on ne doit pas avoir 2x la même adresse.
 
 Les appareils ne sont pas directement connectés au routeur, ils sont connectés à un switch qui lui est connecté au routeur. 
 
+## Protocol DHCP 
+Dynamic Host Configuration Protocol.  
+C'est un protocol de la couche 7 (modèle OSI) qui attribue une adresse IP à un appareil qui rejoint un réseau. 
+ex: Quand un appareil (par exemple un ESP32, un PC ou un smartphone) rejoint un réseau, il ne possède pas encore d'adresse IP. Il envoie alors une requête DHCP pour en obtenir une.
+
+Le serveur DHCP, souvent intégré au routeur, répond à cette requête et attribue dynamiquement une adresse IP disponible à l'appareil.
+
+👉 Il s'agit d’un échange de messages entre l’appareil client et le serveur DHCP, aboutissant à l’attribution de l’adresse IP.
+
+
 ## Mac Adresse
 Media Access Control Adresse:
 ![extension ESP-IDF](mkdocs/mac_adresse.png)  

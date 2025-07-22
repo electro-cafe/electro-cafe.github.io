@@ -46,11 +46,17 @@ Il faut vérifier que les composant soient dans la bonne orientation. le rond ro
 ![extension ESP-IDF](mkdocs/JLCPCB_verifier_Pin_1.png)  
 
 Si il ne trouve pas un composant, il peut nous en proposer un, à nous de vérifier sur JLCPCB part qu'il convient et de corriger notre empreinte dans Kicad.
-![extension ESP-IDF](mkdocs/Kicad_enlever_JLCPCBpart_pr_qu_il_propose_nouveau.png)  
+![extension ESP-IDF](mkdocs/Kicad_enlever_JLCPCBpart_pr_qu_il_propose_nouveau.png)    
 
+Dans les filtres de recherche on a le choix entre **PCA** (Printed Circuit Board Assembly) **Economic** et **Standard**, économic coûte moins cher et est disponible avec les pièces facile pour eux à assembler, Standard induit un surcoût car les pièces sont par exemple plus petites où nécessite un traitement anti humidité supplémentaire.  
+![extension ESP-IDF](mkdocs/JLCPCB_assembly_type.png)      
+
+En cas d'utilisation de composants nécessitant un assemblage Standard, on va recevoir des message d'avertissement expliquant le surcoût:  
+![extension ESP-IDF](mkdocs/JLCPCB_pcba.png)   
+En dehors de l'aspect financier celà change les dimensions de la board, mais nous n'avons pas besoin de la redessiner, JLCPCB le fait automatiquement, il ajoute un rail de chaque côté, qui leur sert lors de l'assemblage. Nous pouvons enlever ce rail par après.
+![extension ESP-IDF](mkdocs/JLCPCB_baking.png)    
 ## convention nomenclature composants
 Certains composant SMD (surface mound display) contiennent un code à 4 chiffres indiquant leur footprint (leur dimension au sol sur le PCB) les 2er chiffres font référence à la longueur, les 2 suivant à la largeur en inch et il faut les diviser par 10, de plus ils sont parfois arrondis. Ces dimensions sont assez conventionelles.
 Il peut arriver que le code faisant référence aux inch soit identique à la dimension en mm d'un autre composant, Attention à ne pas confondre 0603 et 06mm x 0.3mm. 
 Quand on voit ces chiffres dans la nomination d'un élément ça peut porter à confusion sur son empreinte (confusion type: c'est le code où les dimensions en mm ?)
-![extension ESP-IDF](mkdocs/SMD_code_footprint.png)  
 ![extension ESP-IDF](mkdocs/SMD_code_warning.png)  
