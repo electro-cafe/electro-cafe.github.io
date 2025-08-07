@@ -53,8 +53,12 @@ Dans les filtres de recherche on a le choix entre **PCA** (Printed Circuit Board
 
 En cas d'utilisation de composants nécessitant un assemblage Standard, on va recevoir des message d'avertissement expliquant le surcoût:  
 ![extension ESP-IDF](mkdocs/JLCPCB_pcba.png)   
-En dehors de l'aspect financier celà change les dimensions de la board, mais nous n'avons pas besoin de la redessiner, JLCPCB le fait automatiquement, il ajoute un rail de chaque côté, qui leur sert lors de l'assemblage. Nous pouvons enlever ce rail par après.
-![extension ESP-IDF](mkdocs/JLCPCB_baking.png)    
+En dehors de l'aspect financier celà change les dimensions de la board, mais nous n'avons pas besoin de la redessiner, JLCPCB le fait automatiquement, il ajoute un rail de chaque côté, qui leur sert lors de l'assemblage. Nous pouvons enlever ce rail par après.  
+Un autre aspect qui peut entrainer un petit surcoût est l'utilisation de composant avec un MSL level (moisture sensitivity level) supérieur à 4, en effet JLCPCB devra ajouter une étape de péparation thermique avant la soudure afin d'éviter les défauts dus à l'humidité.
+![extension ESP-IDF](mkdocs/JLCPCB_baking.png)      
+
+
+
 ## convention nomenclature composants
 Certains composant SMD (surface mound display) contiennent un code à 4 chiffres indiquant leur footprint (leur dimension au sol sur le PCB) les 2er chiffres font référence à la longueur, les 2 suivant à la largeur en inch et il faut les diviser par 10, de plus ils sont parfois arrondis. Ces dimensions sont assez conventionelles.
 Il peut arriver que le code faisant référence aux inch soit identique à la dimension en mm d'un autre composant, Attention à ne pas confondre 0603 et 06mm x 0.3mm. 
