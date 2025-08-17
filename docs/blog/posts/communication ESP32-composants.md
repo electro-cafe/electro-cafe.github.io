@@ -43,16 +43,29 @@ Pour échanger des informations avec des composants, l’ESP32 utilise des bus d
 
 Types de bus courants
 
-I2C (Inter-Integrated Circuit) : Utilisé pour connecter plusieurs composants avec seulement deux fils :
+**I2C** (Inter-Integrated Circuit) : Utilisé pour connecter plusieurs composants avec seulement trois fils :  
 
-SDA (Serial Data Line) : pour envoyer et recevoir des données.
-poetr
-SCL (Serial Clock Line) : pour synchroniser l'envoi des données.
+- SCL (Serial Clock Line) : pour synchroniser l'envoi des données.
+- SDA (Serial Data Line) : pour envoyer et recevoir des données.  
+- GND pour que les différents éléments soient "tarés" sur le même potentiel. 
 
-SPI (Serial Peripheral Interface) : Plus rapide que l'I2C, mais nécessite plus de fils.
 
-UART (Universal Asynchronous Receiver-Transmitter) : Utilisé pour la communication série simple, comme entre un ordinateur et l'ESP32.
+![schéma pin fonction ](mkdocs/i2c_schema.png)    
 
+la clock (SCL) donne le rythme d'uptate et de lecture des valeurs du SDA. 
+
+![schéma pin fonction ](mkdocs/scl_sda.png)    
+
+**SPI** (Serial Peripheral Interface) : Plus rapide que l'I2C, mais nécessite plus de fils. Grâce à MISO et MOSI, le slave peut répondre pendant que le master envoi des messages. les câbles Chip select (1 câble par couple master-slave) déterminent avec qui le microprocesseur va dialoguer.
+
+![schéma pin fonction ](mkdocs/SPI_schema.png)    
+
+**UART** (Universal Asynchronous Receiver-Transmitter) : Utilisé pour la communication série simple, comme entre un ordinateur et l'ESP32. On a pas de clock donc avant le dialogue les appareils déterminent la fréquence à utiliser (comment découper le temps pour lire les valeurs).
+
+![schéma pin fonction ](mkdocs/UART_schema.png)
+
+lorsque le signal passe de 0 à 1 il sait qu'il commence à communiquer. les 8 bits suivant composent le message, le 9ème bit est le bit de parité, il a un rôle de contrôle, sa valeur est = à 0 si le nombre de 1 est paire et 1 si le nombre de 1 est impaire. ainsi si le nombre de 1 est impaire il y a de la corruption. le stop bit indique la fin du signal.
+![schéma pin fonction ](mkdocs/uart_bit.png)
 ## **éléments de l'ESP 32** 
 
 **Pin (ou broche) / GPIO** = Point de connexion physique sur le microcontrôleur. **G**eneral **P**urpose **I**nput **O**utput. Une pin peut être utilisée comme entrée (reçoit un signal), sortie (envoi un signal), ou pour des protocoles de communication spécifiques (ex. : I2C, SPI, UART, USB, etc.), selon la configuration choisie dans le code.  
