@@ -1,0 +1,7 @@
+3D printing slicer: PrusaSlicer 2.6.0
+
+support les STL. 
+
+Si pursa demande une conversion d'unité dire non. Au pire on multipliera l'échelle par 10.
+
+100% infill https://help.prusa3d.com/article/modifiers_1767

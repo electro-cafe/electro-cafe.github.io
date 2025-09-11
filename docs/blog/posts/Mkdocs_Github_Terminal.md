@@ -143,6 +143,25 @@ Voici quelques commandes utiles
   <figcaption>ici on voit que mon dossier local est mis à jour selon la dernière version sur github</figcaption>
 </figure>
 
+## copier localement un repository github  
+Dans la section "synchroniser repository github avec notre dossier local" on a vu comment mettre à jour notre dossier local avec les infos du Git. Ici on va voir comment avoir notre dossier localement lorsque l'on a commencé par créer le repository git.  
+  
+Ouvrir le terminal Gitbash et utiliser la commande suivante pour cloner le repository github localement:  
+> git clone https://github.com/culiacan77/TEST_UPLOAD_TO_ESP_REGISTRY.git     
+
+> pour info: culiacan77 = nom d'utilisateur git et TEST_UPLOAD_TO_ESP_REGISTRY.git = nom du repository
+  
+Comme on le voit le repository a été copié dans un dossier local. On va pouvoir le ranger ou l'on souhaite sur l'ordinateur, il ne perdra pas le liens avec Github.      
+![emplacement copie locale](mkdocs/clone_git_repo_to_local_folder_location.png)
+
+
+Notre projet existe dans 3 lieux: le repository online sur github, la copie local sous forme de dossier et le dossier caché .git au sein de la copie loacle.  
+![emplacement copie locale](mkdocs/Github_local_diagram.png)  
+quand on se met dans le dossier local et que l'on fait un **git status** depuis le terminal c'est comme demander est-ce que j'ai modifié mes fichiers localement rapport à ce qu'il y a sur github. (il compare le contenu du dossier local au dossier .git)  
+Quand on fait un **pull** on lui dit de récupérer ce qu'il y a de nouveau sur Github.  
+Quand on fait un **push** on lui dit d'envoyer les modifications locales vers Github.  
+
+
 ## terminal
 Le terminal permet d'executer des programmes ou scripts, de rechercher et déplacer des fichiers de manière précise, installer ou mettre à jour des logiciels.  
 Sur windows il en existe plusieur:   

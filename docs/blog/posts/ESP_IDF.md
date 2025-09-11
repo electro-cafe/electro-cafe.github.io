@@ -48,26 +48,6 @@ Afin de voir le code s'executer (ici un hello world qui tourne en boucle) il fau
 ![extension ESP-IDF](mkdocs/ESP_IDF_monitor_device.png)  
 ![extension ESP-IDF](mkdocs/ESP_IDF_code_running.png) 
 
-## ESP Registry
-C'est un [site](https://components.espressif.com/) permettant de télécharger des bibliothèques pour faire fonctionner des composants comme les leds WS2812.
-Il faut copier la commande dans le terminal d'ESP IDF (ctrl + shift +p) où ajouter > avant la commande dans la barre de recherche
-![extension ESP-IDF](mkdocs/ESP_IDF_Registry.png) 
-
-
-## Ajout de components / Architecture dossiers
-le code principale que l'on écrit se siture dans le dossier main.
-Chaque composant sur ESP.Registry comprent une commande permettant de télécharger les fichiers dans notre dossier de projet au sein d'un sous-dossier nommé **managed_components**
-Pour commencer il faut ouvrir le terminal ESP_IDF (ctrl + shift + p -> Open ESP IDF terminal) et y coller la commande du component que l'on souhaite ajouter au projet, récupérée d'ESP Registry, ex: **idf.py add-dependency "supcik/status_led^2.0.0"** ça va créer un fichier idf.component.yml au sein du dossier main, ce fichier est comme une liste de course que CMake va interpréter pour télécharger les fichiers voulu lorsque l'on lance la commande **idf.py build**. Si le composant n'est pas ajouté on peut essayer **idf.py reconfigure** qui fait une sorte de refresh.
-
-en résumé ces 2 commande vont : 
-- créer le fichier .yml qui est une liste de ce dont on a besoin pour intégrer le Component, fichier lisible par les humains et l'ordinateur.  
-- CMake va traduire la liste pour qu'elle soit lisible par Ninja.  
-- Ninja va compiler et executer les instructions.
-- les fichiers du component sont téléchargé dans le dossier managed_component  
-
-J'ai été bloqué à cette étape, je n'avais pas de dossier managed_component. Le problème a pu etre résolu grâce à la commande **idf.py update-dependencies** qui fait une sorte de rafraichissement, retélécharge ce qui nous manque, met à jour les fichiers.
-Lors de la création de mon projet hello-world test j'ai du cocher une option qui m'a ajouté des component Arduino, ça complique les choses, j'en ai pas besoin pour le moment, j'efface le dossier arduino.
- 
 ## commandes
 Les commandes idf.py sont disponible dans les répertoires (directories en anglais = dossiers) contenant un fichier CMakeList.txt  
 On parle de CLI: Command Line Interface (Interface en ligne de commande), cela permet de se passer des menus et interface graphique.
@@ -79,39 +59,87 @@ On parle de CLI: Command Line Interface (Interface en ligne de commande), cela p
 >idf.py create component -> crée un nouveau component.  
 >idf.py set-target -> définir le type de processeur sur lequel on va flasher notre programme.
 
-## Creation d'un component
-On va créer notre composant (ex: moteur 28BY-J-48) dans un projet dédié. Cela rend le partage beaucoup plus facile.
+## ESP Registry
+C'est un [site](https://components.espressif.com/) permettant de télécharger des bibliothèques pour faire fonctionner des composants comme les leds WS2812.
+On peut aussi créer nos propres component et les partager sur ESP Registry.
 
-Pour commencer il faut faire un dossier, ouvrir ce dossier avec VSCode: file -> open folder  
+
+## Récupérer un component sur ESP Registry et l'intégrer à un projet / Architecture dossiers
+le code principale que l'on écrit se situe dans le dossier main.
+Chaque composant sur ESP.Registry comprent une commande permettant de télécharger les fichiers dans notre dossier de projet au sein d'un sous-dossier nommé **managed_components**.  
+
+Pour commencer il faut ouvrir le terminal ESP_IDF (ctrl + shift + p -> Open ESP IDF terminal) et y coller la commande du component que l'on souhaite ajouter au projet, récupérée d'ESP Registry. Autre manière: coller > + la commande du component dans la barre de recherche de Visual studio Code.  
+![extension ESP-IDF](mkdocs/ESP_IDF_Registry.png)   
+> comande à récupérer sur ESP Registry.
+
+
+Par exemple: **idf.py add-dependency "supcik/status_led^2.0.0"** ça va créer un fichier idf.component.yml au sein du dossier main. le fichier .yml est comme une liste de course lisible/compréhensible par l'ordinateur et l'humain que CMake va interpréter pour télécharger les fichiers voulu lorsque l'on lance la commande **idf.py build**. Si le composant n'est pas ajouté on peut essayer **idf.py reconfigure** qui fait une sorte de refresh.
+
+
+
+Résumé des actions de la commande prise sur esp-Registry et idf-py build:   
+
+- créer le fichier .yml qui est une liste de ce dont on a besoin pour intégrer le Component.     
+
+- CMake va traduire la liste pour qu'elle soit lisible par Ninja.    
+
+- Ninja va compiler et executer les instructions.  
+
+- les fichiers du component sont téléchargé dans le dossier managed_component  
+
+J'ai été bloqué à cette étape, je n'avais pas de dossier managed_component. Le problème a pu etre résolu grâce à la commande **idf.py update-dependencies** qui a fait une sorte de rafraichissement, retéléchargé ce qui me manquais, mis à jour les fichiers.  
+Attention: Lors de la création de mon projet de test ESP IDF "hello-world" j'ai du cocher une option qui m'a ajouté des component Arduino, ça complique les choses, j'en ai pas besoin pour le moment, j'efface le dossier arduino.
+ 
+
+## Creation d'un component
+On a vu comment récupérer un component sur ESP Registry, on va maintenant voir comment en créer un dans un projet dédier (ex: moteur 28BY-J-48) afin de le partager.
+
+Pour commencer il faut faire un dossier dans notre explorateur windows. On va ouvrir ce dossier avec VSCode: file -> open folder  
 ensuite ouvrir le terminal de commande et taper: 
 > idf.py create-project my_project_with_components    
+
  
 Cette commande nous a crée un dossier nommé my_project_with_components. on va changer de directory dans le terminal pour executer notre prochaine commande dans ce dossier :  
 > cd my_project_with_components  --------> //change directory  
 > idf.py set-target esp32c3      --------------------> //chose esp model  
 > idf.py build                   ------------------------------------------> // build project  
 
-Le build est réussi si l'on a pas de message d'erreur et que l'on voit **project build complete. To flash, run: ...**, la présence de dossier build dans l'arborescence du projet nous indique aussi que cela a fonctionné
+<span style="color:red">J'ai peut être crée un dossier en trop (le dossier test_component_esp_idf), je modifierai cette partie si c'est le cas</span>.
+
+Le build est réussi si l'on a pas de message d'erreur et que l'on voit **project build complete. To flash, run: ...**  
+La présence de dossier build dans l'arborescence du projet nous indique aussi que cela a fonctionné  
 ![extension ESP-IDF](mkdocs/ESP_IDF_component_build.png) 
 
 On va maintenant créer le sous dossier components qui contiendra les fichiers de code de notre composant. Pour ce faire, utiliser la commande:  
->idf.py create-component -C components MyComponent    
+>idf.py create-component -C components MyComponent    -------> crée que le fichier .cpp et .h
 
 Voilà le resultat dans VScode et l'explorateur de fichier:  
 ![extension ESP-IDF](mkdocs/ESP_IDF_component_folder.png) 
 ![extension ESP-IDF](mkdocs/ESP_IDF_component_folder_2.png) 
   
-On a bien notre fichier .h et .c, reste à y écrire le code du composant.
+On a bien notre fichier .h et .c, reste à y écrire le code du composant.  
 
-XXXXXXXXXXXXXXXXXX cette section s'étoffera.
-xxxxxxxxxxxxxxxxxx ajouter ltypedef enum to hold the registers that can be read or written to the component.
-XXXXXXXXXXXXXXXXXX ajouter les "drivers" dans la CMakeList.txt
-XXXXXXXXXXXXXXXXXX Kconfig (équivaut à changer les valeurs de certains paramètre dans menuconfig ?)
+<span style="color:red">a tester/completer:</span>
+
+XX On peut aussi utiliser cette commande qui a l'avantage de nous créer un dossier avec tout le matériel nécessaire.  Je crois     
+ >idf.py create-component YourComponentName    
+
+ Il nous reste alors à completer les fichiers .h et .c avec notre code. 
+
+
+
+XXXXXXXXXXXXXXXXXX cette section s'étoffera.  
+xxxxxxxxxxxxxxxxxx ajouter ltypedef enum to hold the registers that can be read or written to the component.  
+XXXXXXXXXXXXXXXXXX ajouter les "drivers" dans la CMakeList.txt  
+XXXXXXXXXXXXXXXXXX Kconfig (équivaut à changer les valeurs de certains paramètre dans menuconfig ?)  
 
 xxxxxxxxxxxAll the information you might need should be provided by the manufacturer, including the device address, registers, etc.xxxxxxxxxxxxxxxx
 
-## publication d'un component sur ESP Component Registry
-Afin de pouvoir publier notre component sur ESP registry il faut encore ajouter:  
+## publication d'un component sur ESP Component Registry - manière 1
+**Note**: je n'ai pas testé cette manière de faire j'ai juste synthetisé la doc disponible sur esp Registry.
+J'ai testé la méthode 2 qui est plus compliquée à mettre en place mais plus simple pour le maintient du code et des mises à jour.  
+
+En partant du composant crée précedement, afin de pouvoir publier notre component sur ESP registry il faut encore ajouter:  
 > le fichier .yml  
 > la liscence.txt     
 > le README.md  
@@ -123,36 +151,92 @@ Dans notre cas les informations ne semblent pas pertinante et sa présence sert 
 >  description: "This is a test component"  
 >  url: "https://mycomponent.com"  # The homepage of the component. It can be a GitHub repository page.  
 > version: "0.0.1"  #partie dépendant de la liscence qu'on a choisie
->  license: "MIT"  #partie dépendant de la liscence qu'on a choisie
+>  license: "NameOfTheChosenLiscence"  # nom dépendant de la liscence qu'on a choisie
 
-Le fichier de liscence décrit l'utilisation du component, c'est une sorte de créative common. Si on vx simplement le partager sans contrepartie on px mettre:  
+Le fichier de **liscence** décrit l'utilisation du component, c'est une sorte de créative common. On peut consulter https://choosealicense.com/ pour récupérer une liscence qui nous convient.  
 
-> XXXXXXXXXXXXXXX
-
-Le fichier README.md est une description textuelle de la fonction et de l'utilisation du composant.  
+Le fichier **README.md** est une description textuelle de la fonction et de l'utilisation du composant.  
   
 
 Maintenant qu'on a les prérequis pour la publication on va utiliser **staging Registry** pour tester notre composant, c'est comme une simulation de ce que sera notre composant une fois publié sur Registry.
 
-XXXXXXXXXXXXXXstaging Registry steps.
-  
+Pour se logger sur Staging Registry on va utiliser cette commande:  
+>compote registry login --profile "staging" --registry-url "https://components-staging.espressif.com" --default-namespace <your-github-username>  
+
 On va utiliser cette ligne de commande pour uploader sur staging registry:  
 > compote component upload --profile "staging" --name test_cmp    
-
-Puis on va ajouter ces lignes à notre fichier .yml:  
-> dependencies:  
->  <your_default_namespace>/test_cmp:  
->    version: "*"  
->    registry_url: https://components-staging.espressif.com  
-
-Maintenant que l'on a confirmé le bon fonctionnement du composant on peut le publier sur Registry.  
-Il faut se logger avec cette commande:  
-
-> compote registry login --profile "default" --registry-url "https://components.espressif.com" --default-namespace <your_github_username>  
   
+On va mettre à jour notre fichier .yml:  
+>dependencies:
+>  <your_default_namespace>/test_cmp:  -----> ?????
+>    version: "*"
+>    registry_url: https://components-staging.espressif.com  ----------> ?????
+
+Maintenant que le composant est testé on va pouvoir le publier sur ESP Registry.  
+On va se logguer sur le serveur registry:  
+> compote registry login --profile "default" --registry-url "https://components.espressif.com" --default-namespace <your_github_username>  
+ça va nous ouvrire une page web nous permettant de nous identifier via notre compte Github puis de **récupérer une clé** que l'on va ensuite **coller dans le terminal**
+
 puis publier le composant avec:  
 
 > compote component upload --name test_cmp    
+
+## publication d'un component sur ESP Component Registry - Methode Github - introduction  
+**note**: Manière testée.  
+**Résumé**: On va créer un repository sur Github, y ajouter une Github action bloquera tout composant dans l'architecture de dossier est incorecte et qui se chargera de la synchronisation avec ESP Registry à chaque upload de version. Il nous faut également générer un token sur ESP Registry et le partager avec Github.  
+**remerciement**: Merci à Jacque Supcik pour l'architecture du projet, j'ai ajouter des commentaires dans les fichiers là où il faut changer les noms en fonction de votre projet personalisé.
+
+
+## step X - Github action
+C'est le fichier **build.yml**, situé dans le dossier **.github** puis  **workflow**, il décrit les règles de vérification des fichiers synchronisés sur Git. Il upload sur ESP Registry en cas de nouvelle version. Récupérable sur mon [repo git](https://github.com/culiacan77/TEST_UPLOAD_TO_ESP_REGISTRY/blob/main/.github/workflows/build.yml)
+
+
+## step X - token  
+On va se connecter sur ESP Registry en utilisant notre identifiant Github:  
+![registry log with github](mkdocs/Registry_signin_with_github.png)  
+
+demander un **token**, c'est comme une clée d'accès secrète jetable dans le cas où elle serait compromise:
+![emplacement copie locale](mkdocs/token_registry.png)  
+On peut sélectionner write:components et la créer. On arrive sur une page avec notre token. C'est la seul fois qu'on nous le montre. Comme il est secret on ne pourra plus le récupérer après. Dans notre cas de publication de component on s'en fiche, il faut juste le copier
+![token](mkdocs/token.png)
+
+Il va faloir l'**ajouter à Github**: dans notre repository on va dans settings -> Secrets and variables -> action -> New repository secret
+![token](mkdocs/github_secret.png)  
+On va copier le token d'ESP REgistry et lui donner un nom en majuscule et _  
+Je le nomme TOKEN_GIT_TO_REGISTRY  
+![token](mkdocs/github_secret_token.png)
+
+On peut effacer les token créer si ils sont compromi sur la page des token d'ESP Registry.
+![token gestion](mkdocs/ESP_Registry_gestion_token.png)  
+
+Dernier point concernant le secret, il faut l'indiquer dans le fichier build.yml:
+![secret build.yml](mkdocs/Github_secret_ESP_Registry_Token.png)  
+
+
+
+
+j'installe les commandes pre-commit grâce à la commande pip install pre-commit. puis lance pre-commit run --all-files pour formater comme il faut les fichiers yml, car ils étaient apparement faux et ne passaient pas les git actions.
+
+On ajoute également le fichier pre-commit.yml à la racine de notre repository, car il est appellé dans build.yml. Le pre-commit permet entre autre de s'assurer que les fichiers yml sont valides     
+
+Ajouter un fichier CMakeLists.txt
+
+XXxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx schema des dossiers et de leur contenu min pour uplaod  
+
+Il nous faut un fichier idf_component.yml à la racine du repository
+
+
+Enfin pour uploader notre componant sur ESP Registry il faut lui donner un **tag**, c'est à dire une version. le component sera mis à jour sur ESP Registry à chaque nouvelle version que l'on fait.  
+
+Avec gitbash on va faire:  
+>git tag v0.1.0  
+
+puis envoyer vers git avec:  
+> git push --tag  
+  
+
+Comme on le voit notre repository a le tag de version 0.0.0:  
+![emplacement copie locale](mkdocs/git_tag.png)
 
 ## FreeRTOS
 Système d'exploitation temps réel intégré dans ESP-IDF. Real Time Operating System.
