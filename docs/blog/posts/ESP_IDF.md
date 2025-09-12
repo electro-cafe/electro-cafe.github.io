@@ -184,7 +184,7 @@ puis publier le composant avec:
 ## publication d'un component sur ESP Component Registry - Methode Github - introduction  
 **note**: Manière testée.  
 **Résumé**: On va créer un repository sur Github, y ajouter une Github action bloquera tout composant dans l'architecture de dossier est incorecte et qui se chargera de la synchronisation avec ESP Registry à chaque upload de version. Il nous faut également générer un token sur ESP Registry et le partager avec Github.  
-**remerciement**: Merci à Jacque Supcik pour l'architecture du projet, j'ai ajouter des commentaires dans les fichiers là où il faut changer les noms en fonction de votre projet personalisé.
+**remerciement**: Merci à Jacque Supcik pour l'architecture du projet et les fichiers, j'ai ajouter des commentaires dans les fichiers là où il faut changer les noms en fonction de votre projet personalisé.
 
 
 ## step X - Github action
@@ -209,22 +209,37 @@ Je le nomme TOKEN_GIT_TO_REGISTRY
 On peut effacer les token créer si ils sont compromi sur la page des token d'ESP Registry.
 ![token gestion](mkdocs/ESP_Registry_gestion_token.png)  
 
-Dernier point concernant le secret, il faut l'indiquer dans le fichier build.yml:
+Dernier point concernant le secret/token, il faut l'indiquer dans le fichier build.yml:
 ![secret build.yml](mkdocs/Github_secret_ESP_Registry_Token.png)  
 
 
+## step X - pre-commit (yaml)  
+Lorsque l'on modifie les fichier yml (en particulier lorsque j'y ajoute des commentaires) on peut avoir inséré des caractères qui vont poser problème à la compilation. Le pre-commit permet de corriger ça.  
+Il faut ajouter un fichier .pre-commit-config.yaml (et pas yml) à la racine de notre projet, heureusement il y a une commande pour se faire:  
+> pip install pre-commit  
+> pre-commit install  
 
+Pour lancer le pre-commit (à faire après chaque changement) on utilise la commande:  
+> pre-commit run --all-files  
 
-j'installe les commandes pre-commit grâce à la commande pip install pre-commit. puis lance pre-commit run --all-files pour formater comme il faut les fichiers yml, car ils étaient apparement faux et ne passaient pas les git actions.
+## step X - CMakelist
+Ces fichier servent au compilateur à savoir quels fichiers compiler, où aller les chercher et quelles dépendances ils ont. 
+Pour mon projet il faut 3 fichier CMakeLists.txt  
+Un au niveau du projet global, un au niveau du dossier component et un au niveau du fichier main.cpp.  
 
-On ajoute également le fichier pre-commit.yml à la racine de notre repository, car il est appellé dans build.yml. Le pre-commit permet entre autre de s'assurer que les fichiers yml sont valides     
+## step x - Ajouter les fichier component.cpp, component.h et main.cpp
+Logique, c'est eux qui définissent le fonctionnement du composant.
+component.h déclare les fonctions, component.cpp les défini et elles sont appellées dans main.cpp  
+On ne peut pas uploader de fichier main.cpp vide, il y a un minimum de code requis pour passer la compilation.
 
-Ajouter un fichier CMakeLists.txt
-
-XXxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx schema des dossiers et de leur contenu min pour uplaod  
-
+## step x - Ajouter les fichiers .yml
 Il nous faut un fichier idf_component.yml à la racine du repository
+indique aux outils externes les versions et prérequis que l'on souhaite ??
 
+XXxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx schema des dossiers et de leur contenu min pour uplaod 
+
+
+## step X - Version  
 
 Enfin pour uploader notre componant sur ESP Registry il faut lui donner un **tag**, c'est à dire une version. le component sera mis à jour sur ESP Registry à chaque nouvelle version que l'on fait.  
 
