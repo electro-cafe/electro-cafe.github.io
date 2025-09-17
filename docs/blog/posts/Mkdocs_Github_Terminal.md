@@ -161,6 +161,16 @@ quand on se met dans le dossier local et que l'on fait un **git status** depuis 
 Quand on fait un **pull** on lui dit de récupérer ce qu'il y a de nouveau sur Github.  
 Quand on fait un **push** on lui dit d'envoyer les modifications locales vers Github.  
 
+## créer un repository sur Github à partir d'un dossier local.
+Une fois le dossier crée, utiliser Gitbash depuis son emplacement avec ces commandes:
+> git init  
+> git add .  
+> git commit -m "message du commit"    
+
+Créer un repository vide sur Github et lui donner un nom  
+
+> git remote add origin https://github.com/nomUtilisateurGithub/NomDossierProjet.git  
+> git push -u origin main   
 
 ## terminal
 Le terminal permet d'executer des programmes ou scripts, de rechercher et déplacer des fichiers de manière précise, installer ou mettre à jour des logiciels.  
