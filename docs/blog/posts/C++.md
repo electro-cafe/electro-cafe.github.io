@@ -54,7 +54,11 @@ XXXXXXXXXX**passer par copie** = les arguments sont copiés dans la fonction, on
 **:** = assignation 
 **surcharge** = variante de notation de l'appel d'une fonction.
 
-
+**Naming**  
+On va utiliser les convention de [nomenclature de google](https://google.github.io/styleguide/cppguide.html#Naming).  
+On essaie d'être au plus claire. Ne pas utiliser de verbe pour les variables et booleans.  
+Les variables et les paramètres de fonctions sont en snake_case.  
+Les membres de classe (= les "variables" d'une classe) sont en snake_case avec un _ à la fin. On dit un trailing underscore.
   
 **variable globale** = une variable déclaré à l'extérieur d'une classe où fonction. Utilisable partout dans le code cpp (mais seulement le fichier cpp où elle est déclarée). Stocké dans data. Stocké dans bss si non initialisée.    
 **variable locale** = une variable déclarée dans une fonction. Elle n'existe pas en dehors de la fonction à moins d'être "static". Lorsque la fonction se termine elle est détruite.  
