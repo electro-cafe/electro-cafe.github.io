@@ -22,6 +22,9 @@ Je ne pense pas qu'il y ait une méthode allant du point A au point B permettant
 Je suis parti de 0 et j'y suis souvent retourné, à chaque boucle je comprend un peu mieux les différents principes et composants, ainsi que les liens qui les lient.  
 Ce qui suit a été réecrits plusieurs fois.
 
+## Liens utiles  
+[Geeksforgeeks](https://www.geeksforgeeks.org/cpp/function-overloading-vs-function-overriding-in-cpp/)
+
 ## vocabulaire
   
 XXXXXXXXXXXXXXXXXXXXXXX ajout note cahier 
@@ -45,6 +48,7 @@ XXXXXXXXXXXXXXXXXXXXXXX relire + corriger completer
 XXXXXXXXXX**passer par référence** = les arguments sont passé grâce à un pointeur, on travail directement avec les originaux.  
 XXXXXXXXXX**passer par copie** = les arguments sont copiés dans la fonction, on ne change pas la valeur des originaux, on travaille sur une copie.  
 **portée** = ce qu'une fonction peut atteindre. une variable local d'une autre fonction lui sera hors de portée par exemple, à moins que l'on lui donne son adresse.  
+**masquage/shadowing**  = nom partager entre 2 entités (fonction/variable/etc), souvent source de complication pour le développeur.  
 
 **const** = mot clé indiquant que l'on ne peut changer la valeur la variable où que la fonction ne peut pas changer la valeur des paramètres reçu par référence.  
 **this** = mot clé faisant référence à l'objet. utilisé pour appeller ses membres. this -> member. this est un const.   
@@ -52,7 +56,8 @@ XXXXXXXXXX**passer par copie** = les arguments sont copiés dans la fonction, on
 **->** = arrow operator, permet l'accès aux membres d'un objet via un pointeur vers cet objet.  
 **::** = scope resolution operator. Permet l'accès à un membre depuis l'extérieur d'un objet. Aussi utilisé pour marqué l'appartennance à un **namespace** où une **classe**.    
 **:** = assignation 
-**surcharge** = variante de notation de l'appel d'une fonction.
+**surcharge** = déclarer la même fonction mais avec des arguments différents.  
+
 
 **Naming**  
 On va utiliser les convention de [nomenclature de google](https://google.github.io/styleguide/cppguide.html#Naming).  
@@ -60,6 +65,7 @@ On essaie d'être au plus claire. Ne pas utiliser de verbe pour les variables et
 Les variables et les paramètres de fonctions sont en snake_case.  
 Les membres de classe (= les "variables" d'une classe) sont en snake_case avec un _ à la fin. On dit un trailing underscore.
   
+XXXXXXXXXX diff entre variable globale et variable globale static  
 **variable globale** = une variable déclaré à l'extérieur d'une classe où fonction. Utilisable partout dans le code cpp (mais seulement le fichier cpp où elle est déclarée). Stocké dans data. Stocké dans bss si non initialisée.    
 **variable locale** = une variable déclarée dans une fonction. Elle n'existe pas en dehors de la fonction à moins d'être "static". Lorsque la fonction se termine elle est détruite.  
 **variable globale static** = visible que dans le fichier cpp où elle est déclarée.  
@@ -144,8 +150,12 @@ Les variables apparaîssent sous d'autres nom suivant la manière dont on les ut
 Les paramètres sont des variables à l'intérieur de la fonction. implication durée de vie / copie / sauf si statique
 pass by copy / pass by reference
   
-## Surcharge
-Aussi nommé overload, polymorphisme
+## fonction Overload   
+Aussi nommé urcharge où polymorphisme. Il s'agit du fait de donner définir plusieurs fois une fonction, en changeant le nombre de paramètre et/où leur type.  
+Ne pas confondre aver override.  
+
+## fonction Override
+Il s'agit de redéfinir une fonction de classe (donc un membre) dans une classe dérivée (classe enfant).  
 
 ## pointeur et adresse
 getter / setter
@@ -266,15 +276,59 @@ void Stepper::stepForward() {
 
 
 **ce qui me perturbe c'est qu'on doit utiliser le nom de la class pour nommer le constructeur (dans sa déclaration) mais on utilise le nom que l'on veux lorsque on l'utilise ex:
-Animal(int leg); //déclaration interne
-Animal::Animal(int leg); //déclaration externe
+Animal(); //déclaration du constructeur par défaut (= sans rien) dans la classe (dans le .h)  
 
-Monkey(4); // création d'objet Monkey
+Animal::Animal(int leg){  //définition du constructeur externe (hors .h)
+  méthode  
+  atributs   
+};   
+
+Animal Monkey(4); // création d'objet Monkey (dans .cpp)
 Animal::Monkey(4)// création d'objet Monkey. -> je suis perdu es-ce que c'est juste ? quelle est la diférence
 
 aussi les constructeur des classes sont ils utilisés pour créer des classes filles ?
 les objets héritent ils des attributs et méthodes de la classe ?
 et static dans tout ça ? dans une fonction c'est un mot clé pour appeler la variable que une fois je crois. dans les class c'est un attribut partagé par toutes les instances de la classe (donc les objets ?)**
+
+##classes dérivées
+
+On parle de classe dérivé pour décrire une classe fille qui hérite d'une classe parent.  
+La classe fille hérite des attributs et méthodes de son parent. Elle peut avoir de nouveaux attributs et méthodes que le parent ne possède pas. Le constructeur de la classe dérivé fait appel au constructeur du parent car la classe dérivée est composée des membres du parent ainsi que de ces propres membres. Il est possible que la classe dérivé redéfinisse des méthodes hérités de la classe parent, pour ce faire il faut indiquer les méthodes comme **virtual** et les **assigner à 0** dans la classe parent:  
+![virtual methode](mkdocs/constructor_virtual.png)    
+
+Si la classe parent possède un constructeur vide (un constructeur sans paramètress et sans corps définissant ses attributs/méthodes) on a pas besoin de faire le liens entre les paramètres du constructeur de la classe fille et la classe parent, mais c'est rarement le cas.  
+
+```cpp
+class parent {      // <-- Class 
+public:             // <-- Access modifier
+    int var_1;       // <-- Attribute
+
+    parent(int var_1_) { // <-- Constructor (same name as class, NO return type!)
+      int var_1 = var_1_;
+      var_1_= 50;
+        
+    }
+
+    void divide() {   // <-- Method
+        // Some code here to divide
+    }
+};
+
+class enfant : public parent {    // <-- c'est comme ça qu'on crée une classe dérivée.
+public:  
+  enfant (int child_var_1, int child_var_2) : parent(child_var_1)  // <-- liste  d'initialisation. pour faire le liens entre les paramètre du parent et de l'enfant. ici on lie le premier argument de l'enfant au premier attribut du parent.
+                                                                   // En fait lors de  l'appel de la classe enfant (sa création) les arguments seront passé dans les paramètres du constructeur de l'enfant (logique) on peut passer ces paramètres à la classe parent en écrivant leur nom dans la parenthèse du constructeur parent. Ils seront transmis au constructeur parent en fonction de leur position. (Le fait que la logique de passage dépende une fois du nom et une fois de la position porte à confusion) ces 2 constructeurs vont créer l'objet enfant.
+
+};  
+```   
+Ce schéma explique la logique de passage des paramètres d'un constructeur à l'autre, ici lorsque les constructeurs sont définis dans le fichier.h:  
+![virtual methode](mkdocs/classe_derive_parametre_constructeur_1.png)     
+
+Ici lorsque les constructeurs ne sont pas définis dans le fichier.h mais dans le .cpp  
+Remarque on n'utilise pas d'accoladea après l'appel du constructeur vu qu'il n'y a rien à définir:   
+![virtual methode](mkdocs/classe_derive_parametre_constructeur_2.png)     
+![virtual methode](mkdocs/classe_derive_parametre_constructeur_3.png)     
+
 
 ##⚠️ Héritage   
 
