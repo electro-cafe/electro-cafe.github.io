@@ -39,3 +39,4 @@ Voici la liste du matériel commandé :
 - **1 fer à souder électrique**  
 - **1 Esp32**  
 - **1 s3 mini pro**  
+

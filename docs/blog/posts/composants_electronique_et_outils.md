@@ -115,6 +115,12 @@ On peut lire le signal sur l'écran. Lorsque l'on est dans l'onglet **Volt/Time*
 ## interrupteur 3 point
 ![interupteur_3_points](mkdocs/interupteur_3_points.png) 
 
+## fer à souder
+Lors de la première utilisation d'une pane, la nourrire d'étain jusqu'à ce que la pointe soit recouverte d'étain et que ce dernier tombe de la pane en goutte. Si un film noir apparaît sur le bout de la pane c'est qu'elle est foutue, elle ne transférera plus la chaleur.
+
+## tresse à dessouder  
+couper un bout grand comme la dernière phalange du pouce et le maintenir par une extremité sur la soudure à absorber à l'aide d'une pince. Si il est trop court la chaleur se dissoud dans la pince.  
+
 ## tableau composants/unité/symbole
 certains composant ont plusieurs unités, j'ai représenté que les plus importantes  
 
