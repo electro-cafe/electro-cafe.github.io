@@ -69,3 +69,4 @@ l'on peut l'écrire **fact(n)** où **n!**
 c'est une fonction **récursive** (= qui s'appelle elle même) car fact(n) = n * fact(n-1) on déclare la factorielle avec la factorielle. fact(n-1) = n-1 * fact(n-1-1) puis fact(n-1-1) = n-1-1 * fact(n-1-1-1).  
 Quand s'arrêter ? lorsqu'on atteint fact(0), 0! = 1
 La factorielle augmente plus vite que les puissances.
+

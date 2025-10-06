@@ -303,10 +303,8 @@ class parent {      // <-- Class
 public:             // <-- Access modifier
     int var_1;       // <-- Attribute
 
-    parent(int var_1_) { // <-- Constructor (same name as class, NO return type!)
-      int var_1 = var_1_;
-      var_1_= 50;
-        
+    parent(int var_1) { // <-- Constructor (same name as class, NO return type!)
+      int var_1_ = var_1;
     }
 
     void divide() {   // <-- Method
@@ -319,16 +317,78 @@ public:
   enfant (int child_var_1, int child_var_2) : parent(child_var_1)  // <-- liste  d'initialisation. pour faire le liens entre les paramètre du parent et de l'enfant. ici on lie le premier argument de l'enfant au premier attribut du parent.
                                                                    // En fait lors de  l'appel de la classe enfant (sa création) les arguments seront passé dans les paramètres du constructeur de l'enfant (logique) on peut passer ces paramètres à la classe parent en écrivant leur nom dans la parenthèse du constructeur parent. Ils seront transmis au constructeur parent en fonction de leur position. (Le fait que la logique de passage dépende une fois du nom et une fois de la position porte à confusion) ces 2 constructeurs vont créer l'objet enfant.
 
-};  
+};
 ```   
-Ce schéma explique la logique de passage des paramètres d'un constructeur à l'autre, ici lorsque les constructeurs sont définis dans le fichier.h:  
+
+## liste d'initialisation.
+Il s'agit d'un raccourcis d'écriture. Ce schéma explique la logique de passage des paramètres d'un constructeur à l'autre via liste d'initialisation, ici lorsque les constructeurs sont définis dans le fichier.h:  
 ![virtual methode](mkdocs/classe_derive_parametre_constructeur_1.png)     
 
 Ici lorsque les constructeurs ne sont pas définis dans le fichier.h mais dans le .cpp  
 Remarque on n'utilise pas d'accoladea après l'appel du constructeur vu qu'il n'y a rien à définir:   
 ![virtual methode](mkdocs/classe_derive_parametre_constructeur_2.png)     
-![virtual methode](mkdocs/classe_derive_parametre_constructeur_3.png)     
+![virtual methode](mkdocs/classe_derive_parametre_constructeur_3.png)       
 
+⚠️ Le constructeur d'une classe dérivée peut avoir plus de paramètres que le constructeur de la classe parent mais il ne peut pas passer plus de paramètre au parent que le nombre de paramètres du parent. 
+  
+⚠️ Il faut absoluement utiliser la liste d'initialisation avec les const et les pointeurs car ils ne peuvent pas exister et voir leur valeur changer (dans le cas des const) où sans valeur attribué (dans le cas des pointeur).  
+
+
+## liens paramètres -attributs
+Résumé des cas possibles.  
+classe sans liste d'initialisation:  
+```cpp
+class Parent {
+public:
+    int var_1_;   // attribut
+
+    // constructeur sans liste d'initialisation
+    Parent(int var_1) {
+        var_1_ = var_1;   // on assigne dans le corps
+    }
+};
+
+```   
+Classe avec liste d'initialisation:
+```cpp
+class Parent {
+public:
+    int var_1_;   // attribut
+
+    // constructeur avec liste d’initialisation
+    Parent(int var_1) : var_1_(var_1) {
+        // rien d'autre à écrire
+    }
+};
+
+```   
+Classe dérivée sans liste d'initialisation:  
+```cpp
+class Enfant : public Parent {
+public:
+    int var_2_;
+
+    // constructeur enfant sans liste
+    Enfant(int v1, int v2) : Parent(0) { // obligé d'appeler Parent d'une façon
+        var_1_ = v1;   // hérité de Parent
+        var_2_ = v2;   // propre à Enfant
+    }
+};
+
+```   
+Classe dérivée avec liste d'initialisation:  
+```cpp
+class Enfant : public Parent {
+public:
+    int var_2_;
+
+    // constructeur enfant avec liste
+    Enfant(int v1, int v2) : Parent(v1), var_2_(v2) {
+        // plus rien à écrire
+    }
+};
+
+```   
 
 ##⚠️ Héritage   
 
@@ -368,6 +428,123 @@ public:
 >public:  //spécificateur d'accès  
 >Engine engine;  
 >et pas public: Engine engine;
+
+## modulo  
+
+C'est une opération noté x %y qui va nous donner le reste de la division de x par y. Cela permet de créer une boucle allant de 0 à y-1.   
+Voici comment ça marche: 10 %4 = 2. On met le plus de fois 4 dans 10 et on regarde ce qu'il reste, le reste est le résultat du modulo. 2 %4 = 2, on ne peut pas mettre 4 dans 2, il reste 2. 4 %4 =0.  
+Avec les nombres negatifs le modulo ne donne un résultat négatif dans C++ mais pas forcément dans un autre language de programmation.  
+![modulo](mkdocs/Modulo_4.png)  
+
+Il faut recourir à une astuce pour éviter d'avoir à traiter des nombres négatifs:   on va rajouter 4 (la taille de notre cycle) pour revenir dans des nombres positifs et corriger le décallage (lorsque x = -1, sans l'astuce le modulo nous retourne -1, cf trait rouge. Ce qu'on veut c'est 3, donc faire une valeur absolue du modulo n'aurait pas fonctionné). on se retrouve donc avec (x %4 + 4) %4. Exemple:  
+```cpp
+int stepIndex = ((currentStep_ % 4) + 4) % 4;  
+```   
+
+## Look-up table  
+A la place d'utiliser un switch avec plusieurs case on peut utiliser une Look-up table (abrégé LUT).  
+Si le switch donne du code plus compréhensible à mon niveau, il est aussi moins efficace, moins adaptable et demande au processeur de calculer le résultat de chaque cas à chaque étape. Le principe du look-up table, c'est de faire tous les calculs des cas possible durant l'initialisation et de les stocker dans un tableau. Cela à l'avantage de ne pas avoir besoin de tout calculer à chaque fois. On va juste chercher notre résultat dans le tableau.  
+Dans cet exemple de switch case, on décrit quelles pin doivent être alimenté pour faire tourner un moteur selon les 4 cas possibles:  
+ 
+```cpp
+switch (currentStep_ % 4) {
+  case 0: 
+    gpio_set_level(pin1, 1);  
+    gpio_set_level(pin2, 0);  
+    gpio_set_level(pin3, 1);   
+    gpio_set_level(pin4, 0); 
+    break;  
+
+  case 1:
+   gpio_set_level(pin1, 0); 
+   gpio_set_level(pin2, 1); 
+   gpio_set_level(pin3, 1); 
+   gpio_set_level(pin4, 0); 
+   break;
+
+  case 2:
+   gpio_set_level(pin1, 0); 
+   gpio_set_level(pin2, 1); 
+   gpio_set_level(pin3, 0); 
+   gpio_set_level(pin4, 1); 
+   break;
+
+  case 3: 
+   gpio_set_level(pin1, 1); 
+   gpio_set_level(pin2, 0); 
+   gpio_set_level(pin3, 0); 
+   gpio_set_level(pin4, 1); 
+   break;
+}
+```
+
+A la place on va faire une **lecture binaire par décalage de bits à partir d’une Look-up table**. Le principe c'est de récupérer les séquences du moteur, dans notre cas on a 1010, 0110, 0101 et 1001, ce sont les 4 steps qui permettent à notre moteur de tourner. les 1 et les 0 décrivent si la pin est alimenté où non. la position du chiffre correspond à la pin 1, 2, 3 où 4. Ces séquences moteurs peuvent être interprété comme un nombre en représentation binaire. 1010 équivaut à 10 en notation décimale (1 x 2^4 + 0 x 2^3 + 1 x 2^2 + 0 x 1^2). 0110, 0101 et 1001 correspondent respectivement à 6, 5 et 9.  
+On crée un tablea de 4 entrées auquel on assignes ces 4 nombres:  
+
+```cpp
+int sequence[4] = { 10, 6, 5, 9 };  
+```  
+
+Pour gagnier en lisibiliter, bien que ça complique un peu le tout on va plutôt stocker nos nombres dans le tableau en représentation binaire. Comme ça on voit quelle pin est allumée. on utilise 0b avant la représentation binaire du nombre, ça indique que ce qui suit est une notation binaire.  
+
+```cpp
+int sequence[4] = {0b1010, 0b0110, 0b0101, 0b1001};  // =  0b est juste une notation pour dire aux humains que ce qui suit est un nombre en binaire. là on a 10, 6, 5, 9 en binaire
+```  
+
+Ce tableau c'est notre Look-up table.
+
+Current step va nous dire quelle séquence récupérer dans le LUT, avec l'opérande & combiné à un **left shift operator** - c'est ce symbole: << - on va lire que le dernier symbol de la séquence et déterminer si la pin doit être sur ON où OFF. Le fait de lire que un bit de notre séquence est possible grâce à la manipulation de bits via masque binaire (on parle de Bitmasking).   
+
+```cpp
+for (int i = 0; i < 4; i++) {                // incrémentation standard de 0 à 3, soit 4 états. Les commentaires détaillent le cas i = 0
+    if (sequence[currentStep_] & (1 << i)) {    //on récupère l'entrée 0 du tableau, donc la 1ère séquence. on utilise la logique AND grâce à &. On utilise le masque binaire 0001 grâce à 1 << i. à ce stade le masque est 1 en binaire soit 0001 décalé de 0 vers la gauche donc 0001.
+        gpio_set_level(motor_pins[i], 1);  // active la bobine
+    } else {
+        gpio_set_level(motor_pins[i], 0);  // désactive la bobine
+    }
+}
+```  
+
+en fait (1 << i) veut dire qu'on prend 1 en binaire soit 0001 et qu'on le décale de i vers la gauche, tout en rajoutant i zeros à sa droite. Lorsque i = 0 on reste sur 0001. Quand i = 1, on a 0010. Quand i = 2, on a 0100. Cette partie du code est le **masque binaire**.  Note: j'utilise 4 bit pour représenter la valeur par confort visuel vu qu'on 4 pin qui contrôlent notre moteur et qu'on va aller jusqu'à 1000, mais en fait en interne l'esp utilise un int de 32 bit donc 1 vaut 00000000 00000000 00000000 00000001 en binaire.
+
+Voici les opörateurs logiques et leur représentation en électronique:  
+ ![logic gate](mkdocs/logic_gate.png)  
+
+On utilise &, ce qui équivaut à AND. Si les deux inputs sont identiques, l'output sera le même, si les 2 inputs sont différents, l'output sera 0.  
+Voici les 4 opérateurs logiques binaires (logic gates) de l'informatique:  
+| **NOT**    | **Entrée** | **Sortie** |
+| ---------- | ---------- | ---------- |
+|            | 0          | 1          |
+| **Sortie** | 1          | 0          |  
+
+
+| **AND** | **0** | **1** |
+| ------- | ----- | ----- |
+| **0**   | 0     | 0     |
+| **1**   | 0     | 1     |  
+
+| **OR** | **0** | **1** |
+| ------ | ----- | ----- |
+| **0**  | 0     | 1     |
+| **1**  | 1     | 1     |  
+
+| **XOR** | **0** | **1** |
+| ------- | ----- | ----- |
+| **0**   | 0     | 1     |
+| **1**   | 1     | 0     |  
+  
+inversion du résultat de AND, c'est une combinaison de NOT et AND:    
+| **NAND** | **0** | **1** |
+| -------- | ----- | ----- |
+| **0**    | 1     | 1     |
+| **1**    | 1     | 0     |  
+
+inversion du résultat de OR, c'est une combinaison de NOT et OR:  
+| **NOR** | **0** | **1** |
+| ------- | ----- | ----- |
+| **0**   | 1     | 0     |
+| **1**   | 0     | 0     |
+
 
 ## utilisation de la mémoire
 Après compilation, le programme est stocké dans 3 zones de la mémoire:  

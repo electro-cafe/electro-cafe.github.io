@@ -38,6 +38,12 @@ avec une base 10 on peux créer ce tableau dont on peut utiliser chaque case 9 f
 
 111001000 est la représentation **binaire** de 456.
 
+## Expressions régulières
+Aussi connues sous le nom de Regular expressions où RegEx, il s'agit 
+
+Digital
+Analog = logic gate ?
+
 ## bit, byte   
 Ces termes à l'écriture et la prononciation proche peuvent préter à confusion.  
 un **bit** c'est soit 0 soit 1, c'est la plus petite unité d'information dans un ordinateurs. Il peut valoir ""soit 1 soit 0"".  
