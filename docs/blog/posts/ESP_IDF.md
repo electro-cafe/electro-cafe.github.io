@@ -96,7 +96,21 @@ Attention: Lors de la création de mon projet de test ESP IDF "hello-world" j'ai
 Ce compilateur va nous permettre de changer la mise en page de notre code pour qu'elle respecte les règles d'indentation ainsi que nos préférences en matière de longueur de lignes etc. C'est possible car en plus d'être un compilateur il vient avec clang format, outil de formatage de text.
 On va commencer par [télécharger Clang pour windows 64](https://github.com/llvm/llvm-project/releases/tag/llvmorg-18.1.8) puis **ajouter l'extension Clang** dans visual studio code, puis dans **file**->**préférences**->**extensions**->**C/C++**->**Formatting** choisir le formatage **clangFormat**.  
 ![extension ESP-IDF](mkdocs/clang_format_setting.png)   
-Ensuite dans **file**->**preference**->**settings**->**save** cocher **format on save** pour qu'à chaque constrôle S, Clang corrige la mise en page.
+Ensuite dans **file**->**preference**->**settings**->**save** cocher **format on save** pour qu'à chaque constrôle S, Clang corrige la mise en page.  
+Enfin on ajoute un fichier .clang-format à la racine de notre dossier. Voici son contenu:  
+
+```cpp
+---
+BasedOnStyle: Google
+IndentWidth: 4    
+---
+Language: Cpp
+ColumnLimit: 100
+DerivePointerAlignment: false
+PointerAlignment: Left
+BinPackArguments: false
+BinPackParameters: false
+```
 
 
 
@@ -109,7 +123,7 @@ Sur esp-idf le temps alloué par tâche est libre, ex: 1000 Herz, ça veux dire 
 On peut modifier cette valeur grace à la commande **idf.py menuconfig** -> Component config -> FreeRTOS -> Kernel    
 Les ESP32 et ESP32-S3 ont un système dual core.
 
-## tuto Arduino IDE to ESP-IDF    
+## tuto Arduino IDE    
 Je me réfère à ce blog: [randomnerdtutorial FreeRTOS](https://randomnerdtutorials.com/esp32-freertos-arduino-tasks/)
 TaskHandle_t MyTaskHandleName = NULL; = variable pointant vers une tâche FreeRTOS, nous permettant de controler (reprendre / stopper / effacer) la tâche. [Arduino IDE]
 Les tâches  sont des fonctions de type void qui doivent avoir un unique argument (à ce moment ce n'est pas encore une tâche, il nous faudra appeller la fonction xTaskCreatePinnedToCore() avec un set d'argument définissant la tâche que l'on souhaite créer pour faire de notre fonction de type void une tâche). Dans la fonction on construit une loop infinie avec "for (;;) {xxxx}", dans cette loop on utilise "vTaskDelay(1000 / portTICK_PERIOD_MS);" pour introduire une pause si on le veut (ex led clignotante), cette pause n'est pas perdue, d'autres fonctions tourneront durant ce temps. Sur ESP-32 chaque tick dure typiquement 1ms (on utilise portTICK_PERIOD_MS). Dans notre exemple on a donc une pause d'un millième de seconde.
@@ -246,7 +260,279 @@ https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system
 
 http://tvaira.free.fr/esp32/esp32-freertos.html
 
-https://github.com/DiegoPaezA/ESP32-freeRTOS/blob/master/Task_FreeRTOS/main.c
+https://github.com/DiegoPaezA/ESP32-freeRTOS/blob/master/Task_FreeRTOS/main.c  
+
+https://github.com/DiegoPaezA/ESP32-freeRTOS/blob/master/Task_FreeRTOS/main.c  
+
+On va commencer par inclure les bibliothèques nécessaires:  
+
+```cpp
+#include <stdio.h>
+#include "freertos/FreeRTOS.h"  //fonctions de freeRTOS
+#include "freertos/task.h"    //fonctions de freeRTOS
+#include "esp_system.h"
+#include "driver/gpio.h"  //contrôle des gpio (les pins)
+
+```  
+
+Définir la notre pin. 
+```cpp
+#define BLINK_GPIO 2  // define est une macro, c'est a dire une sorte de programme qui s'exécute avant que le programme ne soit compilé et s'exécute à son tour. son role est de chercher toutes les occurence de "BLINK_GPIO" et de les remplacer par 2. On aurait aussi pu faire une variable. L'avantage de #define c'est qu'il n'y a pas de problème de portée.
+```  
+
+On va définir les fonctions des tâche. La création de la tâche viendra plus tard:
+
+```cpp
+void hello_task(void *pvParameter)  //les tâches sont des fonctions de type void et prennent un pointeur de type void qui va nous permettre de charger nimporte quel type d'argument quand on créera la tâche
+//pv signifie pointer void. 
+{
+	while(1)  //sur arduino ide on utilisait for(;;), c'est dans cett boucle qu'on définit ce que va faire la fonction
+	{
+	    printf("Hello world!\n");
+	    vTaskDelay(100 / portTICK_RATE_MS);  //diviser par portTICK_PERIOD_MS permet d'avoir des milisecondes.
+	}
+}
+```
+
+
+Voyons définition d'une autre tâche, ici une tâche qui utilise les GPIO:
+
+```cpp
+void blinky(void *pvParameter)
+{
+    gpio_config(BLINK_GPIO); //cette fonction prend comme paramètre un int correspondant au numéro de la pin. ici on a utilisé une macro. elle sert à s'assurer que la pin choisie est bien une sortie GPIO et n'est pas utilisée pour autre chose (ex communication I2C)
+    gpio_set_direction(BLINK_GPIO, GPIO_MODE_OUTPUT); // Une fois qu'on a défini la pin comme GPIO il faut encore définir son état. On est obligé d'utilisé ces 2 donctions en combinaison.
+    while(1) {
+        gpio_set_level(BLINK_GPIO, 0);  //prend comme argument le numéro du pin et l'état qu'on souhaite lui attribuer.
+        vTaskDelay(1000 / portTICK_RATE_MS);
+        gpio_set_level(BLINK_GPIO, 1);
+        vTaskDelay(1000 / portTICK_RATE_MS);
+    }
+}
+```
+
+Pour créer nos tâches il faut les appeler dans la fonction principale avec les bons arguments.
+
+```cpp
+void app_main()
+{
+    xTaskCreate(&hello_task, "hello_task", 2048, NULL, 5, NULL); //la fonction xTaskCreate prend comme argument: l'adresse de la fonction de la tâche, on donne un nom à cette tâche, on définit la taille qu'on lui alloue dans la stack, le paramètre à passer à la tâche, si il n'y en a pas on met NULL, un pointeur vers TaskHandle_t si une tâche peut stopper une autre tâche.
+    // Il n'y a pas vraiment de méthode pour définir la taille à allouer. on peut utiliser uxTaskGetStackHighWaterMark() pune fois l'application en marche pour voir la quantité d'espace libre puis tâtoner.
+    xTaskCreate(&blinky, "blinky", 512,NULL,5,NULL );
+}
+
+```
+
+C'était un exemple basique qui ne comprenait pas de **taskHandle**, de tâche prenant des **paramètre** (il y en a lors de la création de la tâche mais pas de paramètre externe utilisés par la tâche ), de **sémaphore** et de **mutex**
+
+On va maintenant voir comment gérer une tâche qui utilise des paramètres. On peut passer un seul paramètre mais il y a une astuce permettant de passer plusieurs paramètres malgrès cette restriction. On va voir les 2 façons de faire:  
+
+
+```cpp
+#include <stdio.h>
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "esp_system.h"
+
+const int speed = 42; //si on utilise pas de const, une variable global qui est reprise dans des fonctions pourrait y être modifiée ce qui pose problème. 2 tâches pourraient utiliser la même variable mais elle pourrait avoir des valeurs différentes. comportement imprévisible. 
+
+// Définition de la tâche
+void hello_task(void *pvParameter)
+{
+    // 1. Casting du pointeur générique pvParameter en int* (donc en pointeur vers une variable de type int)
+     const int* speed_ptr = static_cast<const int*>(pvParameter);
+
+
+    while(1)
+    {
+        // 2. Déréférencement du pointeur pour afficher la valeur qu'il contient et non son adresse.
+        printf("Vitesse : %d\n", *speed_ptr); //%d sert à insérer un élément de type non char (text)
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+    }
+    
+    // 3. 
+    
+    vTaskDelete(nullptr); //si le paramètre est nullptr, cette fonction supprime la task qui l'a appellé, donc cette tâche. On peut aussi utiliser un handle comme paramètre. Dans ce cas c'est la tâche à laquelle le handle se réfère qui sera supprimée
+                          //ici quand on est hors de la boucle on met fin à la tâche avec vTaskDelete(nullptr).
+}
+
+// Fonction principale
+// Fonction principale
+extern "C" void app_main()  //externe "C" permet de faire en sorte que le paramètre passé à la task fonctionne, en fait FreeRTOS utilise C et pas C++, on est obligé d'ajouter ça avant la fonction app_main() pour ne pas rencontrer de problème
+{
+    // Création de la tâche en passant l'adresse de la variable globale constante.
+    // L'opérateur & permet d'obtenir l'adresse de la variable.
+    xTaskCreate(
+        hello_task,
+        "hello_task",
+        2048,
+        static_cast<void*>(const_cast<int*>(&speed)), // On ne peut pas simplement mettre void et le nom du paramètre. Le compilateur a un problème si il ne connait pas le type de l'argument car il a besoin de lui allouer le bon nombre de bit de mémoire, de ce fait il ne   sait pas combien d'octets lire ou écrire à l'adresse du pointeur.
+                                                      // Ici, on fait une conversion de type compliquée pour une bonne raison :
+// FreeRTOS a été écrit en C et ne comprend pas le concept de "const" (valeur constante).
+// Il attend un pointeur générique `void*`. Notre variable `speed` est `const int`,
+// donc son adresse est un pointeur `const int*`. Le compilateur C++ est plus strict
+// et ne nous laisse pas passer un `const int*` directement à une fonction C qui s'attend
+// à un `void*`, car il ne peut pas garantir que cette fonction ne va pas modifier la valeur constante.
+//
+// Pour contourner ça, on fait un "truc" en deux étapes :
+//
+// Étape 1: const_cast<int*>(&speed)
+// On prend l'adresse de notre variable `speed` (`&speed`). Le compilateur voit que c'est un
+// `const int*`. `const_cast` est l'outil spécial qui dit au compilateur : "ignore cette
+// constance pour cette fois". On récupère donc un pointeur temporaire de type `int*`,
+// qui pointe vers la même adresse que `speed`, mais le compilateur fait comme s'il n'était
+// pas constant. C'est ça qui fait que l'étape d'après va fonctionner.
+//
+// Étape 2: static_cast<void*>(...)
+// On prend le résultat de l'étape 1 (le pointeur `int*`) et on le convertit en `void*`
+// comme le veut FreeRTOS. C'est l'opération de cast la plus simple. Apparement static_cast est la manière sécurisée de faire un cast. ça n'a rien à voir avec le mot clé static.
+        5,
+        nullptr
+    );
+}
+```
+
+Voici la méthode pour passer plusieurs arguments grâce à un struct.
+
+```cpp
+#include <stdio.h>
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "esp_system.h"
+
+// On utilise le nom que vous avez choisi pour la structure.
+struct packOfParameter {
+    const char* message; // Le message à afficher
+    int delay_ms;        // Le délai d'attente en millisecondes
+};
+
+// Définition de la tâche
+void hello_task_multiple_params(void *pvParameter)
+{
+    // pvParameter est le pointeur générique reçu par la tâche.
+    // On le caste vers le type de notre structure pour pouvoir l'utiliser.
+    packOfParameter* packOfParameterPointerForCasting = static_cast<packOfParameter*>(pvParameter); //ce pointeur est uniquement utilisé pour le casting (= passer du type void à struct)
+
+    while(1)
+    {
+        // On utilise le pointeur casté pour accéder aux membres de la structure.
+        printf("%s\n", packOfParameterPointerForCasting->message);
+        vTaskDelay(packOfParameterPointerForCasting->delay_ms / portTICK_PERIOD_MS);
+    }
+    
+    // Si la tâche s'arrêtait...
+    // delete packOfParameterPointerForCasting;
+    // vTaskDelete(nullptr);
+}
+
+// Fonction principale
+extern "C" void app_main()
+{
+    // On crée une première instance de notre structure sur le tas avec new.
+    // On crée un pointeur pour acceder à cette instance.
+    packOfParameter* packOfParameterPointerForSelecting_1 = new packOfParameter; //ce pointeur est utilisé pour récupérer les éléments du struct
+    packOfParameterPointerForSelecting_1->message = "Bonjour depuis la tâche 1 !";
+    packOfParameterPointerForSelecting_1->delay_ms = 500;
+
+    // On crée la tâche 1 et on lui passe le pointeur vers notre structure.
+    xTaskCreate(
+        hello_task_multiple_params,
+        "hello_task_multi_1",
+        4096,
+        static_cast<void*>(packOfParameterPointerForSelecting_1),
+        5,
+        nullptr
+    );
+
+    // On crée une deuxième instance pour la deuxième tâche.
+    packOfParameter* packOfParameterPointerForSelecting_2 = new packOfParameter;
+    packOfParameterPointerForSelecting_2->message = "Deuxième tâche en cours...";
+    packOfParameterPointerForSelecting_2->delay_ms = 1000;
+
+    xTaskCreate(
+        hello_task_multiple_params,
+        "hello_task_multi_2",
+        4096,
+        static_cast<void*>(packOfParameterPointerForSelecting_2),
+        4,
+        nullptr
+    );
+}
+```  
+
+On peut aussi utiliser une classe plutôt qu'un struct. Cela permet d'encapsuler les données (attributs) et la logique (méthode) dans une seul entité
+
+```cpp
+#include <stdio.h>
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "esp_system.h"
+
+// 1. On définit une classe pour encapsuler la logique de la tâche.
+class TaskExecutor {
+public:
+    TaskExecutor(const char* msg, int delay) :
+        message(msg), delay_ms(delay) {}
+
+    // 2. La méthode de la tâche qui contient la boucle principale.
+    void run() {
+        while (1) {
+            printf("%s\n", message);
+            vTaskDelay(delay_ms / portTICK_PERIOD_MS);
+        }
+    }
+
+private:
+    const char* message;
+    int delay_ms;
+};
+
+// 3. La fonction de trampoline (passerelle). Elle doit être `static`
+// pour ne pas avoir le pointeur `this` et être compatible avec l'API C de FreeRTOS.
+// Elle reçoit le pointeur d'objet en tant que `pvParameter`.
+void taskTrampoline(void* pvParameter) {
+    TaskExecutor* executor = static_cast<TaskExecutor*>(pvParameter);
+    executor->run();
+    // Normalement, on ne devrait pas atteindre cette ligne avec une boucle infinie.
+    // Si la tâche devait se terminer, on pourrait libérer l'objet ici.
+    // delete executor;
+    vTaskDelete(nullptr);
+}
+
+// Fonction principale
+extern "C" void app_main()
+{
+    // On crée une instance de notre classe sur le tas.
+    TaskExecutor* my_executor_1 = new TaskExecutor("Bonjour depuis la classe 1 !", 500);
+    TaskExecutor* my_executor_2 = new TaskExecutor("Bonjour depuis la classe 2 !", 1000);
+
+    // On crée la première tâche et on lui passe le pointeur vers l'objet.
+    xTaskCreate(
+        taskTrampoline,
+        "task_1_cpp",
+        4096,
+        static_cast<void*>(my_executor_1),
+        5,
+        nullptr
+    );
+
+    // On crée la deuxième tâche et on lui passe le pointeur vers le deuxième objet.
+    xTaskCreate(
+        taskTrampoline,
+        "task_2_cpp",
+        4096,
+        static_cast<void*>(my_executor_2),
+        4,
+        nullptr
+    );
+}
+
+
+```
+
+
+
+
 
 xTaskCreate()        // crée une tache, la mémoire est allouée automatiquement.
 xTaskCreateStatic()  // crée une tache, la mémoire est allouée par le user.
@@ -262,7 +548,7 @@ https://esp32tutorials.com/esp32-esp-idf-freertos-queue-tutorial/?utm_source=cha
 
 ## Task Management  
 Créer, suspendre, reprendre et effacer des tâches. Une tâche est une fonction indépendante, ayant sa propre zone mémoire allouée et possédant un état (en cours / pret / bloqué / suspendue).  
-Core ??
+es
 
 ## Scheduling  
 donner des priorités aux tâches pour qu'elles s'exécutent dans un ordre précis. Il peut intérompre une tâche de basse priorité pour passer la main à une tâche de haute priorité. la priorité est donnée sous forme de nombre entier.  
@@ -289,6 +575,8 @@ Firmware = Programme spécial qui est chargé directement dans un microcontrôle
 API = Application Programming Interface (Interface de programation). Ce n’est pas une interface graphique (UI = User Interface), mais une interface logicielle : un ensemble de fonctions, de classes, de protocoles, qui définissent comment un programme ou une bibliothèque peut être utilisé par un autre programme.  
 
 Kernel = noyeau, c'est le coeur du système d'exploitation de l'ordinateur. Il établit la communication entre la partie hardware et software de l'ordinateur. Le scheduler est une partie du Kernel.  
+
+Core = processor (CPU: Control Prosessing Unit = cerveau de la machine)
 
 Node-RED = programme qui permet d'implémenter la logique générale inter appareil, c'est comme une map des actions à faire en fonction des messages retournés par les différents appareils.  
 

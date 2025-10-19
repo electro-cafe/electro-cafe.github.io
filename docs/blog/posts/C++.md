@@ -69,7 +69,7 @@ XXXXXXXXXX diff entre variable globale et variable globale static
 **variable globale** = une variable déclaré à l'extérieur d'une classe où fonction. Utilisable partout dans le code cpp (mais seulement le fichier cpp où elle est déclarée). Stocké dans data. Stocké dans bss si non initialisée.    
 **variable locale** = une variable déclarée dans une fonction. Elle n'existe pas en dehors de la fonction à moins d'être "static". Lorsque la fonction se termine elle est détruite.  
 **variable globale static** = visible que dans le fichier cpp où elle est déclarée.  
-**variable locale static** = n'est pas stocké dans la stack mais avec les variables globales. Elle est **visible que dans la fonction dans laquelle elle est déclarée** et **conserve sa valeur entre deux appels**.   
+**variable locale static** = n'est pas stocké dans la stack mais avec les variables globales. Elle est **visible que dans la fonction dans laquelle elle est déclarée** et **conserve sa valeur entre deux appels** (sa valeur n'est pas reseté à chaque appel).    
 **variable dynamique** = crée quand on appelle quelquechose avec **new**. n'existe pas à la compilation, sera cére lors de l'execution du code. Stocké dans la **Heap**, n'est pas effacée automatiquement, il faut appeller un delete pour l'effacer.   
 **array** = tableau de taille fixe.  
 **vector** = tableau de taille dynamique, on peut y ajouter/enlever des éléments. Nécessite #include <vector>.    
@@ -507,7 +507,7 @@ for (int i = 0; i < 4; i++) {                // incrémentation standard de 0 à
 
 en fait (1 << i) veut dire qu'on prend 1 en binaire soit 0001 et qu'on le décale de i vers la gauche, tout en rajoutant i zeros à sa droite. Lorsque i = 0 on reste sur 0001. Quand i = 1, on a 0010. Quand i = 2, on a 0100. Cette partie du code est le **masque binaire**.  Note: j'utilise 4 bit pour représenter la valeur par confort visuel vu qu'on 4 pin qui contrôlent notre moteur et qu'on va aller jusqu'à 1000, mais en fait en interne l'esp utilise un int de 32 bit donc 1 vaut 00000000 00000000 00000000 00000001 en binaire.
 
-Voici les opörateurs logiques et leur représentation en électronique:  
+Voici les opérateurs logiques et leur représentation en électronique:  
  ![logic gate](mkdocs/logic_gate.png)  
 
 On utilise &, ce qui équivaut à AND. Si les deux inputs sont identiques, l'output sera le même, si les 2 inputs sont différents, l'output sera 0.  
