@@ -122,6 +122,7 @@ Le fait d'allouer du temps disponible par tâche est nommé système préemptif,
 Sur esp-idf le temps alloué par tâche est libre, ex: 1000 Herz, ça veux dire qu'une tâche dure 1'000ème de seconde, soit 1 miliseconde. Plus la valeur est élevé moins elle dure longtemps/plus elle la durée est courte.
 On peut modifier cette valeur grace à la commande **idf.py menuconfig** -> Component config -> FreeRTOS -> Kernel    
 Les ESP32 et ESP32-S3 ont un système dual core.
+Apparement FreeRTOS a été écrit en C, c'est la raison pourlaquelle on ne peut pas uniquement utiliser ce qu'on connaît en C++, certaines fonctionalités de C++ ne peuvent pas être utilisées et il faut passer par C.
 
 ## tuto Arduino IDE    
 Je me réfère à ce blog: [randomnerdtutorial FreeRTOS](https://randomnerdtutorials.com/esp32-freertos-arduino-tasks/)
@@ -366,7 +367,8 @@ extern "C" void app_main()  //externe "C" permet de faire en sorte que le param�
         hello_task,
         "hello_task",
         2048,
-        static_cast<void*>(const_cast<int*>(&speed)), // On ne peut pas simplement mettre void et le nom du paramètre. Le compilateur a un problème si il ne connait pas le type de l'argument car il a besoin de lui allouer le bon nombre de bit de mémoire, de ce fait il ne   sait pas combien d'octets lire ou écrire à l'adresse du pointeur.
+        static_cast<void*>(const_cast<int*>(&speed)), //paramètre de la tâche
+        // // On ne peut pas simplement mettre void et le nom du paramètre. Le compilateur a un problème si il ne connait pas le type de l'argument car il a besoin de lui allouer le bon nombre de bit de mémoire, de ce fait il ne   sait pas combien d'octets lire ou écrire à l'adresse du pointeur.
                                                       // Ici, on fait une conversion de type compliquée pour une bonne raison :
 // FreeRTOS a été écrit en C et ne comprend pas le concept de "const" (valeur constante).
 // Il attend un pointeur générique `void*`. Notre variable `speed` est `const int`,
@@ -436,12 +438,12 @@ extern "C" void app_main()
 
     // On crée la tâche 1 et on lui passe le pointeur vers notre structure.
     xTaskCreate(
-        hello_task_multiple_params,
-        "hello_task_multi_1",
+        hello_task_multiple_params,  //fonction de la tâche
+        "hello_task_multi_1",       //nom de la tâche
         4096,
-        static_cast<void*>(packOfParameterPointerForSelecting_1),
+        static_cast<void*>(packOfParameterPointerForSelecting_1), //paramètre de la tâche
         5,
-        nullptr
+        nullptr //taskhandle
     );
 
     // On crée une deuxième instance pour la deuxième tâche.
@@ -469,12 +471,13 @@ On peut aussi utiliser une classe plutôt qu'un struct. Cela permet d'encapsuler
 #include "esp_system.h"
 
 // 1. On définit une classe pour encapsuler la logique de la tâche.
-class TaskExecutor {
+class MyClass {
 public:
-    TaskExecutor(const char* msg, int delay) :
-        message(msg), delay_ms(delay) {}
+    MyClass(const char* msg, int delay) : //constructeur avec paramètres
+        message(msg), delay_ms(delay) {} //liste d'initialisation des paramètre pour les passer aux attributs de la classe
 
     // 2. La méthode de la tâche qui contient la boucle principale.
+    // ici elle affiche les attributs de notre classe (selon les paramètres passés aux instances de cette classe)
     void run() {
         while (1) {
             printf("%s\n", message);
@@ -487,12 +490,14 @@ private:
     int delay_ms;
 };
 
-// 3. La fonction de trampoline (passerelle). Elle doit être `static`
-// pour ne pas avoir le pointeur `this` et être compatible avec l'API C de FreeRTOS.
+// Il s'agit de la définition de notre tâche
+// FreeRTOS utilisant C et pas C++, ne connaît donc pas la programation orientée objet
+// Il va faloir utiliser une fonction dite trampoline (passerelle) qui va  
+// reçevoir le paramètre de la tâche (plus bas dans xTaskCreate)
 // Elle reçoit le pointeur d'objet en tant que `pvParameter`.
 void taskTrampoline(void* pvParameter) {
-    TaskExecutor* executor = static_cast<TaskExecutor*>(pvParameter);
-    executor->run();
+    MyClass* executor = static_cast<MyClass*>(pvParameter); //signifie que le paramètre de tâche reçu (dans xTaskCreate) va être casté en pointeur type MyClass et que l'on va assigner le pointeur executor au pointer de type myclass*.
+    executor->run(); //on peut appeler les méthodes de la classe depuis le pointeur avec ->
     // Normalement, on ne devrait pas atteindre cette ligne avec une boucle infinie.
     // Si la tâche devait se terminer, on pourrait libérer l'objet ici.
     // delete executor;
@@ -502,16 +507,16 @@ void taskTrampoline(void* pvParameter) {
 // Fonction principale
 extern "C" void app_main()
 {
-    // On crée une instance de notre classe sur le tas.
-    TaskExecutor* my_executor_1 = new TaskExecutor("Bonjour depuis la classe 1 !", 500);
-    TaskExecutor* my_executor_2 = new TaskExecutor("Bonjour depuis la classe 2 !", 1000);
+    // On crée une instance de notre classe sur le stack avec new. On crée un pointeur vers cette instance
+    MyClass* my_class_1_ptr = new MyClass("Bonjour depuis la classe 1 !", 500);
+    MyClass* my_class_2_ptr = new MyClass("Bonjour depuis la classe 2 !", 1000);
 
-    // On crée la première tâche et on lui passe le pointeur vers l'objet.
+    // On crée la première tâche et on lui passe le pointeur vers l'objet (l'instance de classe).
     xTaskCreate(
-        taskTrampoline,
+        taskTrampoline, //la fonction qui va appeller la méthode de l'objet reçu en paramètre de tâche, c'est tordu
         "task_1_cpp",
         4096,
-        static_cast<void*>(my_executor_1),
+        static_cast<void*>(my_class_1_ptr), //paramètre de la tâche sous forme de pointer vers une instance de classe
         5,
         nullptr
     );
@@ -521,18 +526,12 @@ extern "C" void app_main()
         taskTrampoline,
         "task_2_cpp",
         4096,
-        static_cast<void*>(my_executor_2),
+        static_cast<void*>(my_class_2_ptr), //paramètre de la tâche sous forme de pointer vers une instance de classe
         4,
         nullptr
     );
 }
-
-
 ```
-
-
-
-
 
 xTaskCreate()        // crée une tache, la mémoire est allouée automatiquement.
 xTaskCreateStatic()  // crée une tache, la mémoire est allouée par le user.
@@ -542,6 +541,7 @@ xTaskCreatePinnedToCore()           // crée une tache affiliée à un coeur, la
 xTaskCreateStaticPinnedToCore()     // crée une tache, affiliée à un coeur, la mémoire est allouée par le user.  
 
  Dans les paramètre on donne 0, 1 où tskNO_AFFINITY pour affilier la tâche à un coeur spécifique ou les deux.
+ 
 ## queue 
 https://esp32tutorials.com/esp32-esp-idf-freertos-queue-tutorial/?utm_source=chatgpt.com
 
