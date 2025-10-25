@@ -540,20 +540,155 @@ Mais dans un système multicore il faut attacher les tâches à un coeur. on uti
 xTaskCreatePinnedToCore()           // crée une tache affiliée à un coeur, la mémoire est allouée automatiquement.
 xTaskCreateStaticPinnedToCore()     // crée une tache, affiliée à un coeur, la mémoire est allouée par le user.  
 
- Dans les paramètre on donne 0, 1 où tskNO_AFFINITY pour affilier la tâche à un coeur spécifique ou les deux.
- 
+ Dans les paramètre on donne 0, 1 où tskNO_AFFINITY pour affilier la tâche à un coeur spécifique ou les deux.  
+
+ Lors de la création de tâche on leur a alloué une zone mémoire avec de l'espace (stack), ça signifie que contrairement à une fonction dont les variables internes (donc locales) disparaissent si elles ne sont pas static, les variables au sein d'une tâche continuent d'exister lorsque la tâche passe la main à la suivante. La stack d'une tâche persiste tant que la tâche n'est pas supprimée avec vTaskDelete(). En résumé: les variables d'une tâches n'ont pas besoin d'être static, l'état de ses variables est conservé entre ses misees en pause.  
+Ces variables restent locales, pour communiquer leur valeur avec une autre tâche on peut utiliser une variable global (attention nécessite des précaution, par exemple un mutex pour éviter que la variable soit réécrite par 2 tâches en même temps) où plus simplement utiliser la Queue.
+
 ## queue 
 https://esp32tutorials.com/esp32-esp-idf-freertos-queue-tutorial/?utm_source=chatgpt.com
+où file d'attente en français, il s'agit d'un système de communication entre les tâches, c'est ce qui permet de transmettre des messages d'une tâche à une autre, de connaître l'état des variable d'une tâche depuis une autre si elles ont étés envoyés dans la queue. 👉 La Queue ne stocke pas les variables elles-mêmes, mais une copie des données envoyées.
+La tâche 1 remplie la queue lorsque son temps de tâche est épuisé, la tâche 2 lit ce qu'il y a dans le queue buffer. Efface ce qu'il y a dans le queue buffer et rempli le queue buffer et ainsi de suite.
 
+Pour mettre en place la queue il va nous faloir une QueueHandle, c'est variable de type QueueHandle_t.
+puis créer la queue avec la fonction xQueueCreate. Cette fonction prend le nombre de "bloc" dans la queue (espace mémoire alloués) et la taille de chaqu'un de ces blocs. Tous les blocs dans une queue sont du même type.  
 
-## Task Management  
+```cpp
+QueueHandle_t queueEvents;  //permet aux fonction à qui on passe cet handle de manipuler la queue, similaire à ce qu'on a vu avec les taskhandle.
+
+void app_main() {
+    queueEvents = xQueueCreate(10, sizeof(int));  // creation de la queue avec 10 messages max, chaque message = 1 int
+
+    xTaskCreate(TaskMotor, "Motor", 2048, NULL, 2, NULL); // déclaration de tâche 1
+    xTaskCreate(TaskLight, "Light", 2048, NULL, 1, NULL); // déclaration de tâche 2
+}
+```  
+
+Il faut indiquer aux tâches comment envoyer des messages dans la queue, ce terme porte à confusion car on ne place pas la variable qu'on souhaite transmettre dans la queue, à la place on copie la valeur des variables dans la queue. L'"envoi" de message se fait dans la définition de la fonction de la tâche grâce à la fonction xQueueSend qui prend comme paramètre le nom de la queue, l'adresse du message (le message est une variable) et le temps maximum que la tâche doit attendre qu'il y ait de la place dans la queue si cette dernière est pleine. La fonction xQueueSend va lire la valeur contenue à l'adresse donnée et placer une **copie** de cette valeur dans la queue (en gros elle crée une variable dans la queue avec la même valeur qu'elle a lu à l'adresse):    
+
+```cpp
+void TaskMotor(void *pv) {
+    int msg = 1; // identifiant du moteur par ex.
+    while (true) {
+        rotateMotor(1, 10); // les paramètres sont par exemple le nr du moteur et le nbr de pas à faire.
+
+        // envoie un message à la Queue
+        xQueueSend(queueEvents, &msg, portMAX_DELAY);  //les paramètres sont le nom de la queue, l'adresse du message et le temps max d'attente qu'il y ai de la place dans la queue. si on a 0, la fonction va faire un return immédiatement. le temps est défini en ticks, il faut utiliser portTICK_PERIOD_MS pour avoir un temps défini rapport à nos secondes et non un temps défini rapport à la fréquence du processeur (ce qui est un temps local et pas global.) On peut utiliser portMAX_DELAY pour attendre jusqu'à ce qu'il y a de la place mais si include_VtASKsUSPEND vaut 1, la tâche va rester bloquer indéfiniment.
+
+        vTaskDelay(pdMS_TO_TICKS(500)); // attend 0.5s avant de recommencer
+    }
+}
+```  
+
+Maintenant qu'on a vu comment envoyer des messages, on va voir comment les récupérer (ce terme porte un peu à confusion car on copie le contenu de la queue, on le récupère pas). La fonction xQueueReceive va récupérer la valeur de la variable contenue dans la queue et copier sa valeur à l'adresse passée en argument.   
+
+```cpp
+void TaskLight(void *pv) {
+    int received;
+    while (true) {
+        // Si la fonction xQueueReceive n'est pas null c'est qu'on a reçu un message.
+        if (xQueueReceive(queueEvents, &received, portMAX_DELAY)) {
+            
+            changeLightColor(received); // ex : change la couleur selon le moteur
+        }
+
+        vTaskDelay(pdMS_TO_TICKS(100)); // animation continue si tu veux
+    }
+}
+```
+
+Pour **débugger** on peut utiliser **uxQueueMessagesWaiting(handle)**, cette fonction va nous retourner le nombre de message dans la queue.  
+Afin de passer plusieurs variables dans la queue on peut utiliser un struct. Il faut utiliser typedef struct.   
+En C++ on travail avec des type, int, float, etc. sont des types. Les types définissent ce que contient une variable et comment la mémoire est organisée (combien alouer d'octet pour stocker les variables).
+Typedef permet de créer un nouveau type, ici struct. Chaque struct est différents, il n'a pas le même nombre de variable ni le même type de variable, c'est pour ça qu'on doit passer par une phase de définition.  
+
+```cpp
+typedef struct  { //typedef = définition de type, ici de type struct
+    int motorId;
+    int steps;
+} MotorCommand; //nom du struct
+```
+Voici un exemple utilisant un struct. Important: bien que le struct contienne 2 variables, il occupe un bloc dans la queue. Ce bloc contient els 2 variables.
+
+```cpp
+#include <stdio.h>
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "freertos/queue.h"
+
+typedef struct  {   //template du struct. Comme il est global les 2 task y ont accès et peuvent créer un struct local à partir de ce template.
+    int counter;
+    int counter2;
+} MotorCommand;
+
+QueueHandle_t queueMotor;  // global: seulement le handle de la queue, pas les données
+
+// --- Tâche 1 : Producteur ---
+void TaskProducer(void *pv) {
+    MotorCommand cmd;  // VARIABLE LOCALE à la tâche 1
+
+    cmd.counter = 0;
+    cmd.counter2 = 100;
+
+    while (true) {
+        cmd.counter++;
+        cmd.counter2 += 10;
+
+        printf("[Task 1] Send: counter=%d, counter2=%d\n", cmd.counter, cmd.counter2);
+
+        // Envoie une COPIE du struct dans la queue
+        xQueueSend(queueMotor, &cmd, portMAX_DELAY);
+
+        vTaskDelay(pdMS_TO_TICKS(1000));
+    }
+}
+
+// --- Tâche 2 : Consommateur ---
+void TaskConsumer(void *pv) {
+    MotorCommand received;  // VARIABLE LOCALE à la tâche 2
+
+    while (true) {
+        // Lecture de la queue — copie dans la variable locale "received"
+        if (xQueueReceive(queueMotor, &received, portMAX_DELAY)) {
+            printf("  [Task 2] Received: counter=%d, counter2=%d\n",
+                   received.counter, received.counter2);
+
+            // Modifie la donnée reçue
+            received.counter *= 2;
+            received.counter2 -= 5;
+
+            printf("  [Task 2] Updated -> counter=%d, counter2=%d\n",
+                   received.counter, received.counter2);
+
+            // Si tu veux renvoyer vers la queue
+            xQueueSend(queueMotor, &received, portMAX_DELAY);
+        }
+
+        vTaskDelay(pdMS_TO_TICKS(1500));
+    }
+}
+
+// --- Fonction principale ---
+extern "C" void app_main() {
+    // Crée une queue de 3 blocs, chaque bloc = un struct MotorCommand
+    queueMotor = xQueueCreate(3, sizeof(MotorCommand));
+
+    if (queueMotor == NULL) {
+        printf("Erreur : échec de la création de la queue\n");
+        return;
+    }
+
+    xTaskCreate(TaskProducer, "Producer", 4096, NULL, 2, NULL);
+    xTaskCreate(TaskConsumer, "Consumer", 4096, NULL, 1, NULL);
+}
+```
+
+## Scheduler  
+c'est la partie du programme qui passe à la tâche suivante lorsqu'une tâche a terminé avant le temps imparti. Le scheduling c'est donner des priorités aux tâches pour qu'elles s'exécutent dans un ordre précis. Le scheduler peut intérompre une tâche de basse priorité pour passer la main à une tâche de haute priorité. la priorité est donnée sous forme de nombre entier.  
+
+## Task Management   - Mutex - Semaphore - ISR
 Créer, suspendre, reprendre et effacer des tâches. Une tâche est une fonction indépendante, ayant sa propre zone mémoire allouée et possédant un état (en cours / pret / bloqué / suspendue).  
 es
-
-## Scheduling  
-donner des priorités aux tâches pour qu'elles s'exécutent dans un ordre précis. Il peut intérompre une tâche de basse priorité pour passer la main à une tâche de haute priorité. la priorité est donnée sous forme de nombre entier.  
-
-## communication inter tâches  
 
 -----------------
 MQTT = protocole efficace pr dialogue entre appareils.
