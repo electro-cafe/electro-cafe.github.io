@@ -564,8 +564,18 @@ La zone text contient le code compilé du programme, en lecture seule.
   
 La stack et la heap occupent et se partagent le reste de la mémoire, il n'y a pas 50% réservé pour la stack et 50% pour la heap, c'est en fonction de nos besoin. on peut se retrouver dans une situation où 80% c'est de la stack et 20% de la heap. Si on a trop de variables locale on peut se retrouver en stack overflow, c'est qu'on a plus de place pour les variables locales.
 La **Stack** se remplie du haut vers le bas, il faut imaginer ça comme une pile de livre dont on peut retirer que le livre au sommet de la pile. Ainsi la 1ère variable que l'on entre sera la dernière que l'on sort. A contratio, la dernière variable ajoutée est la plus accessible, on dit **LIFO** "last in first out".
+On parle de mémoire dynamique car elle évolue au cours du temps. des éléments y sont ajoutés puis supprimés. Une variable peut se retrouver plusieurs fois dans la stac, chaque fois à un endroit différent durant l'exécution du programme. D'ou l'utilité des pointeurs, qui sont des trackeurs du lieu où sont stockés les variables. Dans certaines applications comme les task freeRTOS il faut spécifier combien de place allouer dans la stack (combien de bits). ça permet à l'ordinateur de savoir que les x bits suivant appartiennent à la même entité.
 
-Chaque appelle de fonction vient remplir la stack avec ses variables locales. Chaque fonction terminé enlève les variables grâce au mot clé **return**.
+Chaque appelle de fonction vient remplir la stack avec ses variables locales. une même variable ne sera pas appelée toujours au même endroit, comme on rempli la stack selon LIFO, sa place dépend de ce qu'il y a déjà dans la Stack. Chaque fonction terminé enlève les variables grâce au mot clé **return**.  
+
+La **heap** - le tas - contient les structures dont on ne connaît pas la taille à l'exécution du code, comme un tableau dynamique (= qu'on peut alimenter donc taille variable). il n'y a pas de système LIFO avec la heap. La heap a les désavantages d'être plus lente que la stack, et de ne pas se vider automatiquement. Les smart pointer solvent ce problème.
+
+  ![zone mémoire](mkdocs/schema_memoire.png)
+> ici un exemple d'une même variable stocké à 2 endroit différent dans la stack
+
+## Program counter
+Il s'agit de la tête de lecture qui parcour le programme (un programme est une liste d'instruction). Un peu comme nous qui lisons les appel de fonctions et devons changer de fichier pour lire leur définition, le Program counter se téléporte vers d'autres parties du programme - il change d'adresse, se déplace dans la mémoire pour lire ce qu'il y a à une autre adresse. Quand il va le faire il récupère l'adresse de la prochaine instruction. ça lui permettra de se téléporter au bon endroit une fois qu'il aurra fini de voir les détails du contenu de l'adresse à laquelle il vient de voyager.    
+Exemple: l'instruction 2 lui dit de se référer à une zone de la stack, avant d'y aller il récupère l'adresse de l'instruction 3. une fois la zone de la stack parcourue il peut se déplacer à l'instruction 3 car il a pensé à la stocker avant de se déplacer. Si il ne l'avait pas fait il serait perdu, comme un amnésique qui ne sait pas d'où il vient.
 
 ## fonctions
 

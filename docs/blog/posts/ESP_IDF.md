@@ -38,7 +38,7 @@ il faut utiliser la commande **ESP-IDF: Open ESP-IDF Terminal** pour ouvrir le t
 
 
 ## connexion à l'ESP 32
-j'ai un ESP32 S3 mini, je le connecte au PC via le câble USB-C, il me faut connaitre son serial port, pour ce faire chercher Ports
+j'ai un ESP32 S3 mini, je le connecte au PC via le câble USB-C, il me faut connaitre son serial port, pour ce faire, dans le gestionnaire de périphériques, chercher Ports 
 ![extension ESP-IDF](mkdocs/ESP_IDF_port.png)  
 
 En bas de notre page on a les boutons pour ce qui est de compiler le code et le téléverser vers l'ESP.
@@ -47,6 +47,8 @@ On va choisir UART comme flash méthode, sélectioner le port, faire build et fl
 Afin de voir le code s'executer (ici un hello world qui tourne en boucle) il faut encore cliquer sur monitor device afin de le voir dans le terminal.  
 ![extension ESP-IDF](mkdocs/ESP_IDF_monitor_device.png)  
 ![extension ESP-IDF](mkdocs/ESP_IDF_code_running.png) 
+
+⚠️ Si la procédure ne marche pas et que l'on a des message d'erreur de type mentionnant clang et/ou 0x00, il se peut que ce soit parce que c'est la **première fois qu'on téléverse du code sur l'ESP**. Dans ce cas il faut effacer le dossier build (ce dossier sera recréer à notre prochain build) et **passer l'ESP en mode download** en maintenant pressé le bouton à droite du port USB-C (lorsqu'on lui fait face), il a l'inscription 0. Tout en maintenant le bouton, connecté le câble USB-C de l'ordinateur à l'ESP. Maintenir 5 secondes. Il va faloir refaire le build et le flash. Mais avant il faut **s'assurer qu'on soit sur le bon port**, en effet il peut avoir changé bien qu'on soit resté sur le même port USB.  
 
 ## commandes
 Les commandes idf.py sont disponible dans les répertoires (directories en anglais = dossiers) contenant un fichier CMakeList.txt  
@@ -296,13 +298,13 @@ void hello_task(void *pvParameter)  //les tâches sont des fonctions de type voi
 ```
 
 
-Voyons définition d'une autre tâche, ici une tâche qui utilise les GPIO:
+Voyons la définition d'une autre tâche, ici une tâche qui utilise les GPIO:
 
 ```cpp
 void blinky(void *pvParameter)
 {
     gpio_config(BLINK_GPIO); //cette fonction prend comme paramètre un int correspondant au numéro de la pin. ici on a utilisé une macro. elle sert à s'assurer que la pin choisie est bien une sortie GPIO et n'est pas utilisée pour autre chose (ex communication I2C)
-    gpio_set_direction(BLINK_GPIO, GPIO_MODE_OUTPUT); // Une fois qu'on a défini la pin comme GPIO il faut encore définir son état. On est obligé d'utilisé ces 2 donctions en combinaison.
+    gpio_set_direction(BLINK_GPIO, GPIO_MODE_OUTPUT); // Une fois qu'on a défini la pin comme GPIO il faut encore définir son état. c'est ce qu'on fait ici. On est obligé d'utilisé ces 2 donctions en combinaison.
     while(1) {
         gpio_set_level(BLINK_GPIO, 0);  //prend comme argument le numéro du pin et l'état qu'on souhaite lui attribuer.
         vTaskDelay(1000 / portTICK_RATE_MS);
@@ -312,12 +314,12 @@ void blinky(void *pvParameter)
 }
 ```
 
-Pour créer nos tâches il faut les appeler dans la fonction principale avec les bons arguments.
+Passons à la création de tâche. En fait on appelle une fonctionxTaskCreate en lui passant les bons arguments, dont l'adresse de la tâche qu'on a défini précédement.
 
 ```cpp
 void app_main()
 {
-    xTaskCreate(&hello_task, "hello_task", 2048, NULL, 5, NULL); //la fonction xTaskCreate prend comme argument: l'adresse de la fonction de la tâche, on donne un nom à cette tâche, on définit la taille qu'on lui alloue dans la stack, le paramètre à passer à la tâche, si il n'y en a pas on met NULL, un pointeur vers TaskHandle_t si une tâche peut stopper une autre tâche.
+    xTaskCreate(&hello_task, "hello_task", 2048, NULL, 5, NULL); //la fonction xTaskCreate prend comme argument: l'adresse de la fonction de la tâche, on donne un nom à cette tâche, on définit la taille qu'on lui alloue dans la stack, le paramètre à passer à la tâche (si il n'y en a pas on met NULL), la priorité de la tâche (plus le nombre est haut plus la priorité est grande) et un pointeur vers TaskHandle_t si une tâche peut stopper une autre tâche.
     // Il n'y a pas vraiment de méthode pour définir la taille à allouer. on peut utiliser uxTaskGetStackHighWaterMark() pune fois l'application en marche pour voir la quantité d'espace libre puis tâtoner.
     xTaskCreate(&blinky, "blinky", 512,NULL,5,NULL );
 }
@@ -368,7 +370,7 @@ extern "C" void app_main()  //externe "C" permet de faire en sorte que le param�
         "hello_task",
         2048,
         static_cast<void*>(const_cast<int*>(&speed)), //paramètre de la tâche
-        // // On ne peut pas simplement mettre void et le nom du paramètre. Le compilateur a un problème si il ne connait pas le type de l'argument car il a besoin de lui allouer le bon nombre de bit de mémoire, de ce fait il ne   sait pas combien d'octets lire ou écrire à l'adresse du pointeur.
+        // // On ne peut pas simplement mettre void et le nom du paramètre. Le compilateur a un problème si il ne connait pas le type de l'argument car il a besoin de lui allouer le bon nombre de bit de mémoire, ça lui permettra de savoir combien d'octets lire ou écrire à l'adresse du pointeur.
                                                       // Ici, on fait une conversion de type compliquée pour une bonne raison :
 // FreeRTOS a été écrit en C et ne comprend pas le concept de "const" (valeur constante).
 // Il attend un pointeur générique `void*`. Notre variable `speed` est `const int`,
@@ -402,7 +404,7 @@ Voici la méthode pour passer plusieurs arguments grâce à un struct.
 #include "freertos/task.h"
 #include "esp_system.h"
 
-// On utilise le nom que vous avez choisi pour la structure.
+// On utilise le nom qu'on veut pour le struct. Maintenant packOfParameter est en fait un type qui contient un const char* et un int. le compilateur s'attend a recevoir ces 2 type quand un élément est de type packOfParameter
 struct packOfParameter {
     const char* message; // Le message à afficher
     int delay_ms;        // Le délai d'attente en millisecondes
@@ -418,7 +420,7 @@ void hello_task_multiple_params(void *pvParameter)
     while(1)
     {
         // On utilise le pointeur casté pour accéder aux membres de la structure.
-        printf("%s\n", packOfParameterPointerForCasting->message);
+        printf("%s\n", packOfParameterPointerForCasting->message);  //on utilise -> pour acceder aux variables stockés à l'adresse du pointeur.
         vTaskDelay(packOfParameterPointerForCasting->delay_ms / portTICK_PERIOD_MS);
     }
     
@@ -433,7 +435,7 @@ extern "C" void app_main()
     // On crée une première instance de notre structure sur le tas avec new.
     // On crée un pointeur pour acceder à cette instance.
     packOfParameter* packOfParameterPointerForSelecting_1 = new packOfParameter; //ce pointeur est utilisé pour récupérer les éléments du struct
-    packOfParameterPointerForSelecting_1->message = "Bonjour depuis la tâche 1 !";
+    packOfParameterPointerForSelecting_1->message = "Bonjour depuis la tâche 1 !"; //on assigne une valeur aux éléments du struct packOfParameterPointerForSelecting_1
     packOfParameterPointerForSelecting_1->delay_ms = 500;
 
     // On crée la tâche 1 et on lui passe le pointeur vers notre structure.
@@ -446,7 +448,7 @@ extern "C" void app_main()
         nullptr //taskhandle
     );
 
-    // On crée une deuxième instance pour la deuxième tâche.
+    // On crée une deuxième instance pour la deuxième tâche. on lui assigne des autres valeurs que celle de la 1ère instance.
     packOfParameter* packOfParameterPointerForSelecting_2 = new packOfParameter;
     packOfParameterPointerForSelecting_2->message = "Deuxième tâche en cours...";
     packOfParameterPointerForSelecting_2->delay_ms = 1000;
