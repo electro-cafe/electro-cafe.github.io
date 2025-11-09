@@ -56,7 +56,7 @@ On parle de CLI: Command Line Interface (Interface en ligne de commande), cela p
 
 >idf.py build -> revient à cliquer sur l'icone de clée à molette pour build le projet.  
 >idf.py build VERBOSE=1 -> build du project mais en activant le mode verbeux, qui donne un peu plus d'information. Plus lent.    
->idf.py build -v -> build du project avec mode verbeux encore plus complet.  
+>idf.py -v build -> build du project avec mode verbeux encore plus complet.  
 >idf.py menuconfig -> configurer les paramètres système de l'ESP tel que la fréquence du tick (fréquence FreeRTOS)  
 >idf.py update-dependencies -> met à jour le projet au niveau des dépendances.  
 >idf.py create-project -> crée un nouveau projet ESP IDF.  
