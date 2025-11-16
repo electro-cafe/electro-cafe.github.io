@@ -61,7 +61,11 @@ On parle de CLI: Command Line Interface (Interface en ligne de commande), cela p
 >idf.py update-dependencies -> met à jour le projet au niveau des dépendances.  
 >idf.py create-project -> crée un nouveau projet ESP IDF.  
 >idf.py create component -> crée un nouveau component.  
->idf.py set-target -> définir le type de processeur sur lequel on va flasher notre programme.
+>idf.py set-target -> définir le type de processeur sur lequel on va flasher notre programme.  
+
+## Procédure de correction des erreurs du code
+Pour les modification des fichiers de type **.c**, **.h** et **.cpp** un ctrl + S suivit d'un build suffit.
+Pour les modification de la structure des dossiers / fichiers, comme un ajout de composant, le changement de nom de fichier où la modification d'un fichier CMake, il faut effacer le dossier build puis faire un nouveau build
 
 ## ESP Registry
 C'est un [site](https://components.espressif.com/) permettant de télécharger des bibliothèques pour faire fonctionner des composants comme les leds WS2812.

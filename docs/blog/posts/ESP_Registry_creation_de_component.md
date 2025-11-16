@@ -156,8 +156,9 @@ Pour lancer le pre-commit (à faire après chaque changement) on utilise la comm
 
 ## step X - CMakelist
 Ces fichier servent au compilateur (en fait ils servent à des programmes qui serviront au compilateur) à savoir quels fichiers compiler, où aller les chercher et quelles dépendances ils ont. 
-Pour mon projet il faut 3 fichier CMakeLists.txt  
+Pour mon projet il faut 3 fichier CMakeLists.txt. Celà permet d'utiliser les #include pour intégrer les composants qu'on a crées. En fait le projet est parcouru et son architecture de dossier est enregistré, ce qui permet de ne pas avoir a préciser le path de ce qu'on inclu.  
 Un au niveau du projet global, un au niveau du dossier component et un au niveau du fichier main.cpp. En rêgle générales il en faut un à la racine et un dans chaque composant (attention le dossier main est considéré comme un composant).
+![cmake](mkdocs/cmake_list.png)  
 
 ## step x - Ajouter les fichier component.cpp, component.h et main.cpp
 Logique, c'est eux qui définissent le fonctionnement du composant.

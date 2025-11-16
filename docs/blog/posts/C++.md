@@ -318,20 +318,26 @@ public:
                                                                    // En fait lors de  l'appel de la classe enfant (sa création) les arguments seront passé dans les paramètres du constructeur de l'enfant (logique) on peut passer ces paramètres à la classe parent en écrivant leur nom dans la parenthèse du constructeur parent. Ils seront transmis au constructeur parent en fonction de leur position. (Le fait que la logique de passage dépende une fois du nom et une fois de la position porte à confusion) ces 2 constructeurs vont créer l'objet enfant.
 
 };
-```   
+```     
+ la classe dérivée est composée de la classe parent. ça porte un peu à confusion de se dire que l'enfant possède le parent mais c'est bien le cas. La classe dérivée a accès aux méthodes et attributs du parent, mais ces dernières n'ont pas accès aux méthodes et attributs de la classe dérivée (cf Schéma gauche) **à moins que** l'on déclare les méthodes du parent comme virtual et qu'on les assigne à 0. Cela signifie que les méthodes seront redéfinies dans la classe dérivée, il faut y utiliser le mot clé override pour pouvoir les redéfinir. (cf schéma droite)
+    
+![virtual methode](mkdocs/classe_Derive_schema.png)         
+
 
 ## liste d'initialisation.
 Il s'agit d'un raccourcis d'écriture. Ce schéma explique la logique de passage des paramètres d'un constructeur à l'autre via liste d'initialisation, ici lorsque les constructeurs sont définis dans le fichier.h:  
 ![virtual methode](mkdocs/classe_derive_parametre_constructeur_1.png)     
 
-Ici lorsque les constructeurs ne sont pas définis dans le fichier.h mais dans le .cpp  
+Ci dessous lorsque les constructeurs ne sont pas définis dans le fichier.h mais dans le .cpp  
 Remarque on n'utilise pas d'accoladea après l'appel du constructeur vu qu'il n'y a rien à définir:   
 ![virtual methode](mkdocs/classe_derive_parametre_constructeur_2.png)     
 ![virtual methode](mkdocs/classe_derive_parametre_constructeur_3.png)       
 
 ⚠️ Le constructeur d'une classe dérivée peut avoir plus de paramètres que le constructeur de la classe parent mais il ne peut pas passer plus de paramètre au parent que le nombre de paramètres du parent. 
   
-⚠️ Il faut absoluement utiliser la liste d'initialisation avec les const et les pointeurs car ils ne peuvent pas exister et voir leur valeur changer (dans le cas des const) où sans valeur attribué (dans le cas des pointeur).  
+⚠️ Lorsque l'on traite des const et les pointeurs, il faut absoluement utiliser la liste d'initialisation car ils ne peuvent pas exister et voir leur valeur changer (dans le cas des const) où sans valeur attribué (dans le cas des pointeur).    
+
+⚠️ ça paraît inutilement compliqué de mettre des attributs non défini dans une classe, devoir utiliser la notation compliquée d'une liste d'initialisation afin d'y avoir accès et pouvoir les définir dans une classe dérivée. Pourquoi ne pas simplement les supprimer de la classe parent et les avoir que dans les classes dérivées ? Dans certains cas on veut forcer les classes dérivées à posséder certains attributs, par exemple si la méthode speed de la classe parent "vehicule" a besoin de connâitre le poid de la voiture / moto / etc pour calculer la vitesse, avoir un attribut weight non initialisé dans la classe parent fait sens, si demande un poid en tant que paramètre dans le constructeur de la classe parent et qu'on fait le liens avec l'attribut, la classe dérivée est obligé de définir cet attribut. Dans cet exemple le parent a un attribut sans valeur par défaut. comme le constructeur du parent fait le lien entre les paramètres et les attributs, cela force la classe enfant à appeler le constructeur parent et faire le liens avec ses propres paramètres.
 
 
 ## liens paramètres -attributs
