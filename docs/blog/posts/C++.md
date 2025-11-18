@@ -35,8 +35,8 @@ XXXXXXXXXXXXXXXXXXXXXXX relire + corriger completer
 **classe** = blueprint définissant les attributs et méthodes partagés par ses instances. Permet de créer des objets.  
 **objet** = instance d'une classe. Chaque objet est indépendant à moins que ses attributs et méthodes soient static.   
 **member** = méthodes et attributs d'une classe. Les objets en hérité de leur classe parent.  
-**méthode** = fonction d'une classe.  
-**attribut** = variable dans une classe.  
+**méthode** = fonction d'une classe. "Décrit" le comportement de la classe.
+**attribut** = variable dans une classe. "Décrit" l'état de la classe.  
 **constructeur** = méthode d'une classe instanciant (créant) un objet.    
 **destructeur** = méthode détruisant l'objet, à appeller lorsque l'on a plus besoin de l'objet pour ne pas surcharger la mémoire.  
   
@@ -96,7 +96,11 @@ int speed = 4;
 ```   
 
 Lors de la compilation nous aurons une erreur de linkage. Afin de se prémunir on peut déclarer les variables globales comme static, leur portée sera ainsi limité, utiliser un namespace différent pour chaque une d'elles, ne pas en faire des variables globales mais locales en les mettant dans une fonction.
+## règles  
 
+Lorsque l'on écrit **type** + **nomDeVariable** le compilateur crée une variable. Il applique cette règle « Si je vois un type suivi d’un identificateur, alors je dois déclarer une nouvelle variable. »  
+ça aide à comprendre pouquoi une même variable a un type à certains endroits du code et pas d'autres.
+  
 ## les 3 "etats" d'une fonction
 **déclaration** = dit au compileur quelles fonctions, variable et classes existent. Quand on déclare une classe on déclare également ses méthodes et attributs à l'intérieur. Cela se fait dans le fichier .h  
 **definition** = donne le corps de la fonctions (ce qu'elles fait). La définition peut être contenue dans la déclaration (donc dans le fichier .h) mais comme ça prend de la place, généralement on met la définition dans le fichier .cpp sous le main().   
@@ -294,17 +298,23 @@ et static dans tout ça ? dans une fonction c'est un mot clé pour appeler la va
 
 On parle de classe dérivé pour décrire une classe fille qui hérite d'une classe parent.  
 La classe fille hérite des attributs et méthodes de son parent. Elle peut avoir de nouveaux attributs et méthodes que le parent ne possède pas. Le constructeur de la classe dérivé fait appel au constructeur du parent car la classe dérivée est composée des membres du parent ainsi que de ces propres membres. Il est possible que la classe dérivé redéfinisse des méthodes hérités de la classe parent, pour ce faire il faut indiquer les méthodes comme **virtual** et les **assigner à 0** dans la classe parent:  
-![virtual methode](mkdocs/constructor_virtual.png)    
+![virtual methode](mkdocs/constructor_virtual.png)      
+Si les attributs sont publics, dans une instance de classe (un objet) on peut manipuler les attributs sans méthode. C’est aussi vrai pour les méthodes. L’appel d’une méthode peut se faire depuis l’objet, ou alors il peut se faire deouis une autre méthode.
+
+
+En mettant ce "**=0**", la méthode devient **abstraite** et on force la classe dérivée à redéfinir la méthode. Il n'est pas obligatoire de l'assigner à 0, on peut aussi lui donner un comportement "par défaut" qui sera celui utilisé si la classe dérivée ne redéfinit pas la méthode.
+Ainsi virtual signifie qu'on peut (on peut aussi ne pas le faire) redéfinir la méthode dans une classe dérivée. Utiliser virtual avec =0 signifie qu'on doit la redéfinir dans une classe dérivée.
 
 Si la classe parent possède un constructeur vide (un constructeur sans paramètress et sans corps définissant ses attributs/méthodes) on a pas besoin de faire le liens entre les paramètres du constructeur de la classe fille et la classe parent, mais c'est rarement le cas.  
 
 ```cpp
 class parent {      // <-- Class 
 public:             // <-- Access modifier
-    int var_1;       // <-- Attribute
+    int var_1_;       // <-- Attribute
 
     parent(int var_1) { // <-- Constructor (same name as class, NO return type!)
-      int var_1_ = var_1;
+    var_1_ = var_1;  //<-- a noter que l'on ne remet pas le type int, sinon ce serait
+                     // recréer une nouvelle variable 
     }
 
     void divide() {   // <-- Method
@@ -314,12 +324,22 @@ public:             // <-- Access modifier
 
 class enfant : public parent {    // <-- c'est comme ça qu'on crée une classe dérivée.
 public:  
-  enfant (int child_var_1, int child_var_2) : parent(child_var_1)  // <-- liste  d'initialisation. pour faire le liens entre les paramètre du parent et de l'enfant. ici on lie le premier argument de l'enfant au premier attribut du parent.
-                                                                   // En fait lors de  l'appel de la classe enfant (sa création) les arguments seront passé dans les paramètres du constructeur de l'enfant (logique) on peut passer ces paramètres à la classe parent en écrivant leur nom dans la parenthèse du constructeur parent. Ils seront transmis au constructeur parent en fonction de leur position. (Le fait que la logique de passage dépende une fois du nom et une fois de la position porte à confusion) ces 2 constructeurs vont créer l'objet enfant.
+  enfant (int child_var_1, int child_var_2) : parent(child_var_1) 
+   // liste  d'initialisation. pour faire le liens entre les paramètre 
+   // du parent et de l'enfant. 
+   // ici on lie le premier argument de l'enfant au premier attribut du parent.
+   // En fait lors de  l'appel de la classe enfant (sa création) les arguments 
+   // seront passé dans les paramètres du constructeur de l'enfant (logique) 
+   // on peut passer ces paramètres à la classe parent en écrivant leur nom 
+   // dans la parenthèse du constructeur parent. Ils seront transmis au 
+   // constructeur parent en fonction de leur position. 
+   // (Le fait que la logique de passage dépende une fois du nom et 
+   // une fois de la position porte à confusion) 
+   // ces 2 constructeurs vont créer l'objet enfant.
 
 };
 ```     
- la classe dérivée est composée de la classe parent. ça porte un peu à confusion de se dire que l'enfant possède le parent mais c'est bien le cas. La classe dérivée a accès aux méthodes et attributs du parent, mais ces dernières n'ont pas accès aux méthodes et attributs de la classe dérivée (cf Schéma gauche) **à moins que** l'on déclare les méthodes du parent comme virtual et qu'on les assigne à 0. Cela signifie que les méthodes seront redéfinies dans la classe dérivée, il faut y utiliser le mot clé override pour pouvoir les redéfinir. (cf schéma droite)
+ la classe dérivée est composée de la classe parent. Ca porte un peu à confusion de se dire que l'enfant possède le parent mais c'est bien le cas. Les méthodes de la classe dérivée ont accès aux méthodes et attributs du parent si ils sont public ou protected. Les méthodes de la classe dérivée n'ont pas accès aux méthodes et attributs de la classe dérivée (cf Schéma gauche) **à moins que** l'on déclare les méthodes du parent comme virtual et qu'on les assigne à 0. Cela signifie que les méthodes seront redéfinies dans la classe dérivée, on y ajoute le mot clé override (pas obligaoire mais bonne pratique) (cf schéma droite)
     
 ![virtual methode](mkdocs/classe_Derive_schema.png)         
 

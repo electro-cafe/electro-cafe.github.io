@@ -63,6 +63,19 @@ On parle de CLI: Command Line Interface (Interface en ligne de commande), cela p
 >idf.py create component -> crée un nouveau component.  
 >idf.py set-target -> définir le type de processeur sur lequel on va flasher notre programme.  
 
+## Debug  
+ESP-IDF nous retourne un code si il y a une erreur (de type esp_err_t, exemple **esp_err_t 0x17**)  lors du build où ESP-OK si il n'y en a pas.  
+On peut utiliser la fonction **esp_err_to_name()** et lui donner le code d'erreur comme paramètre pour qu'elle nous retourne l'erreur sous forme de text. 
+[doc](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/error-handling.html#esp-error-check-macro).  
+
+Afin de pouvoir utiliser la fonction esp_err_t 0x17 et avoir plus de contrôle sur les log, il faut ajouter #include "esp_log.h" à notre fichier. On peut paramètrer le niveau de détail des log. Plus ils sont détaillés, plus la compilation prend du temps:  
+ ![parametre log ESP-IDF](mkdocs/sdk_log_parametre.png)     
+   
+ Il est possible d'avoir des log plus détaillés dans une certaine zone du code plutôt que dans tout le code (gain de temps de compilation) en utilisant **log_local_level** dans le CMakeList.txt du composant que l'on souhaite détailler.
+
+ On peut aussi utiliser le principe de Per-log formating pour que les log soient détaillés lorsqu'une certaine valeur est atteinte, on fait ça avec un if (ex: lorsqu'une sonde atteins 70 degrés). 
+ [doc log](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/log.html#_CPPv47esp_log16esp_log_config_tPKcPKcz)  
+
 ## Procédure de correction des erreurs du code
 Pour les modification des fichiers de type **.c**, **.h** et **.cpp** un ctrl + S suivit d'un build suffit.
 Pour les modification de la structure des dossiers / fichiers, comme un ajout de composant, le changement de nom de fichier où la modification d'un fichier CMake, il faut effacer le dossier build puis faire un nouveau build
