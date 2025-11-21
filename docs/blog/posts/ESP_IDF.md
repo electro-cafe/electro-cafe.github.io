@@ -75,7 +75,7 @@ Afin de pouvoir utiliser la fonction esp_err_t 0x17 et avoir plus de contrôle s
 
  On peut aussi utiliser le principe de Per-log formating pour que les log soient détaillés lorsqu'une certaine valeur est atteinte, on fait ça avec un if (ex: lorsqu'une sonde atteins 70 degrés). 
  [doc log](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/log.html#_CPPv47esp_log16esp_log_config_tPKcPKcz)  
-
+ 
 ## Procédure de correction des erreurs du code
 Pour les modification des fichiers de type **.c**, **.h** et **.cpp** un ctrl + S suivit d'un build suffit.
 Pour les modification de la structure des dossiers / fichiers, comme un ajout de composant, le changement de nom de fichier où la modification d'un fichier CMake, il faut effacer le dossier build puis faire un nouveau build
