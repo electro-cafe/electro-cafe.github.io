@@ -88,7 +88,7 @@ chaque element de ws2812 reçoit 5v car elles sont en parallèle. si elles étai
 
 Le but est de modifier le comportement de la led en fonction de la position du bouton 3 points.  
 Il va falloir définir une fonction pour chaque position du bouton et câbler les éléments correctement.  
-On va utiliser asigner une pin à un booléan, si elle lit une valeur de courant élevé (HIGH) le bool est true, si elle lit une valeur basse (LOW) il est false.
+On va asigner une pin à un booléan, si elle lit une valeur de courant élevé (HIGH) le bool est true, si elle lit une valeur basse (LOW) il est false.
 Il existe un seuil à partir duquel la valeur est HIGH où LOW on peut le consulter page 53 de la [documentation de l'Esp32 par Espressif]( https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf)
 Pour 3.3V entre **75 - 100%** du voltage on lit **HIGH**, entre **0 - 25%** on lit **LOW**.    
 

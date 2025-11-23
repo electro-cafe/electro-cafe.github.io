@@ -533,43 +533,72 @@ for (int i = 0; i < 4; i++) {                // incrémentation standard de 0 à
 
 en fait (1 << i) veut dire qu'on prend 1 en binaire soit 0001 et qu'on le décale de i vers la gauche, tout en rajoutant i zeros à sa droite. Lorsque i = 0 on reste sur 0001. Quand i = 1, on a 0010. Quand i = 2, on a 0100. Cette partie du code est le **masque binaire**.  Note: j'utilise 4 bit pour représenter la valeur par confort visuel vu qu'on 4 pin qui contrôlent notre moteur et qu'on va aller jusqu'à 1000, mais en fait en interne l'esp utilise un int de 32 bit donc 1 vaut 00000000 00000000 00000000 00000001 en binaire.
 
-Voici les opérateurs logiques et leur représentation en électronique:  
- ![logic gate](mkdocs/logic_gate.png)  
+
+## opérateurs bitwise
+ Aussi nommé logic gate, opérateur bit à bit où opération binaires. Ils manipulent bit par bit des valeurs sous notation binaire (ex: 00110010). Voici leur représentation en électronique:  
+ ![logic gate](mkdocs/logic_gate.png)    
+  
 
 On utilise &, ce qui équivaut à AND. Si les deux inputs sont identiques, l'output sera le même, si les 2 inputs sont différents, l'output sera 0.  
-Voici les 4 opérateurs logiques binaires (logic gates) de l'informatique:  
-| **NOT**    | **Entrée** | **Sortie** |
-| ---------- | ---------- | ---------- |
-|            | 0          | 1          |
-| **Sortie** | 1          | 0          |  
+Voici les opérateurs logiques binaires (logic gates) de l'informatique:    
+
+| **NOT** **~** | **0** | **1** |
+| ------- | ----- | ----- |
+| **0**   | 0     | 1     |
+| **1**   | 1     | 0     |  
 
 
-| **AND** | **0** | **1** |
+| **AND** **&** | **0** | **1** |
 | ------- | ----- | ----- |
 | **0**   | 0     | 0     |
 | **1**   | 0     | 1     |  
 
-| **OR** | **0** | **1** |
+| **OR** **\|** | **0** | **1** |
 | ------ | ----- | ----- |
 | **0**  | 0     | 1     |
 | **1**  | 1     | 1     |  
 
-| **XOR** | **0** | **1** |
+| **XOR** **^** | **0** | **1** |
 | ------- | ----- | ----- |
 | **0**   | 0     | 1     |
 | **1**   | 1     | 0     |  
   
-inversion du résultat de AND, c'est une combinaison de NOT et AND:    
+L'opérateur NAND n'existe pas directement en C++. On doit le construire avec **~(a & b)**
+C'est une inversion du résultat de AND, c'est une combinaison de NOT et AND. :    
+
 | **NAND** | **0** | **1** |
 | -------- | ----- | ----- |
 | **0**    | 1     | 1     |
-| **1**    | 1     | 0     |  
+| **1**    | 1     | 0     |    
 
-inversion du résultat de OR, c'est une combinaison de NOT et OR:  
+L'opérateur NOR n'existe pas directement en C++. On doit le construire avec **~(a \| b)**
+C'est une inversion du résultat de OR, c'est une combinaison de NOT et OR:  
+
 | **NOR** | **0** | **1** |
 | ------- | ----- | ----- |
 | **0**   | 1     | 0     |
-| **1**   | 0     | 0     |
+| **1**   | 0     | 0     |  
+
+⚠️ Attention la notation && peut porter à confusion avec l'opérateur &.  
+Il s'agit de 2 choses différentes.  
+& est un opérateur binaire alors que && est un opérateur logique.  
+  
+## Opérateur logiques
+Noté **&&** pour le **AND logique**, à ne pas confondre avec le AND au niveau du bit (&). Retourne true si les 2 opérandes sont true, false dans les autres cas.
+Les 2 opérandes ne sont pas toujours évalué, si la première opérande est false, la deuxième opérande n'est pas évalue (car dans tous les cas l'opérateur logique retournera false). On appelle ça le shortcut où évaluation court-circuit.  
+
+Selon le même principe on a aussi le **OR logique**, noté **\|****\|** qui retourne true si au moins une des opérande est true. Les opérandes utilisés avec l'opérateur logique OR n'ont pas à être du même type, mais elles doivent avoir un type booléen, intégral ou pointeur. Le 2ème opérande n'est évalué que si la première opérande est false, la deuxième opérande n'est pas évalue (car dans tous les cas l'opérateur logique retournera false). évaluation court-circuit.  
+
+Cette aspect de court-circuit a plusieurs avantages: gain de temps de calcul vu qu'on evalue pas la 2ème opérande, bloque les effets d'incrémentation de la 2ème opérande dans les cas non désirés (si la 2ème opérande contient un i++, ça l'empêche d'incrémenter une variable à chaque évaluation plutôt qu'à chaque cas positif). peut prévenir des erreurs ex:  
+
+```cpp
+int x = 5;
+int y = 0;
+
+if (y != 0 && x / y > 1) {  // 1ère opérande false, activation du court-circuit, on va pas évaluer la 2ème opérande et ainsi éviter une division par 0
+}
+
+```  
 
 
 ## utilisation de la mémoire
