@@ -63,13 +63,13 @@ On parle de CLI: Command Line Interface (Interface en ligne de commande), cela p
 >idf.py create component -> crée un nouveau component.  
 >idf.py set-target -> définir le type de processeur sur lequel on va flasher notre programme.  
 
-## Debug  
-ESP-IDF nous retourne un code si il y a une erreur (de type esp_err_t, exemple **esp_err_t 0x17**)  lors du build où ESP-OK si il n'y en a pas.  
-On peut utiliser la fonction **esp_err_to_name()** et lui donner le code d'erreur comme paramètre pour qu'elle nous retourne l'erreur sous forme de text. 
-[doc](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/error-handling.html#esp-error-check-macro).  
+## Erreur log   
+Si il y a une erreur lors de la compilation, ESP-IDF nous retourne une variable de type esp_err_t, exemple **esp_err_t 0x17**. Si il n'y a pas d'erreur la compilation retourne esp_err_t ESP-OK.  
+On peut utiliser la fonction **esp_err_to_name()** et lui donner le code d'erreur comme paramètre pour qu'elle nous retourne l'erreur sous forme de text. c.f: [doc](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/error-handling.html#esp-error-check-macro)  
 
-Afin de pouvoir utiliser la fonction esp_err_t 0x17 et avoir plus de contrôle sur les log, il faut ajouter #include "esp_log.h" à notre fichier. On peut paramètrer le niveau de détail des log. Plus ils sont détaillés, plus la compilation prend du temps:  
- ![parametre log ESP-IDF](mkdocs/sdk_log_parametre.png)     
+Afin de pouvoir utiliser la fonction esp_err_to_name() et avoir plus de contrôle sur les log, il faut ajouter #include "esp_log.h" à notre fichier.  
+On peut filtrer le niveau de détail des log (attention il faut changer le log level des log et pas celui du Bootloader. Le bootloader est un programme appellé uniquement au début afin choisir la version la plus récente et qui fonctionne du programme qui va faire tourner notre code). Plus ils sont détaillés, plus la compilation prend du temps:  
+ ![parametre log ESP-IDF](mkdocs/log_level_setting.png)     
    
  Il est possible d'avoir des log plus détaillés dans une certaine zone du code plutôt que dans tout le code (gain de temps de compilation) en utilisant **log_local_level** dans le CMakeList.txt du composant que l'on souhaite détailler.
 
@@ -79,7 +79,16 @@ Afin de pouvoir utiliser la fonction esp_err_t 0x17 et avoir plus de contrôle s
 ## Procédure de correction des erreurs du code
 Pour les modification des fichiers de type **.c**, **.h** et **.cpp** un ctrl + S suivit d'un build suffit.
 Pour les modification de la structure des dossiers / fichiers, comme un ajout de composant, le changement de nom de fichier où la modification d'un fichier CMake, il faut effacer le dossier build puis faire un nouveau build
+  
+## Debug  
+Plutôt que d'utiliser printf() pour retourner des valeurs dans l'ESP-IDF Monitor, il vaut mieux utiliser les macros (disponible grâce à #include "esp_log.h") ESP_LOGI(). Avec ESP_LOGI(), Les log apparaîtront que si on a paramétré le filtre de log sur info où plus haut. Avec ESP_LOGD(), ils seront visible si le filre est au minimum sur debug. Il y a aussi ESP_LOGW() pour les warning et ESP_LOGE() pour les erreurs. Ces fonctions prennent 2 paramètres: un tag de type string, à nous de le définir, son utilité est de nous informer de quel fichier provient le log. La bonne pratique consiste à déclarer une constante k dans le fichier et à l'utiliser comme tag. Le 2ème paramètre est le message d'erreur, similaire à printf(), il s'agit d'un text entre quillets, contenant le caractère spécial % suivit de la lettre relative au format de la variable que l'on veut intégrer à notre message de débug. ex: "vitess: &d" et finalement le nom de la variable a intégrer au message de débug.  
+On peut consulter [ici](https://perso.liris.cnrs.fr/raphaelle.chaine/COURS/LIFAPC/printf_form.html) les notations pour les différents types de variable.  
 
+Finalement, la bonne pratique consiste à encapsuler nos log dans des if pour ne pas saturer la consol de log, mais les afficher uniquement lorsque la valeur actuel est mise à jour. Ex: on ne veut pas recevoir un log de la valeur d'un boolean à chaque exécution du code si son état reste identique, mais on veut être informé à son changement d'état.
+
+Nos message de debug apparaissent dans le terminal sous la section ESP-IDF Monitor
+ ![parametre log ESP-IDF](mkdocs/esp_idf_terminal_monitor.png)   
+      
 ## ESP Registry
 C'est un [site](https://components.espressif.com/) permettant de télécharger des bibliothèques pour faire fonctionner des composants comme les leds WS2812.
 On peut aussi créer nos propres component et les partager sur ESP Registry.
@@ -133,7 +142,54 @@ BinPackArguments: false
 BinPackParameters: false
 ```
 
+## GPIO set-up
+Il est courant d'avoir plusieurs pin qui ont la même configuration au niveau de la résistance pull-up/down, du mode input/output. Pour un code concis, on utilise la **GPIO common configuration**. L'idée est de créer un struct de type gpio_config_t, de configurer les différents paramètres communs de nos pin au sein de ce struct et d'appeler la fonction gpio_config en lui donnant l'adresse du struct en tant qu'argument.  
+Pour se faire il nous faut passer par plusieurs étapes: définir le numéro de pin des GPIO, définir les paramètres du struct (bit mask / pull down / pull up / mode / type d'interuption). appeller la fonction de configuration des pins.
 
+Voici un exemple:  
+
+```cpp
+#include "driver/gpio.h" //permet de paramettrer les gpio en tant qu'input/output, pupllup/pulldown
+
+// set GPIO pin
+constexpr gpio_num_t SWITCH_PIN_1 = GPIO_NUM_1;
+constexpr gpio_num_t SWITCH_PIN_2 = GPIO_NUM_5;
+
+
+// déclaration d'un struct de type gpio_config_t qui permettra de configurer plusieurs GPIO avec les mêmes attributs
+gpio_config_t SWITCH_BUTTON_MOTOR_GPIO_CONFIGURATION;
+
+// set pin number
+int MOTOR_STEP_NUMBER = 2048;
+
+// sert à faire faire le liens entre C++ et C (Esp-IDF est à la base prévu pour
+// C)
+extern "C" {
+void app_main(void);
+}
+
+void app_main(void) { // fonction principale
+
+  // configuration des attributs du struct de configuration des gpio
+  SWITCH_BUTTON_MOTOR_GPIO_CONFIGURATION.pin_bit_mask =
+      (1 << MINUTE_SWITCH_UP_PIN) | (1 << MINUTE_SWITCH_DOWN_PIN); // bitmask
+  SWITCH_BUTTON_MOTOR_GPIO_CONFIGURATION.pull_down_en = GPIO_PULLDOWN_DISABLE;
+  SWITCH_BUTTON_MOTOR_GPIO_CONFIGURATION.pull_up_en = GPIO_PULLUP_ENABLE;
+  SWITCH_BUTTON_MOTOR_GPIO_CONFIGURATION.mode = GPIO_MODE_OUTPUT;
+  SWITCH_BUTTON_MOTOR_GPIO_CONFIGURATION.intr_type = GPIO_INTR_DISABLE;
+
+  // la fonction gpio_congig utilise l'adresse du struct de configuration.
+  gpio_config(&SWITCH_BUTTON_MOTOR_GPIO_CONFIGURATION);
+}
+```
+
+Voyons plus en détail les attributs du struct.   
+Dans ESP-IDF les pin ne sont pas configurée une par une mais via un bitmask, Il s'agit d'un chiffre en binaire, chaque entier (0 où 1) représente une pin.  
+ex: 0000. Le zero le plus à droite est la première pin et le zero tout à gauche la quatrième.
+Le bitmask permet d'appliquer les paramètres que l'on a défini dans notre struct que sur les pin dont la valeur est 1. Voilà qui explique le nom bitmask, les bit font office de masque en fonction de leur valeur, pour appliquer les paramètres que sur les pin non masquées. L'opérateur logique | permet de "superposer" les 1 des deux masques. 
+xxxxxxxxxxx SCHéMA XXXXXXXXXX. le signe << dit bit shifting signifie décalle vers la gauche de x unité. Donc 1 << 3 signigie décalle 1 de 3 unité vers la gauche. 1 en binaire c'est 0000001 (en 8 bit), une fois décallé de 3 ça nous donne 00001000. En donnant le numéro de la pin, ça permet de créer un masque qui sélectionne que la pin donnée. 
+
+XXXXXXXX le mot attribut est il juste ? XXXXXXXXXX
 
 ## FreeRTOS
 Système d'exploitation temps réel intégré dans ESP-IDF. c'est l'acronyme de Real Time Operating System.
@@ -745,5 +801,5 @@ un Nass - network attak ? storage marque synologie.
 
 --------------------------------
 
-projet hello world: C:\Users\thoma\Documents\Github\Timer_code\Test_decouverte-_ESP_IDF\main
-Cmake installed by espIDF extension: C:\Users\thoma\esp\v5.4.2\esp-idf\tools\cmake
+## ressources et liens
+[random nerd tutorial blinking on-board LED](https://randomnerdtutorials.com/esp-idf-esp32-blink-led/)

@@ -39,10 +39,10 @@ avec une base 10 on peux créer ce tableau dont on peut utiliser chaque case 9 f
 111001000 est la représentation **binaire** de 456.
 
 ## Expressions régulières
-Aussi connues sous le nom de Regular expressions où RegEx, il s'agit 
+Aussi connues sous le nom de Regular expressions où RegEx, Les expressions régulières sont des suites de caractères (nomé motif) combinés à des caractères spéciaux (quantificateurs), servant à la recherche de ces motifs selon les critères introduits à l'aide des caractères spéciaux dans un text.   
+exemple: **^a** -> trouve les "a" en début de paragraphe.   
+⚠️ À ne pas confondre avec les [opérateur bitwise et opérateur logiques](C++.md)
 
-Digital
-Analog = logic gate ?
 
 ## bit, byte   
 Ces termes à l'écriture et la prononciation proche peuvent préter à confusion.  

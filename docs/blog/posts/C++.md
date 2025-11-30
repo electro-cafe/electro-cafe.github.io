@@ -504,7 +504,7 @@ switch (currentStep_ % 4) {
 }
 ```
 
-A la place on va faire une **lecture binaire par décalage de bits à partir d’une Look-up table**. Le principe c'est de récupérer les séquences du moteur, dans notre cas on a 1010, 0110, 0101 et 1001, ce sont les 4 steps qui permettent à notre moteur de tourner. les 1 et les 0 décrivent si la pin est alimenté où non. la position du chiffre correspond à la pin 1, 2, 3 où 4. Ces séquences moteurs peuvent être interprété comme un nombre en représentation binaire. 1010 équivaut à 10 en notation décimale (1 x 2^4 + 0 x 2^3 + 1 x 2^2 + 0 x 1^2). 0110, 0101 et 1001 correspondent respectivement à 6, 5 et 9.  
+A la place on va faire une **lecture binaire par décalage de bits à partir d’une Look-up table**. Le principe c'est de récupérer les séquences du moteur, dans notre cas on a 1010, 0110, 0101 et 1001, ce sont les 4 steps qui permettent à notre moteur de tourner. les 1 et les 0 décrivent si la pin est alimenté(1) où non(0). la position du chiffre correspond à la pin 1, 2, 3 où 4. Ces séquences moteurs peuvent être interprété comme un nombre en représentation binaire. 1010 équivaut à 10 en notation décimale (1 x 2^4 + 0 x 2^3 + 1 x 2^2 + 0 x 1^2). 0110, 0101 et 1001 correspondent respectivement à 6, 5 et 9.  
 On crée un tablea de 4 entrées auquel on assignes ces 4 nombres:  
 
 ```cpp
@@ -532,6 +532,15 @@ for (int i = 0; i < 4; i++) {                // incrémentation standard de 0 à
 ```  
 
 en fait (1 << i) veut dire qu'on prend 1 en binaire soit 0001 et qu'on le décale de i vers la gauche, tout en rajoutant i zeros à sa droite. Lorsque i = 0 on reste sur 0001. Quand i = 1, on a 0010. Quand i = 2, on a 0100. Cette partie du code est le **masque binaire**.  Note: j'utilise 4 bit pour représenter la valeur par confort visuel vu qu'on 4 pin qui contrôlent notre moteur et qu'on va aller jusqu'à 1000, mais en fait en interne l'esp utilise un int de 32 bit donc 1 vaut 00000000 00000000 00000000 00000001 en binaire.
+
+ ![logic gate](mkdocs/bit_shifting.png)     
+
+Notre code va réaliser une opération binaire & avec le bitmask et la séquence actuelle du moteur. Le résultat va déterminer quelles pin pin enverront un signal.    
+ ```cpp  
+ if (sequence[currentStep_] & (1 << i))
+ ```    
+  ![logic gate](mkdocs/bitmasking.png)
+   ![logic gate](mkdocs/bitwise_operateur.png) 
 
 
 ## opérateurs bitwise
