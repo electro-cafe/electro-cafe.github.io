@@ -96,12 +96,14 @@ On peut aussi créer nos propres component et les partager sur ESP Registry.
 
 ## Récupérer un component sur ESP Registry et l'intégrer à un projet / Architecture dossiers
 le code principale que l'on écrit se situe dans le dossier main.
-Chaque composant sur ESP.Registry comprent une commande permettant de télécharger les fichiers dans notre dossier de projet au sein d'un sous-dossier nommé **managed_components**.  
+Chaque composant sur le site ESP.Registry comprent une commande permettant de télécharger les fichiers dans notre dossier de projet au sein d'un sous-dossier nommé **managed_components**. Ainsi on a téléchargé localement la librairie.  
 
-Pour commencer il faut ouvrir le terminal ESP_IDF (ctrl + shift + p -> Open ESP IDF terminal) et y coller la commande du component que l'on souhaite ajouter au projet, récupérée d'ESP Registry. Autre manière: coller > + la commande du component dans la barre de recherche de Visual studio Code.  
+Pour commencer il faut récupérer la commande d'installation sur ESP Registry.   
 ![extension ESP-IDF](mkdocs/ESP_IDF_Registry.png)   
-> comande à récupérer sur ESP Registry.
-
+> comande à récupérer sur ESP Registry.  
+  
+Ouvrir le terminal ESP_IDF et y coller la commande du component que l'on souhaite ajouter au projet
+![extension ESP-IDF](mkdocs/esp_idf_terminal_registry_component.png)  
 
 Par exemple: **idf.py add-dependency "supcik/status_led^2.0.0"** ça va créer un fichier idf.component.yml au sein du dossier main. le fichier .yml est comme une liste de course lisible/compréhensible par l'ordinateur et l'humain que CMake va interpréter pour télécharger les fichiers voulu lorsque l'on lance la commande **idf.py build**. Si le composant n'est pas ajouté on peut essayer **idf.py reconfigure** qui fait une sorte de refresh.
 
