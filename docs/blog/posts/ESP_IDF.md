@@ -355,7 +355,7 @@ On va commencer par inclure les bibliothèques nécessaires:
 
 ```  
 
-Définir la notre pin. 
+Définir notre pin. 
 ```cpp
 #define BLINK_GPIO 2  // define est une macro, c'est a dire une sorte de programme qui s'exécute avant que le programme ne soit compilé et s'exécute à son tour. son role est de chercher toutes les occurence de "BLINK_GPIO" et de les remplacer par 2. On aurait aussi pu faire une variable. L'avantage de #define c'est qu'il n'y a pas de problème de portée.
 ```  
@@ -676,8 +676,11 @@ void TaskLight(void *pv) {
 }
 ```
 
-Pour **débugger** on peut utiliser **uxQueueMessagesWaiting(handle)**, cette fonction va nous retourner le nombre de message dans la queue.  
-Afin de passer plusieurs variables dans la queue on peut utiliser un struct. Il faut utiliser typedef struct.   
+Pour **débugger** on peut utiliser **uxQueueMessagesWaiting(handle)**, cette fonction va nous retourner le nombre de message dans la queue. Malheureusement, FreeRTOS n'assigne pas les messages stockés dans la queue à des variables nommées (elles sont des blocs de mémoire anonymes). On ne peut donc pas débugger directement en appelant une variable contenant la valeur du message. Mais on peut créer une variable locale et laisser xQueueReceive copier le contenu de la queue dans cette variable locale pour pouvoir ensuite l'examiner via un ESP_LOGI. c'est ce qu'on a fait avec received dans l'exemple. donc xqueuesend copie la valeur d'une variable dans un espace anonyme.
+xqueureceive lrecoit cette variable et grace à l'utilisation d'une variable locale et &"nom de la variable locale de réception" on extrait la valeur du message.  
+  
+
+Afin de **passer plusieurs variables dans la queue** on peut utiliser un **struct**. Il faut utiliser typedef struct.   
 En C++ on travail avec des type, int, float, etc. sont des types. Les types définissent ce que contient une variable et comment la mémoire est organisée (combien alouer d'octet pour stocker les variables).
 Typedef permet de créer un nouveau type, ici struct. Chaque struct est différents, il n'a pas le même nombre de variable ni le même type de variable, c'est pour ça qu'on doit passer par une phase de définition.  
 
@@ -761,6 +764,23 @@ extern "C" void app_main() {
     xTaskCreate(TaskConsumer, "Consumer", 4096, NULL, 1, NULL);
 }
 ```
+## FreeRTOS Timer  
+Un timer permet l'appel d'une fonction à un moment défini dans le temps. On nomme cette fonction dépendant du timer, la fonction callback du timer. Le temps entre le début du timer et sa date de fin est nommé la période. La fonction callback est appellée quand la période du timer arrive à échéance.  
+  
+  Les fonctions relatives au timer de FreeRTOS utilisent une queue spécifique pour communiquer: **timer command queue**.  
+Une fonction qui doit s'exécuter selon le timer atteint le temps défini s'appelle une fonction callback.  
+  
+Il y a **2 sortes de timer**: one-shot timer et auto-reload timer.  
+Le **one-shot timer** appelle sa fonction callback uniquement une fois (quand il arrive à bout de sa durée). Il ne se restart lui même automatiquement  mais on peut le restarter manuellement.  
+Le **auto-reload timer** appelle sa fonction à chaque fois qu'il arrive au bout de sa période et se restart automatiquement. La fonction callback est donc appellée périodiquement.
+
+Afin d'utiliser le timer il faut inclure le fichier source FreeRTOS/Source/timers.c ?? et configurer les constantes suivantes:  
+configUSE_TIMERS //set to 1 to include timer functionality  
+configTIMER_TASK_PRIORITY // le degré de priorité de la tâche timer  
+configTIMER_QUEUE_LENGTH  //  nombre de commande unprocessed que la queue peut contenir. La queue peut se remplir si de multiples fonctions relative à l'API du timer sont appellées avant que le RTOS scheduler a démarré. Si de multiples fonction de l'API du timer sont appellées par une tâche qui a une priorité plus haute que le timer (Attention la priorité la plus haute est 0, ça porte à confusion vu que c'est le chiffre le plus bas).    
+configTIMER_TASK_STACK_DEPTH // défini la taille de la stack (en mots, pasa en bits) allouée au timer.  
+  
+On ne peut pas mettre le timer à zéro quand il tourne mais on peut faire une sorte de reset du timer. Lorsque le timer "expire" selon la durée qu'on lui a défini, il continue de tourner mais enregistre le temps relativement au moment où il a expriré. Ainsi Si notre timer expire toutes les 5 secondes, quand le temps global est à la 8ème seconde, notre timer est à la 3ème depuis sa dernière expiration. Une fonction callback s'exécutera au mieux à la 10ème seconde si le timer n'est pas reset à nouveau. 
 
 ## Scheduler  
 c'est la partie du programme qui passe à la tâche suivante lorsqu'une tâche a terminé avant le temps imparti. Le scheduling c'est donner des priorités aux tâches pour qu'elles s'exécutent dans un ordre précis. Le scheduler peut intérompre une tâche de basse priorité pour passer la main à une tâche de haute priorité. la priorité est donnée sous forme de nombre entier.  
