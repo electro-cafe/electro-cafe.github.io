@@ -37,6 +37,23 @@ avec une base 10 on peux créer ce tableau dont on peut utiliser chaque case 9 f
 |nombre de fois| 1 | 1 | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 
 111001000 est la représentation **binaire** de 456.
+Pour indiquer qu'un nombre est en base 2 on ajoute 0b devant. ainsi 0b456 = 111001000.
+
+##  Base 16  
+La base 16 est utilisée notement pour les hexacode, il s'agit d'un code représantant les valeurs RVB d'une couleur à l'écran.
+Il reprend le principe de la base 10 et de la base 2, mais il ajoute une complexité: comme on ne dispose que de 10 chiffres distinctifs (0 à 9), la représentation des valeurs entre 10 et 15 portent à confusion, c'est 15 où 1 et 5 ? Il a donc fallu déterminer comment utiliser 1 seul caractère pour représenter une valeur à 2 chiffres. On a utilisé l'alphabet. A vaut 10, B 11, C 12, D 13, E 14 et F 16. Pour reprendre la représentation des couleurs par leur valeurs décimales, dans photoshop lorsque l'on travaille en xbit, on a 256 valeurs de teinte pour le rouge, pareil pour le vert, le bleu et le niveau de transparence.   
+l'hexacode de la couleur est composée de 3 pack de 2 symboles, ces 2 symboles représentent la valeur de la nuance en base 16. Ainsi FF vaut 256. Voici comment cela se décompose: F étant égale à 16, on a 16 * 16^1 + 16 * 16^0, ce qui fait 15 * 16 + 15 * 1, soit 240 + 16 = 256.
+Une dernière chose, pour indiquer qu'un nombre est hexadécimal et pas décimal on ajoute **0x** devant. 
+>4 centaines  
+>5 dizaines   
+>6 unités  
+
+avec une base 10 on peux créer ce tableau dont on peut utiliser chaque case 9 fois (le nombre de la base -1) pour définir le nombre donné.
+
+| **puissance 10** | **\(10^2\)**       | **\(10^1\)**        | **\(10^0\)**    |
+|--------------|--------------|--------------|--------------|
+| | 100  | 10 | 1 |
+|nombre de fois| 4  | 5 | 6 |
 
 ## Expressions régulières
 Aussi connues sous le nom de Regular expressions où RegEx, Les expressions régulières sont des suites de caractères (nomé motif) combinés à des caractères spéciaux (quantificateurs), servant à la recherche de ces motifs selon les critères introduits à l'aide des caractères spéciaux dans un text.   

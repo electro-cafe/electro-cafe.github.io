@@ -767,20 +767,43 @@ extern "C" void app_main() {
 ## FreeRTOS Timer  
 Un timer permet l'appel d'une fonction à un moment défini dans le temps. On nomme cette fonction dépendant du timer, la fonction callback du timer. Le temps entre le début du timer et sa date de fin est nommé la période. La fonction callback est appellée quand la période du timer arrive à échéance.  
   
-  Les fonctions relatives au timer de FreeRTOS utilisent une queue spécifique pour communiquer: **timer command queue**.  
-Une fonction qui doit s'exécuter selon le timer atteint le temps défini s'appelle une fonction callback.  
-  
 Il y a **2 sortes de timer**: one-shot timer et auto-reload timer.  
 Le **one-shot timer** appelle sa fonction callback uniquement une fois (quand il arrive à bout de sa durée). Il ne se restart lui même automatiquement  mais on peut le restarter manuellement.  
 Le **auto-reload timer** appelle sa fonction à chaque fois qu'il arrive au bout de sa période et se restart automatiquement. La fonction callback est donc appellée périodiquement.
 
-Afin d'utiliser le timer il faut inclure le fichier source FreeRTOS/Source/timers.c ?? et configurer les constantes suivantes:  
+Comme on utilise ESP-IDF, la bibliothèque permettant d'utiliser le timer est déjà installée. Il reste à l'inclure avec **#include "freertos/timers.h"**.  
+Si ce n'était pas le cas il aurait fallu télécharger le fichier [timers.c](https://github.com/maniacbug/FreeRTOS/blob/master/timers.c) et l'inclure dans le dossier source puis mettre à jour le fichier CMakeList.txt. 
+
+Les fonctions relatives au timer de FreeRTOS utilisent une queue spécifique pour communiquer, elle se nomme **timer command queue**. Elle est crée automatiquement quand le scheduler démarre.  
+
+Ce qu'il nous faut c'est créer un timer, on le fait en appelant la fonction xTimerCreate qui nous permet de configurer le timer et nous retourne un TimerHandle_t, cet handle nous permet d'accéder au timer, on l'utilise nottament comme argument de la fonction callback  
+```cpp
+ TimerHandle_t xTimerCreate
+                 ( const char * const pcTimerName, //le nom que l'on donne au timer.  
+                   const TickType_t xTimerPeriod, // la période du timer, en ticks. on peut utiliser pdMS_TO_TICKS() pour donner une durée en miliseconde.  
+                   const UBaseType_t uxAutoReload, // true = autoReload, false = one shot timer -> fonction callback appellée que 1x.  
+                   void * const pvTimerID, // identifiant assigné au timer  
+                   TimerCallbackFunction_t pxCallbackFunction ); //la fonction callback assignée au timer.
+
+```    
+La fonction callback doit avoir le timerHandle_t xTimer comme argument.
+```cpp
+ void vTimerCallback( TimerHandle_t xTimer )
+ {
+  //corp de la fonction callback
+ }
+```    
+
+Voir [exemple de cette implémentation](https://freertos.org/Documentation/02-Kernel/04-API-references/11-Software-timers/01-xTimerCreate)
+
+Voici les constantes du timer et leur configuration:  
 configUSE_TIMERS //set to 1 to include timer functionality  
 configTIMER_TASK_PRIORITY // le degré de priorité de la tâche timer  
 configTIMER_QUEUE_LENGTH  //  nombre de commande unprocessed que la queue peut contenir. La queue peut se remplir si de multiples fonctions relative à l'API du timer sont appellées avant que le RTOS scheduler a démarré. Si de multiples fonction de l'API du timer sont appellées par une tâche qui a une priorité plus haute que le timer (Attention la priorité la plus haute est 0, ça porte à confusion vu que c'est le chiffre le plus bas).    
 configTIMER_TASK_STACK_DEPTH // défini la taille de la stack (en mots, pasa en bits) allouée au timer.  
   
-On ne peut pas mettre le timer à zéro quand il tourne mais on peut faire une sorte de reset du timer. Lorsque le timer "expire" selon la durée qu'on lui a défini, il continue de tourner mais enregistre le temps relativement au moment où il a expriré. Ainsi Si notre timer expire toutes les 5 secondes, quand le temps global est à la 8ème seconde, notre timer est à la 3ème depuis sa dernière expiration. Une fonction callback s'exécutera au mieux à la 10ème seconde si le timer n'est pas reset à nouveau. 
+On ne peut pas mettre le timer à zéro quand il tourne mais on peut faire une sorte de reset du timer. Lorsque le timer "expire" selon la durée qu'on lui a défini, il continue de tourner mais enregistre le temps relativement au moment où il a expriré. Ainsi Si notre timer expire toutes les 5 secondes, quand le temps global est à la 8ème seconde, notre timer est à la 3ème depuis sa dernière expiration. Une fonction callback s'exécutera au mieux à la 10ème seconde si le timer n'est pas reset à nouveau.   
+[documentation](https://www.freertos.org/Documentation/02-Kernel/02-Kernel-features/05-Software-timers/01-Software-timers)
 
 ## Scheduler  
 c'est la partie du programme qui passe à la tâche suivante lorsqu'une tâche a terminé avant le temps imparti. Le scheduling c'est donner des priorités aux tâches pour qu'elles s'exécutent dans un ordre précis. Le scheduler peut intérompre une tâche de basse priorité pour passer la main à une tâche de haute priorité. la priorité est donnée sous forme de nombre entier.  
