@@ -63,7 +63,9 @@ XXXXXXXXXX**passer par copie** = les arguments sont copiés dans la fonction, on
 On va utiliser les convention de [nomenclature de google](https://google.github.io/styleguide/cppguide.html#Naming).  
 On essaie d'être au plus claire. Ne pas utiliser de verbe pour les variables et booleans.  
 Les variables et les paramètres de fonctions sont en snake_case.  
-Les membres de classe (= les "variables" d'une classe) sont en snake_case avec un _ à la fin. On dit un trailing underscore.
+Les membres de classe (= les "variables" et "fonction" d'une classe, nommées respectivement les attributs et les méthodes) sont en snake_case avec un _ à la fin. On dit un trailing underscore.  
+Les constantes sont nommées avec un k comme préfix.  
+Qu'est-ce qui est nommé en upper-case (tout en majscule) ??
   
 XXXXXXXXXX diff entre variable globale et variable globale static  
 **variable globale** = une variable déclaré à l'extérieur d'une classe où fonction. Utilisable partout dans le code cpp (mais seulement le fichier cpp où elle est déclarée). Stocké dans data. Stocké dans bss si non initialisée.    
@@ -504,7 +506,7 @@ switch (currentStep_ % 4) {
 }
 ```
 
-A la place on va faire une **lecture binaire par décalage de bits à partir d’une Look-up table**. Le principe c'est de récupérer les séquences du moteur, dans notre cas on a 1010, 0110, 0101 et 1001, ce sont les 4 steps qui permettent à notre moteur de tourner. les 1 et les 0 décrivent si la pin est alimenté(1) où non(0). la position du chiffre correspond à la pin 1, 2, 3 où 4. Ces séquences moteurs peuvent être interprété comme un nombre en représentation binaire. 1010 équivaut à 10 en notation décimale (1 x 2^4 + 0 x 2^3 + 1 x 2^2 + 0 x 1^2). 0110, 0101 et 1001 correspondent respectivement à 6, 5 et 9.  
+A la place on va faire une **lecture binaire par décalage de bits à partir d’une Look-up table**. Le principe c'est de récupérer les séquences du moteur, dans notre cas on a 1010, 0110, 0101 et 1001, ce sont les 4 steps qui permettent à notre moteur de tourner. les 1 et les 0 décrivent si la pin est alimenté(1) où non(0). la position du chiffre correspond à la pin 1, 2, 3 où 4. Ces séquences moteurs peuvent être interprété comme un nombre en représentation binaire. 1010 équivaut à 10 en notation décimale (1 x 2^3 + 0 x 2^2 + 1 x 2^1 + 0 x 2^0). 0110, 0101 et 1001 correspondent respectivement à 6, 5 et 9.  
 On crée un tablea de 4 entrées auquel on assignes ces 4 nombres:  
 
 ```cpp
@@ -608,6 +610,44 @@ if (y != 0 && x / y > 1) {  // 1ère opérande false, activation du court-circui
 }
 
 ```  
+
+## couleur hexadecimale vers RVB  
+Dans photoshop chaque couleur est associée à une valeur hexadécimale à 6 chiffres allant de 0 à F (soit 16 valeurs d'où le hexadécimal).
+En fait les 2 premiers chiffres depuis la gauche équivalent à la teinte rouge, les 2 suivants à la verte et les 2 derniers à la bleu. Chaque composant RVB est exprimé sur une échelle allant de 0 à 255, soit 256 valeurs.  
+  ![colorpicker](mkdocs/rvb_hex.png)
+
+certaines fonctions prennet comme argument les teintes RVB, voici comment décomposé une variable hexadécimale pour en extraire ses composants RVB:
+
+```cpp
+
+struct RGB {
+    int r, g, b;
+};
+
+RGB HexToRGB(int hexValue) { //le type de retour de la fonction est RGB, il s'agit d'un struct (comme indiqué plus haut)
+    RGB result; //on crée un struct interne à la fonction.
+
+    // On décale de 16 bits pour isoler le Rouge (RRxxxx)
+    result.r = (hexValue >> 16) & 0xFF; //on aurait aussi pu utiliser 0b11111111
+    
+    // On décale de 8 bits pour isoler le Vert (xxVVxx)
+    result.g = (hexValue >> 8) & 0xFF;
+    
+    // Pas de décalage nécessaire pour le Bleu (xxxxBB)
+    result.b = hexValue & 0xFF;
+
+    return result;
+}
+
+int main() {
+    int myColor = 0xA655FB;
+    RGB color = HexToRGB(myColor); //Les valeurs du struct result sont assignées au struct color. Pass by value.
+
+    int LedColor (color.r, color.g, color.b); //les composantes r g b extraites de l'hexacode sont transmises à la fonction.
+}
+```  
+Voici une explication plus visuelle du code:  
+  ![bitshifting](mkdocs/bit_shifting.png)
 
 
 ## utilisation de la mémoire
@@ -758,6 +798,8 @@ Stepper::setSpeed(...)
 définition de la méthode setSpeed de la class stepper. cette définition sera partagée par tous les objets mais chacun l'exécutera avec ses propres attributs.
 mais tous les objets partagent la même méthode setspeed comme on l'a définie ?
 Oui ✅, tous les objets partagent le code de la méthode setSpeed(), mais chacun l’exécute pour lui-même, avec ses propres données internes (attributs).
+
+## struct 
 
 ## Data type
 
