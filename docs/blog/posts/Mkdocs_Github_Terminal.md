@@ -172,6 +172,20 @@ Créer un repository vide sur Github et lui donner un nom
 > git remote add origin https://github.com/nomUtilisateurGithub/NomDossierProjet.git  
 > git push -u origin main   
 
+## Branche
+Les Branches sont une version parallèle de notre projet. En fait lorsque l'on crée un repository, Github le stock automatiquement dans la branche main. Si l'on souhaite faire des changement tout en maintenant ce que l'on a déjà dans la branche main on peut créer une nouvelle branche. Cela nous permet de faire des tests et d'implémenter une nouvelle feature sans perturber notre contenu fonctionel. Lorsque l'implémentation est terminée, on va faire pouvoir valider la pull request de la branche vers la branche main (ça s'appelle un merge). à chaques commit depuis VSC vers notre branche, on va tout de même voir apparaître une pull request dans notre branche merge, il faut simplement l'ignorer si l'on ne veut pas encore la mettre à jour.  
+
+![emplacement copie locale](mkdocs/Git_Pull_request.png)   
+> le message de pull request (merge vers main)  
+
+![emplacement copie locale](mkdocs/changer_de_branch.png)    
+> Dans VSC en bas à gauche il faut sélectioner dans quelle branche l'on souhaite faire notre commit.  
+
+Pour info il existe aussi la rebase, imaginons l'état du code de la branche main au moment où l'on crée une nouvelle branche, le rebase consiste à effacer cet état de base de la nouvelle branche et lui assigner l'état de la branche main mis à jour par un où des nouveau commit de main. C'est à éviter, sauf si l'on est seul à travailler sur un projet.
+
+## Fork  
+Lorsque l'on a pas les droits d'administrateur l'on ne peut pas modifier le repository de quelqu'un d'autre, la solution c'est de faire un fork, c'est à dire copier son repo dans un nouveau repo que l'on contrôle. On peut y apporter nos modifications et proposer à l'auteur original de faire un merge pour intégrer nos changements.
+
 ## terminal
 Le terminal permet d'executer des programmes ou scripts, de rechercher et déplacer des fichiers de manière précise, installer ou mettre à jour des logiciels.  
 Sur windows il en existe plusieur:   
