@@ -175,6 +175,12 @@ Static a différentes comportement qui dépendent de son context d'utilisation
 | N'est initialisée qu'une seule fois          | Peut être accédé sans objet : Classe::membre   |
 | Est locale en visibilité, globale en durée de vie | Partage la même valeur pour tous les objets |
 
+## Static et globale.
+Les variables peuvent être locale où globale, en fonction de l'endroit de leur déclaration. On peut modifier leur comportement grâce au mot clé static. Les variables globales conservent les modification de leur valeurs entre chaques appels, pareil pour les variables static, le schéma suivant détaille leur durée de vie et leur porté.
+![static et globale](mkdocs/static_global.png)    
+
+Pour les fonctions c'est un peu différent, par défaut toute fonction déclarée hors d'une classe est globale et peut être appellée par toute part du programme ayant le bon #include. On peut déclarer une fonction static, elle n'est alors disponible que dans le fichier où elle est déclarée.
+
 ## ⚠️ Static VS const.  
 **Dans une fonction** une variable static est initialisé une fois mais peut changer de valeur suivant les opération qu'on lui fait subir. Elle n'est pas réinitialisée d'un appel à l'autre, c'est à dire qu'elle garde en mémoire sa valeur.  
 à l'inverse une variable const ne peut être changée et sa valeur n'est pas conservée entre deux appels
@@ -218,7 +224,7 @@ main() {
   counter(99); // 102
 }
 ```  
-Maintenant **dans une classe**, static indique que l'attribut (les variables de class sont nommées ainsi) est partagé par tous les objets, si un objet modifie sa valeur, cela changera aussi la valeur dans les autres objets. On peut éviter ça avec un const.    
+Maintenant **dans une classe**, static indique que l'attribut (les variables de class sont nommées ainsi) est partagé par tous les objets (instances de la classe ), si un objet modifie sa valeur, cela changera aussi la valeur dans les autres objets. On peut éviter ça avec un const.    
   
 
 
@@ -428,7 +434,7 @@ public:
 
 ##🔎 Is-a VS Has-a
 
-On utilise la question **is-a** / **has-a** pour savoir si une classe hérite d'une autre classe où possède une autre classe ou un objet d'une autre classe ??  
+On utilise la question **is-a** / **has-a** pour savoir si une classe hérite d'une autre classe où possède une autre classe ou un objet d'une autre classe. Is-a c'est de l'héritage, utilisé lorsque l'on a besoin des attributs et méthode du parent mais que l'on doit en ajouter où y apporter des spécificités. Lorsque la classe est principalement basé sur / tiré de une autre classe. Has-a, c'est de la composition. Lorsque la classe possède ses fonctionalités mais doit aussi posséder des fonctionalités spécifique provenant d'une autre classe. Ex: injection_Motor est probablement un enfant de Motor et Car utilise la composition pour incorporer injection_Motor, cette dernière classe pourait incorporer une class piston.
 
 Is-a:
 ```cpp
@@ -457,6 +463,91 @@ public:
 >Engine engine;  
 >et pas public: Engine engine;
 
+## Pointeurs et références  
+Voilà un thème qui porte à confusion à cause du pauvre choix de symbol qui a été fait pour symboliser la référence (& est aussi utilisé comme opérateur pour récupérer une adresse, ça semble lié puisque une référence stock une adresse mais c'est 2 utilisations de & différentes) ainsi que du fait que références et pointeurs font quasi la même chose avec quelques subtilités. 
+
+Détaillons ce qu'est un **pointeur**: Il s'agit d'une variable de type pointeur  qui va stocker l'adresse d'une autre variable. Le type de la variable pointé est inclu dans le type pointeur. ex: 
+
+```cpp
+int* a; //pointeur nommé a pointant vers un int.  
+``` 
+Pour l'instant le pointeur est déclaré mais ne pointe nulle part. Pour ce faire on va lui assigner l'adresse de la variable vers laquelle on souhaite pointer:  
+```cpp
+int* a = &speed //a pointe vers speed.  
+``` 
+Un pointeur stock une seul adresse, mais on peut le réassigner à une autre variable. Il pointera donc vers une nouvelle adresse. Un pointeur peut être null, afin d'éviter des comportement erratique du code (lorsque l'on lit la valeur du pointeur vers un null, on peut avoir toute sorte de résultats et des résultats différents entre les lectures), il est d'usage d'utiliser if type* pointerName = nullptr {return;} pour désamorcer ces situations.  
+On peut déréférencer un pointeur pour récupérer la valeur de la variable vers laquelle il pointe.
+```cpp  
+int myVariable = 47;
+
+// assignation de myPtr à l'adresse de myVariable. Ce n'est pas une référence
+int* myPtr = &myVariable; 
+
+cout << "myPtr = " << myPtr << endl; // 0x55c72def0010
+cout << "déréférencement de myPtr = " << *myPtr << endl; // 47
+```   
+
+**Références**: ne peut être assigné qu'une fois, ce qui veut dire que contrairement aux pointeurs on ne peut pas modifier l'adresse vers laquelle pointe notre référence. Ne peut pas être égale à nullptr. Les références sont plus simples d'utilisation que les pointeurs. (La difficulté qui les entoure vient de la confusion avec les pointeurs, de base elles donnent accès à la valeur et non l'adresse. Par déréférencement elles donnent l'adresse et non la valeur, on le fait avec & et non *). Pour être exacte on ne devrait pas parler de déréférencement, & étant l'opérateur d'adresse. Mais ça permet  de faire un parallèle avec le concept des pointeurs.  
+```cpp  
+int myVariable = 47;
+
+// assignation de myPtr à l'adresse de myVariable. Ce n'est pas une référence
+int& myReference = myVariable; 
+
+cout << "myReference = " << myReference << endl; // 47
+cout << "déréférencement de myReference = " << &myReference << endl; // 0x55c72def0010
+```   
+
+Les pointeurs sont assignés à une adresse, ils retournent donc une adresse, en les déréférences (*ptrName) on obtient la valeur de la variable vers laquelle ils pointent.  
+Les références sont assignées à une variable, elles contiennent la valeur de cette variable, en les déréférence (&refName) on obtient l'adresse vers laquelle elles pointent.  
+Ainsi déréférencer dans le cas d'un pointeur c'est utiliser * pour avoir la valeur. Dans le cas d'une référence c'est utiliser & pour avoir l'adresse.  
+Ce tableau nous résume bien le tout:  
+![modulo](mkdocs/Pointeur_vs_references.png) 
+
+## Aliasing
+En programation cela signigie que plusieurs expréssions concernent le même élément (référencent le même objet mais je préfère éviter ces termes qui portent à confusion). Ainsi les références sont des alias, cependant tous les alias ne sont pas des références.  
+
+## Pass by value / copy / référence / adresse  
+
+**Pass by value**, aussi nommé **Pass by copy**: méthode plus lourde car une copie de la valeur transmise est crée en coulisses. C'est cette copie qui va être modifiée. À la fin de la fonction la variable originel n'aura pas changée, même si elle à été déclarée static.   
+
+**Pass by address** aussi nommé **Pass by pointer**: grâce au pointeurs, on transmet une adresse à la fonction qui modifie donc la variable originale. A la fin de la fonction la variable conserve sa valeur modifiée. 
+Le pass by address utilise l'adresse de la variable en tant qu'argument lors de l'appel de la fonction. Un pointeur en tant que paramètre dans la déclaration de la fonction. En arrière plan le compilateur assigne le paramètre à l'argument, on a donc bien un pointeur assigné à une adresse, int* myPtr = &myVariable dans l'exemple ci dessous.  
+```cpp  
+ void myFunction(int* myPtr) {  // déclaration de la fonction
+  cout << "*myPtr = " << myPtr << endl; // 47
+  myPtr = 5;
+  cout << "myPtr = " << myPtr << endl; // 5
+}
+
+int main() {
+  int myVariable = 47;
+  cout << "myVariable = " << myVariable << endl;  // 47
+  myFunction(&myVariable);  // appel de la fonctionpassage. pass by adresse
+  cout << "myVariable = " << myVariable << endl; // 5
+}  
+```   
+
+**Pass by reference**: moins compliqué dans la notation que le pass by adresse/pointer, il est intéréssant de noter qu'une référence ne peut pointer que vers une seul adresse, dans le code ci dessous, la durée de vie de myReference ne dépasse pas l'execution de la fonction, elle est détruite suite à son appel. On peut appeller la fonction plusieurs fois avec des arguments différents, notre référence semble donc être assignée à plusieurs adresse mais du fait de sa durée de vie elle est détruite avant que ce soit le cas (j'aurais donc du dire nos références). La valeur de la variable passée par référence conserve les changements de valeurs produits par la fonction. 
+```cpp  
+ void myFunction(int& myReference) {  // déclaration de la fonction
+  cout << "myReference = " << myReference << endl; // 47
+  myPtr = 5;
+  cout << "myReference = " << myReference << endl; // 5
+}
+
+int main() {
+  int myVariable = 47;
+  cout << "myVariable = " << myVariable << endl;  // 47
+  myFunction(myVariable);  // appel de la fonctionpassage. pass by reference
+  cout << "myVariable = " << myVariable << endl; // 5
+}  
+```   
+Ce qui qui porte à confusion c'est la nomination:  
+Quand on dit pass by reference on dit que l'argument est une référence.    
+Quand on dit pass by adresse on dit que l'argument est une adresse.  
+quand on dit pass by pointeur, l'argument est toujours une adresse, ce nom fait référence au paramètre dans la déclaration de fonction. Synonyme de pass by adresse.
+
 ## modulo  
 
 C'est une opération noté x %y qui va nous donner le reste de la division de x par y. Cela permet de créer une boucle allant de 0 à y-1.   
@@ -467,7 +558,7 @@ Avec les nombres negatifs le modulo ne donne un résultat négatif dans C++ mais
 Il faut recourir à une astuce pour éviter d'avoir à traiter des nombres négatifs:   on va rajouter 4 (la taille de notre cycle) pour revenir dans des nombres positifs et corriger le décallage (lorsque x = -1, sans l'astuce le modulo nous retourne -1, cf trait rouge. Ce qu'on veut c'est 3, donc faire une valeur absolue du modulo n'aurait pas fonctionné). on se retrouve donc avec (x %4 + 4) %4. Exemple:  
 ```cpp
 int stepIndex = ((currentStep_ % 4) + 4) % 4;  
-```   
+```     
 
 ## Look-up table  
 A la place d'utiliser un switch avec plusieurs case on peut utiliser une Look-up table (abrégé LUT).  
@@ -649,7 +740,16 @@ int main() {
 Voici une explication plus visuelle du code:  
   ![bitshifting](mkdocs/bit_shifting.png)
 
+## bit masking
+Le bitmasking est le fait d'utiliser un masque binaire. Voici un masque binaire: 001101. Son utilisation consiste à assigner des éléments à chaque bit du mask et d'utiliser le masque pour extraire que les éléments dont le bit du masque vaut 1 (où zero, c'est au chois). ça permet de discriminer des éléments au sein d'un groupe. Souvent le masque se construitgràace à ces techniques: lecture de valeur binaires, bitshifting et combinaison du tout grâce à l'opérateur |. Par exemple on pourait faire une loop de x élément qui va lire l'état d'une pin et la déplacer vers la gauche de x unité et combiner tous les résultats pour en faire un masque.    
+```cpp
+int masqueFinal = 0; // Variable pour stocker le masque, sera mis à jour par la loop
 
+for(int x = 0; x < 4; x++) {
+    int pinResult = digitalRead(x);       // On lit la pin x
+    masqueFinal |= (pinResult << x);      // On décale le bit et on l'ajoute avec l'opérateur OR (|)
+}
+```
 ## utilisation de la mémoire
 Après compilation, le programme est stocké dans 3 zones de la mémoire:  
 
@@ -800,6 +900,178 @@ mais tous les objets partagent la même méthode setspeed comme on l'a définie 
 Oui ✅, tous les objets partagent le code de la méthode setSpeed(), mais chacun l’exécute pour lui-même, avec ses propres données internes (attributs).
 
 ## struct 
+les structs sont des containers stockant des variables. Ces variables sont dites membres du struct et peuvent être de type différents au sein du même struct.  
+Il y a 2 types de struct, les structs initialisé dans plusieurs variables et les structs nommés. Le 1er type consiste à créer un struct avec le mot clé "struct", déclarer ses membres dans les acolades et créer des variables qui contiennent ce struct simplement en les nommant après les accolades. Il n'y a pas de liens entre les membres des 2 mêmes variables  basées sur le même struct.  
+
+```cpp 
+struct {
+    int quantity;
+    float price;
+    string name;
+} Product_1, Product_2;
+
+Product_1.price = 16;
+Product_2.price = 4;
+```    
+Le 2ème type est la structures nommées. Pour ce faire il faut donner un nom après le mot struct, cela permet de traiter le struct comme un type de donnée, à même titre que int, float etc.   
+
+```cpp 
+struct Product {
+    int quantity;
+    float price;
+    string name;
+};
+
+Product MyProduct_1; //création d'un struct Product dans MyProduct_1
+Product MyProduct_2; //création d'un struct Product dans MyProduct_2
+
+MyProduct_1.price = 16;
+MyProduct_2.price = 4;
+```      
+
+## Enums  
+Les **Enums** (pour enumeration)  ressemble aux structs mais ils contienent des constantes de type int. Si on ne leur donne pas de valeur, elles en prendront par défaut, allant de 0 à x-1, x étant le nombre d'élément dans l'enum. On peut leur attribuer une valeur avec un =. Si on attribue la valeur de 5 par exemple au 1er élément de l'enum, le second vaudra 5+1 et ainsi de suite. La manière d'accéder à ces variable diffère des structs. En fait un enum c'est un moyen d'assigner des noms à des valeurs fixes qui partent de 0 et se qui se suivent. Les éléments d'un enum sont séparés par des virgules et non des points virgules comme dans les structs. 
+```cpp   
+enum Level {
+    LOW, //la convention est d'utiliser des majuscules.
+    MEDIUM,
+    HIGH  //pas besoin de virgule pour le dernier item.
+}
+```     
+
+Pour accéder aux valeurs de l'enum il faut créer une variable dans la méthode main() du programme. On commence par le mot clé enum, puis le nom de l'énum et enfin le nom de notre variable. On peut lui assigner une valeur contenue dans l'enum Level.
+
+```cpp   
+enum Level MyVar = MEDIUM
+```    
+
+⚠️ Les enum ont des limitations:      
+Les enums ne peuvent pas avoir des membres avec le même noms. Un nom utilisé dans un enum ne peut plus être utilisé (par une variable hor enum).  
+
+Il existe les **enum class** aussi appelés scoped enumeratoins, c'est une sorte d'enum qui n'a pas la contrainte des noms, dont le scope n'est pas global.  On les crées en ajoutant le mot clé "class" entre enum et le nom de l'enum. On utilise :: pour accéder à ses membres.  
+
+```cpp   
+// Declaration
+enum class EnumName{ Value1, Value2, ... ValueN};
+
+// Initialisation
+EnumName ObjectName = EnumName::Value; 
+```    
+
+[doc et exemple](https://www.geeksforgeeks.org/cpp/enum-classes-in-c-and-their-advantage-over-enum-datatype/)
+
+## struct vs class  
+Les structs (abréviation de structure) et les classes partagent des similitudes, historiquement les struct appartiennent à C et les classes sont leur évolution introduite dans le language C++ spécialisé en programation orienté objet (POO). Ils sont tous deux le regroupement de variables et fonctions (nommés membres et méthodes pour la classe). Les grande différence sont que, par défaut, ces éléments sont privés dans la calsse et public dans le struct. Généralement on défini un constructeur dans les classes. Dans la pratique, la manière d'accéder aux éléments du struct et de la classe diffère (bien qu'en arrière plan elle soit semblable)
+
+```cpp   
+class vehicle {
+    public:
+        vehicle(int carSpeed) : speed(carSpeed) {}; //constructeur
+        int speed; //membre publique
+
+    private:
+        int acceleration = 10; //membre privé
+        int boost(speed) {
+            speed = speed * acceleration;
+        return speed;
+    }
+}
+
+vehicle myCar(60); //initialisation de l'objet à partir de la classe
+
+myCar.speed = 90; //changement de la valeur du membre speed de l'objet myCar
+```  
+On peut accéder aux membres public depuis l'extérieur de la classe. Pour les membres private, on peut uniquement le faire depuis l'intérieur de la classe en utilisant **this**.
+La méthode boost est définie dans la classe vehicle. Quand on l'appelle depuis un objet, en arrière plan le compilateur remplace l'objet par this-> ainsi il pointe sur l'objet. 
+
+Dans l'exemple qui suit on voit comment modifier les variables d'un struct depuis l'intérieur et l'extérieur de ce dernier grâce à une fonction. Dans le cas où l'on appelle une fonction depuis l'extérieur d'un struct pour modifier ses variables internes, il faut créer un pointeur vers le struct. Pour rapelle un pointeur s'écrit type* nomDuPointeur. Si on veut un pointeur nommé myPointer vers un struct nommé point, le pointeur sera point* myPointer.  Lorsque l'on est dans un struct où un objet et qu'on nomme l'un de ses membre/variable, dans le corps d'une fonction destinée à modifier sa valeur, on peut se contenter de donner le nom du membre/variable à modifier. Le compilateur rajoute implicitement "this->" devant le nom pour qu'on sélectionne bien le bon élément. Attention, si un des argument à le même nom qu'un membre/variable de la classe / du struct, le compilateur pense qu'on y fait référence et ne rajoute pas "this->" c'est une exception car si une variable ailleur dans le code, ex variable globale, a le même nom, le compilateur passe outre et rajoute le "this->"  
+  
+ En fait this c'est un peu comme créer un pointeur vers l'élément et le déréférencer, ce qui permet d'utiliser l'opérateur . pour accéder aux membres de l'élément pointé. this->x revient à faire (*this).x    
+  
+Lors de la définition de fonction modifiant les variables / membres internes depuis l'extérieur d'un struct / d'une classe, il faut transmettre un pointeur comme paramètre et non jute le struct / la classe. Sinon l'on modifierait une copie (pass-by-balue), une fois la fonction terminée, la copie est détruite et le struct / la classe n'a pas été changée. L'utilisation d'un pointeur permet de modifier directement le struct / la classe (pass-by-reference).  
+
+```cpp   
+//fonction modifiant les variable du struct depuis l'intérieur du struct
+struct Point {
+    int x = 5;
+    int y = 10;
+
+    void move (int dx, int dy) {
+        x += dx; // implicitement le compilateur rajoute "this->" devant x
+        y += dy;
+    }
+}
+
+ptr* p = &Point; //avant de pouvoir utiliser un pointeur il faut le déclarer.
+
+//fonction modifiant les variable du struct depuis l'exterieur du struct
+    void move (Point* p, int dx, int dy) {
+        p->x += dx; // "Va à l'adresse de p, trouve x, et ajoute lui dx"
+        p->y += dy;
+    }
+
+```  
+
+```cpp   
+void Point::move (int dx, int dy) {
+    x += dx; // Équivaut à this->x += dx;
+    y += dy; // Équivaut à this->y += dy;
+}
+```  
+
+
+dans cet exemple on a changé la valeur de speed à priori sans utiliser de pointeur, ce qui signifierait qu'on aurait modifié la valeur sur une copie de speed (pass by copy), pourtant on a bien mis à jour le membre speed de myCar. ce qui se passe en arrière plan c'est l'utilisation de this->speed. c'est la short form de (*this).speed. Ainsi on a bien modifié la valeur à l'adresse du membre.
+
+La classe peut être parent d'une autre classe. On parle de classe dérivée. Le struct peut également être composé d'un struct où même d'une classe donc il y a aussi une forme de dérivation. On peut créer un objet à partir d'une classe, on parle d'instance. On peut aussi instancier un struct bien qu'il soit préférable de réserver le mot instancier aux classe pour éviter la confusion entre classe et struct.
+
+Je comprend rien avec <type>* qui est un pointeur, &objet quie est une adresse, <type>& qui est un alias. des fois dans les déclaration on utilise des pointeur mais dans l'apelle de la fonction on utilise une adresse ? c'est pas pareil puisque un pointeur sauvegarde une adresse ?  
+
+## Opération ternaire  
+
+On pourrait dire qu'il s'agit d'une short form d'une fonction booléenne. (Je parle de fonction car selon la valeur de la variable booléenne on retourne une valeur où une autre.). Le terme exacte est opérateur condinionel car il teste une condition (un if où un else). "ternaire" vient du fait qu'il prend 3 opérandes.  
+
+```cpp   
+// Si x n'est pas égale à 0, n vaut 10. Sinon n vaut 20
+n = (x != 0) ? 10 : 20;   
+
+``` 
+ L'opérateur ternaire permet de se passer d'écrire    
+```cpp     
+// Si x n'est pas égale à 0, n vaut 10. Sinon n vaut 20
+if (n = 0) {
+    n = 10;
+} else {
+    n = 20;
+}
+``` 
+
+## template  
+Cette technique est de niveau avancée et peut facilement être source d'erreur, c'est pourquoi elle n'est pas utilisée dans le code critique à la sécurité (voiture / avions etc). Les fonctions demandent des paramètres, ces paramètres sont d'un certain type. ça peut être limitant. L'overload (une même fonction mais avec des paramètres différents) semble être une piste pour passer outre ce problème mais il demande d'écrire 2 fonctions, ayant chaqu'une leur type, ça devient vite compliquer de se retrouver dans le code.
+Voici un expemple de fonction permettant d'additioner 2 nombres. Problème: on ne peut pas lui donner 2 floats à additioner.   
+
+```cpp   
+int sum (int numberA, int numberB) {
+    return numberA + numberB;
+}
+```   
+
+La solution c'est d'utiliser les **fonctions templates**. On défini une **primary template** et l'instancie pour génèrer des fonctions overloadée, nommées **instantiated functions**. Partout où on a un type (type de fonction, d'arguments, etc) on utilise un type placeholder (nommé offitiellement type template parameters et officieusement template type) plutôt qu'un type fixe comme int par exemple. Pour ce faire on remplace le type par ce que l'on veut. ici "T" et l'on ajoute "template <typename T>" pour indiquer que ce qui suit est une fonction template de type T. cette indication est valable **que** pour la fonction qui suit, donc il faut le faire pour chaque fonction template. Il est possible de créer une [fonction template avec plusieurs type de template](https://www.learncpp.com/cpp-tutorial/function-templates-with-multiple-template-types/)
+  
+```cpp   
+template <typename T> // this is the template parameter declaration defining T as a type template parameter
+T max(T x, T y) // this is the function template definition for max<T>
+{
+    return (x < y) ? y : x;
+}
+```   
+
+Les fonctions templates ne sont pas compilées où exécutées directement, cela se passe lorsque l'on appelle la fonction en spécifiant entre <> le type que l'on souhaite. à Ce moment le compilateur crée la déclaration de la fonction max du type souhaité en arrière plan pour pouvoir l'executer à son appel.
+
+
+```cpp   
+max<int>(1, 2); // appel de la fonction template en type int
+```  
+
 
 ## Data type
 
@@ -808,4 +1080,9 @@ Oui ✅, tous les objets partagent le code de la méthode setSpeed(), mais chacu
 **char** = XXXX  
 **char** = XXXX
 etc
+
+```cpp   
+
+```   
+
 
