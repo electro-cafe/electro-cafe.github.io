@@ -22,15 +22,13 @@ Je ne pense pas qu'il y ait une méthode allant du point A au point B permettant
 Je suis parti de 0 et j'y suis souvent retourné, à chaque boucle je comprend un peu mieux les différents principes et composants, ainsi que les liens qui les lient.  
 Ce qui suit a été réecrits plusieurs fois.
 
+
+// XXXXXXXXXXXX ajout loop + for each loop  
+
 ## Liens utiles  
 [Geeksforgeeks](https://www.geeksforgeeks.org/cpp/function-overloading-vs-function-overriding-in-cpp/)
 
 ## vocabulaire
-  
-XXXXXXXXXXXXXXXXXXXXXXX ajout note cahier 
-XXXXXXXXXXXXXXXXXXXXXXX ajout note natel
-XXXXXXXXXXXXXXXXXXXXXXX relire + corriger completer   
-
 
 **classe** = blueprint définissant les attributs et méthodes partagés par ses instances. Permet de créer des objets.  
 **objet** = instance d'une classe. Chaque objet est indépendant à moins que ses attributs et méthodes soient static.   
@@ -58,6 +56,7 @@ XXXXXXXXXX**passer par copie** = les arguments sont copiés dans la fonction, on
 **:** = assignation 
 **surcharge** = déclarer la même fonction mais avec des arguments différents.  
 
+**#include <iostream>** = bibliothèque pour utiliser std::cout / std::cin et \n  
 
 **Naming**  
 On va utiliser les convention de [nomenclature de google](https://google.github.io/styleguide/cppguide.html#Naming).  
@@ -900,20 +899,23 @@ mais tous les objets partagent la même méthode setspeed comme on l'a définie 
 Oui ✅, tous les objets partagent le code de la méthode setSpeed(), mais chacun l’exécute pour lui-même, avec ses propres données internes (attributs).
 
 ## struct 
-les structs sont des containers stockant des variables. Ces variables sont dites membres du struct et peuvent être de type différents au sein du même struct.  
-Il y a 2 types de struct, les structs initialisé dans plusieurs variables et les structs nommés. Le 1er type consiste à créer un struct avec le mot clé "struct", déclarer ses membres dans les acolades et créer des variables qui contiennent ce struct simplement en les nommant après les accolades. Il n'y a pas de liens entre les membres des 2 mêmes variables  basées sur le même struct.  
+les structs (diminutif de "structure") sont des containers stockant des variables. Ces variables sont dites membres du struct. contrairement aux array et vector, on peut avoir des data types différents au sein du même struct.  
+Il y a **2 manière** de déclarer un struct: les **structs anonymes** et les **structs nommés**. La 1ère manière consiste à utiliser le mot clé "struct", déclarer ses membres dans les acolades puis créer la variable (juste donner son nom) qui contiendra les membres de ce struct, Simplement en la nommant après les accolades. On peut nommer plusieurs variables. Il n'y a pas de liens entre les membre d'un struct, ils ne sont pas partagés par toutes les instances du struct.
 
 ```cpp 
 struct {
     int quantity;
     float price;
     string name;
-} Product_1, Product_2;
+} Product_1, Product_2; //créra Product_1 et Product_2
 
 Product_1.price = 16;
 Product_2.price = 4;
-```    
-Le 2ème type est la structures nommées. Pour ce faire il faut donner un nom après le mot struct, cela permet de traiter le struct comme un type de donnée, à même titre que int, float etc.   
+```      
+**Avantage**: Rapide pour créer quelques instances de la structure.    
+**Inconvénient**: Si l'on veut rajouter une instance plus tard dans le code il faut soit revenir à notre déclaration du struct et ajouter le nom de notre instance, soit recopier le code du struct et y mettre le nom de note instance. Puisque notre struct n'a pas de nom (seul ses instance en ont un) on ne peut pas le passer à une fonction. Pour ces raisons, cette manière de faire est rarement utilisée.
+
+**Le 2ème type est la structures nommées**. Pour ce faire il faut donner un nom après le mot struct, cela permet de traiter le struct comme un type de donnée, à même titre que int, float etc.   
 
 ```cpp 
 struct Product {
@@ -925,9 +927,13 @@ struct Product {
 Product MyProduct_1; //création d'un struct Product dans MyProduct_1
 Product MyProduct_2; //création d'un struct Product dans MyProduct_2
 
-MyProduct_1.price = 16;
+MyProduct_1.price = 16;  // on utilise . pour acceder aux membres du struct
 MyProduct_2.price = 4;
 ```      
+**Avantage**: On peut créer des instances du struct facilement sans avoir besoin de revenir modifier la déclaration du struct. On peut passer les instances du struct comme paramètres de fonction.  
+**Inconvénient**: Nécessite deux lignes ou blocs de code pour définir le type puis déclarer la variable.  
+
+Quelle que soit la manière utilisée, il n'y a pas de liens entre les membres des instances de struct basées sur le même struct. 
 
 ## Enums  
 Les **Enums** (pour enumeration)  ressemble aux structs mais ils contienent des constantes de type int. Si on ne leur donne pas de valeur, elles en prendront par défaut, allant de 0 à x-1, x étant le nombre d'élément dans l'enum. On peut leur attribuer une valeur avec un =. Si on attribue la valeur de 5 par exemple au 1er élément de l'enum, le second vaudra 5+1 et ainsi de suite. La manière d'accéder à ces variable diffère des structs. En fait un enum c'est un moyen d'assigner des noms à des valeurs fixes qui partent de 0 et se qui se suivent. Les éléments d'un enum sont séparés par des virgules et non des points virgules comme dans les structs. 
@@ -1071,6 +1077,86 @@ Les fonctions templates ne sont pas compilées où exécutées directement, cela
 ```cpp   
 max<int>(1, 2); // appel de la fonction template en type int
 ```  
+
+## Vector  
+Appelé vecteur en français, il s'agit d'un array **dynamique**, ce qui signifie que sa taille n'est pas fixe, on peut ajouter et retirer des éléments à un vector.
+Tout comme les array il ne peut contenir qu'un seul data type. Si l'on doit regrouper plusieurs data type il faut utiliser un struct où un enum.  
+
+**création de vector**  
+Pour utiliser les vecteurs il faut ajouter le #include <vector>, chaque fois qu'on utilise le mot clé vector il doit étre précédé de std:: (en fait vector est un membre de la classe std, comme on souhaite y accédé en dehors de la classe std on utilise ::). C'est fastidieux mais on peut s'en passer grâce à using namespace std;
+
+```cpp   
+using namespace std; //Ajoute tous les std:: implicitement
+vector<int> myNumber = {4, 5, 6};
+
+void myFunction(std::vector vectorParameter);
+```      
+
+Sans using namespace std; il faut spécifier std:: partout. C'est fastidieux mais recommandé dans les projets professionnels.  
+```cpp   
+std::vector<int> myNumber = {4, 5, 6};
+
+void myFunction(std::vector vectorParameter);
+```   
+
+On utilise [] pour accéder aux éléments d'un vecteur:
+```cpp   
+vector<int> priceList = {5, 6, 7};
+
+// Change the value of the first element
+priceList[0] = 20 ;
+
+cout << priceList[0];  // Now outputs 20 instead of 5
+```    
+
+On peut imbriquer un vecteur dans un vecteur, cela crée un tablea 2D. le 1er vecteur permet d'accéder aux lignes et le second aux colonnes:  
+
+```cpp   
+std::vector<std::vector<Type>> My2DGrid = {
+    // ligne 0
+    {1, 2, 3}, 
+    // ligne 1
+    {4, 5, 6}, 
+    // ligne 2
+    {7, 8, 9}
+};
+
+//My2DGrid [ligne][colonne]
+My2DGrid [1][2] = 5; // change le 3ème élément de la 2ème ligne
+```   
+
+Pour manipuler un vector on utilise les foncitons **.push_back()** et **.pop_back()**. On peut également connaître sa taille grâce à **.size()**. Le fait de pouvoir retirer des éléments au vector implique le risque xxx adresse xxx risque de nullptr xx. La fonction **.empty()** retourne 1(true) où 0(false).   
+On peut utiliser une loop (où sa short version for-each loop) au sein d'un vector  
+
+```cpp   
+vector<string> cars = {"Volvo", "BMW", "Ford", "Mazda"};
+
+for (int i = 0; i < cars.size(); i++) {
+  cout << cars[i] << "\n";
+}  
+```    
+
+
+Lorsque qu'une fonction doit avoir un vecteur dans ses paramètres, on le passe par référence pour s'assurer qu'il soit valide et on vérifie que le tableau n'est pas vide. Cela garanti l'efficacité (évite de copier le vecteur) et la sécurité (évite les accès mémoire invalides). 
+On garantie ainsi que la référence n'est pas nulle lors de la compilation: si la référence au vecteur est null lors de la compilation, la compilation est impossible.   
+Il reste un second problème, bien que la référence soit valide, le vecteur peut avoir été vidé. C'est un état valide, on peut ajouter des membres sans problèmes où utiliser la fonction qui nous retourne sa taille. **Mais** si l'on tente d'accéder aux éléments de ce vecteur vide on ne tombe sur des null mais on accède à une zone mémoire inexistante, et ça, ça peut mener à un comportement imprévisible ou un crash.
+
+Pour éviter cette situation et nous avertir que la référence au vecteur est valide mais que le vecteur est vide, on ajouter un test "if return" au début de la fonction. Il vérifie que le vecteur ne soit pas vide, nous prévient et quitte la fonction si c'est le cas:
+```cpp 
+void exemple(const std::vector<int>& myVector) {
+
+    if (myVector.empty()) {
+        // si myVector est null.
+        std::cout << "Pas de données à traiter, je m'arrête proprement." << std::endl;
+        return; 
+    }
+    
+    // suite de la fonction
+}
+```   
+
+Avec un pointeur vers un vecteur invalide, la compilation n'échoue pas et les fonctions ne plantent pas lors de leur exécution si le vecteur est vide (tant que l'on ne déréférence pas le pointeur pour lire les valeurs). Dans ce cas on risque un comportement imprévisible (puisque le programme peut continuer de tourner avec des pointeurs null, on intègre un test de nullptr pour être prévenu)
+
 
 
 ## Data type
