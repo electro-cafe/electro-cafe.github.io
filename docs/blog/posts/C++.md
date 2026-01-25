@@ -1157,7 +1157,42 @@ void exemple(const std::vector<int>& myVector) {
 
 Avec un pointeur vers un vecteur invalide, la compilation n'échoue pas et les fonctions ne plantent pas lors de leur exécution si le vecteur est vide (tant que l'on ne déréférence pas le pointeur pour lire les valeurs). Dans ce cas on risque un comportement imprévisible (puisque le programme peut continuer de tourner avec des pointeurs null, on intègre un test de nullptr pour être prévenu)
 
+## UML  
+Acronyme d'Unified Modeling Language, il s'agit d'une notation permettant de représenter la structure d'un système de par ses classes, leurs atributs et méthodes, ainsi que les relations entre les objets.  
 
+**Installation**: Pour utiliser les diagrammes de classe UML dans Mkdocs il a fallu mettre à jour le fichier **mkdocs.yml**. sous Mardown extensions: ajouter ce code: 
+``` 
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format  
+
+```
+⚠️ les indentations sont importantes.  
+
+Ensuite nous pouvons créer notre schéma dans nos articles à l'aide de ce code:  
+```
+```mermaid
+classDiagram
+Class01 <|-- AveryLongClass : Cool
+Class03 *-- Class04
+Class05 o-- Class06
+Class07 .. Class08
+Class09 --> C2 : Where am i?
+Class09 --* C3
+Class09 --|> Class07
+Class07 : equals()
+Class07 : Object[] elementData
+Class01 : size()
+Class01 : int chimp
+Class01 : int gorilla
+Class08 <--> C2: Cool label  
+```  
+⚠️ ajouter ``` à la fin.    
+
+![image](mkdocs/classDiagramRelation.png)  
+Les différents type de relations sont expliqués sur le site [geeksforgeeks](https://www.geeksforgeeks.org/system-design/unified-modeling-language-uml-class-diagrams/)
 
 ## Data type
 
