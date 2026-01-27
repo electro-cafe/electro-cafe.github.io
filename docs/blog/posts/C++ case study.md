@@ -151,6 +151,42 @@ int applyGammaFast(int input) {
 }
 ```  
 
+## timer diagram  
+```mermaid
+classDiagram
+class LedPanel
+LedPanel : LedPanel() 
+LedPanel : litLedPanel() void
+
+class ClockWheel
+ClockWheel : int size
+ClockWheel : switch_up_
+ClockWheel : switch_down_
+ClockWheel : time_origin_
+ClockWheel : led_strip_
+ClockWheel : current_position_
+ClockWheel : size()
+ClockWheel : ClockWheel()
+ClockWheel : SetTimeOrigin()
+ClockWheel : Update()
+ClockWheel : SetLedColor()
+
+
+class StepperMotor4P
+StepperMotor4P : kNumberOfPins
+StepperMotor4P : gpio_num_t motor_pins_[]
+StepperMotor4P : StepperMotor4P()
+StepperMotor4P : Step() void
+
+class StepperMotor
+StepperMotor : steps_per_rotation_
+StepperMotor : current_step_
+StepperMotor : StepperMotor()
+StepperMotor : Step() void
+StepperMotor : ResetStep() int
+
+```
+
 ## element utile pour écrire le blog  
 
 ```mermaid

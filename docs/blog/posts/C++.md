@@ -1194,6 +1194,120 @@ Class08 <--> C2: Cool label
 ![image](mkdocs/classDiagramRelation.png)  
 Les différents type de relations sont expliqués sur le site [geeksforgeeks](https://www.geeksforgeeks.org/system-design/unified-modeling-language-uml-class-diagrams/)
 
+visibilité / encapsulation (aka modificateur d'accès/ portée des membres), sympole à mettre avant les membres de classe:    
+ **+** Public  
+ **-** Private  
+ **#** Protected  
+ **~** Package/Internal  
+
+abstrait, static sympole à mettre après les parenthèses de méthode où après le type de retour:  
+**\*** abstract (c'est une méthode qui devra être redéfinie par un objet dérivée de la classe. notation: virtual methode() = 0  dans la classe parent et methode() override {/*code*/} dans la classe enfant)  
+ **$** static  
+
+Il y a 8 types de relations
+
+| Symbole    | Relation     | Description / synthaxe |
+|----------------------------------------------|------------------------------------------------|----|
+| `--|>`        | **Héritage** | IS-A: la classe est dérivée d'une autre|
+| `..|>` | **Réalisation** | cas d'héritage à partir d'une classe parent contenant que des méthodes virtuelles pures (abstract) |
+| `*--` | **Composition** | HAS-A: la classe en possède une autre |
+| `o--` | **Agrégation** | variante de composition, la classe enfant peut exister si son composant est détruit |
+| `-->` | **Association** | Une classe communique avec une autre. pas de liens de parenté |
+| `..>` | **Dépendance** | Utilisation temporaire (ex: en paramètre de fonction) |
+| `--` | **Lien (Solid)** | Relation structurelle de base |
+| `..` | **Lien (Dashed)** | Relation sémantique ou annotation |  
+
+🔎 On peut utiliser les symboles dans l'autre sens pour inverser les flèches.    
+🔎 On peut utiliser des doubles flèches comme ceci:  
+     `<|--|>`  
+🔎 On peut ajouter un label comme ceci:  
+classA --|> classB : Inheritance
+  
+On peut ajouter une annotation au dessus du nom de la classe:  
+```cpp   
+classDiagram
+  class Shape 
+  <<interface>> Shape
+```     
+
+```mermaid
+classDiagram
+  class Shape
+  <<interface>> Shape
+```
+
+
+On peut utiliser un namespace qui **regroupe visuellement les classes**:  
+```cpp   
+classDiagram
+namespace BaseShapes {
+    class Triangle
+    class Rectangle {
+      double width
+      double height
+    }
+}
+```     
+```mermaid   
+classDiagram
+namespace BaseShapes {
+    class Triangle
+    class Rectangle {
+      double width
+      double height
+    }
+}
+```       
+
+On utilise **%%** pour ajouter des commentaires dans le code mermaid. Il ne sont pas visible dans le graph.  
+
+On peut définir la direction du graph grâce à TD (top down), RL et LR
+
+```c++   
+classDiagram
+  direction TD %% RL = droite gauche LR = gauche droite 
+  class Student {
+    -idCard : IdCard
+  }
+```     
+
+```mermaid   
+classDiagram
+  direction RL  
+  class Student {
+    -idCard : IdCard
+  }
+  class IdCard{
+    -id : int
+    -name : string
+  }
+  class Bike{
+    -id : int
+    -name : string
+  }
+  Student "1" --o "1" IdCard : carries
+  Student "1" --o "1" Bike : rides
+```    
+
+On peut ajouter des notes:  
+```c++   
+classDiagram
+    note "This is a general note"
+    note for MyClass "This is a note for a class"
+    link class MyClass{
+    }
+```   
+
+```mermaid   
+classDiagram
+    note "This is a general note"
+    note for MyClass "This is a note for a class"
+    class MyClass{
+    }
+```  
+
+Document référence: [doc Mermaid](https://mermaid.js.org/syntax/classDiagram.html)
+
 ## Data type
 
 **int** = XXXX
