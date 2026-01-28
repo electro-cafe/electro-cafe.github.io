@@ -155,31 +155,38 @@ int applyGammaFast(int input) {
 ```mermaid
 classDiagram
 class LedPanel
+LedPanel : int trailLength_
+LedPanel : vector LightPatternCoordonate_
 LedPanel : LedPanel() 
 LedPanel : litLedPanel() void
+LedPanel : loadNewLightPatternCoordonate() void
+LedPanel : changeColor() void
+LedPanel : dimLight() void
+LedPanel : LightFallof() vector
+
 
 class ClockWheel
-ClockWheel : int size
 ClockWheel : switch_up_
 ClockWheel : switch_down_
 ClockWheel : time_origin_
 ClockWheel : led_strip_
 ClockWheel : current_position_
-ClockWheel : size()
 ClockWheel : ClockWheel()
-ClockWheel : SetTimeOrigin()
-ClockWheel : Update()
-ClockWheel : SetLedColor()
+ClockWheel : SetTimeOrigin() void
+ClockWheel : Update() void
+ClockWheel : SetLedColor() void
+ClockWheel --* StepperMotor4P : HAS-A
 
-
+direction LR
 class StepperMotor4P
 StepperMotor4P : kNumberOfPins
 StepperMotor4P : gpio_num_t motor_pins_[]
 StepperMotor4P : StepperMotor4P()
 StepperMotor4P : Step() void
+StepperMotor4P --|> StepperMotor : IS-A  
 
 class StepperMotor
-StepperMotor : steps_per_rotation_
+StepperMotor : steps_per_rotation_ 
 StepperMotor : current_step_
 StepperMotor : StepperMotor()
 StepperMotor : Step() void
