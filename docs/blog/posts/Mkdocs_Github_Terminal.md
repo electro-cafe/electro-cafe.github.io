@@ -96,7 +96,7 @@ Puis Sync changes
 
 
 ## synchroniser repository github avec notre dossier local
-
+Notre dossier local va recevoir les dernières mises à jour du projet Github
 Utile pour travailler avec la dernière version mise à jour par les collègues.  
 Il va falloir utiliser [gitbash](https://git-scm.com/downloads).
 
@@ -111,8 +111,14 @@ Il faut dire à gitbash ou est situé notre dossier local avec cette commande:
 <figure markdown="span">
   ![push to git](mkdocs/localiser_gitbash.png)
   <figcaption>ici j'ai demandé où gitbash se "situe" puis je l'ai "placé" dans mon dossier copie local du repository github. Quand je lui redemande où il se situe, il nous indique qu'il est dans le dossier demandé</figcaption>
-</figure>
+</figure>  
 
+On met à jour notre repo local avec la commande **git pull origin main**  
+
+<figure markdown="span">
+  ![push to git](mkdocs/gitbash_pull.png)
+  <figcaption>ici on voit que mon dossier local est mis à jour selon la dernière version sur github</figcaption>
+</figure>
 Voici quelques commandes utiles 
 
 - **pwd** → Affiche le chemin complet du répertoire actuel dans lequel vous travaillez.
@@ -135,13 +141,10 @@ Voici quelques commandes utiles
 - **git commit -m "xxx"**
 → défini le message décrivant les changements du commit.
 
-**git push origin main**
+- **git push origin main**
 → Envoie (push) le commit vers GitHub.
 
-<figure markdown="span">
-  ![push to git](mkdocs/gitbash_pull.png)
-  <figcaption>ici on voit que mon dossier local est mis à jour selon la dernière version sur github</figcaption>
-</figure>
+
 
 ## copier localement un repository github  
 Dans la section "synchroniser repository github avec notre dossier local" on a vu comment mettre à jour notre dossier local avec les infos du Git. Ici on va voir comment avoir notre dossier localement lorsque l'on a commencé par créer le repository git.  
@@ -173,7 +176,15 @@ Créer un repository vide sur Github et lui donner un nom
 > git push -u origin main   
 
 ## Branche
-Les Branches sont une version parallèle de notre projet. En fait lorsque l'on crée un repository, Github le stock automatiquement dans la branche main. Si l'on souhaite faire des changement tout en maintenant ce que l'on a déjà dans la branche main on peut créer une nouvelle branche. Cela nous permet de faire des tests et d'implémenter une nouvelle feature sans perturber notre contenu fonctionel. Lorsque l'implémentation est terminée, on va faire pouvoir valider la pull request de la branche vers la branche main (ça s'appelle un merge). à chaques commit depuis VSC vers notre branche, on va tout de même voir apparaître une pull request dans notre branche merge, il faut simplement l'ignorer si l'on ne veut pas encore la mettre à jour.  
+Les Branches sont une version parallèle de notre projet. En fait lorsque l'on crée un repository, Github le stock automatiquement dans la branche main. Si l'on souhaite faire des changement tout en maintenant ce que l'on a déjà dans la branche main on peut créer une nouvelle branche. Cela nous permet de faire des tests et d'implémenter une nouvelle feature sans perturber notre contenu fonctionel. Lorsque l'implémentation est terminée, on va pouvoir valider la pull request de la branche vers la branche main (ça s'appelle un merge). à chaques commit depuis VSC vers notre branche, on va tout de même voir apparaître une pull request dans notre branche merge, il faut simplement l'ignorer si l'on ne veut pas encore la mettre à jour.  
+
+![emplacement copie locale](mkdocs/github_branche.png)   
+> creation d'une nouvelle branche   
+![emplacement copie locale](mkdocs/github_branche2.png)   
+> creation d'une nouvelle branche       
+
+![emplacement copie locale](mkdocs/git_branch_maj_localement.png)   
+> les commandes gitbash pour, depuis le repo local, le mettre à jour avec ce qu'il y a sur github. Note: c'est la commande git checkout nomDeLaBranche qui crée la branche en locale.      
 
 ![emplacement copie locale](mkdocs/Git_Pull_request.png)   
 > le message de pull request (merge vers main)  

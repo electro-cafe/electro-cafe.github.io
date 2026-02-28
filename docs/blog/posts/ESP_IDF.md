@@ -344,6 +344,8 @@ https://github.com/DiegoPaezA/ESP32-freeRTOS/blob/master/Task_FreeRTOS/main.c
 
 https://github.com/DiegoPaezA/ESP32-freeRTOS/blob/master/Task_FreeRTOS/main.c  
 
+En fait dans ESP-IDF app main() {} est en fait une tâche, ça ne se voit pas à sa synthaxe mais en arrière plan le compilateur transforme app main() {} en une tâche. Quand on crée des tâches et qu'on les appelles dans app main() {} on a en fait une tâche dans une tâche.
+
 On va commencer par inclure les bibliothèques nécessaires:  
 
 ```cpp
@@ -360,7 +362,7 @@ Définir notre pin.
 #define BLINK_GPIO 2  // define est une macro, c'est a dire une sorte de programme qui s'exécute avant que le programme ne soit compilé et s'exécute à son tour. son role est de chercher toutes les occurence de "BLINK_GPIO" et de les remplacer par 2. On aurait aussi pu faire une variable. L'avantage de #define c'est qu'il n'y a pas de problème de portée.
 ```  
 
-On va définir les fonctions des tâche. La création de la tâche viendra plus tard:
+On va définir les fonctions des tâche **en dehors de main{}**. La création de la tâche viendra plus tard (en fait c'est l'appel des tâches, et il se fait dans main{}):
 
 ```cpp
 void hello_task(void *pvParameter)  //les tâches sont des fonctions de type void et prennent un pointeur de type void qui va nous permettre de charger nimporte quel type d'argument quand on créera la tâche
@@ -391,7 +393,7 @@ void blinky(void *pvParameter)
 }
 ```
 
-Passons à la création de tâche. En fait on appelle une fonctionxTaskCreate en lui passant les bons arguments, dont l'adresse de la tâche qu'on a défini précédement.
+Passons à la création de tâche. En fait on appelle une fonctionxTaskCreate en lui passant les bons arguments, dont l'adresse de la tâche qu'on a défini précédement. Si une tâche doit pouvoir être stoppée / modifié on the go, il faut lui donner un task handle.
 
 ```cpp
 void app_main()
@@ -622,7 +624,7 @@ xTaskCreateStaticPinnedToCore()     // crée une tache, affiliée à un coeur, l
  Dans les paramètre on donne 0, 1 où tskNO_AFFINITY pour affilier la tâche à un coeur spécifique ou les deux.  
 
  Lors de la création de tâche on leur a alloué une zone mémoire avec de l'espace (stack), ça signifie que contrairement à une fonction dont les variables internes (donc locales) disparaissent si elles ne sont pas static, les variables au sein d'une tâche continuent d'exister lorsque la tâche passe la main à la suivante. La stack d'une tâche persiste tant que la tâche n'est pas supprimée avec vTaskDelete(). En résumé: les variables d'une tâches n'ont pas besoin d'être static, l'état de ses variables est conservé entre ses misees en pause.  
-Ces variables restent locales, pour communiquer leur valeur avec une autre tâche on peut utiliser une variable global (attention nécessite des précaution, par exemple un mutex pour éviter que la variable soit réécrite par 2 tâches en même temps) où plus simplement utiliser la Queue.
+Ces variables restent locales, pour communiquer leur valeur avec une autre tâche on peut utiliser une variable global (attention nécessite des précaution, par exemple un mutex pour éviter que la variable soit réécrite par 2 tâches "en même temps" ex: une tâche de retrait et de dépôt sur un compte en banque, une variable représentant la solde du compte. Si la tâche de dépôt cède la main à la tâche de retrait avant d'avoir updaté le solde, on a une erreur de compte. On appelle ce type de problème une **race condition**) où plus simplement utiliser la Queue.
 
 ## queue 
 https://esp32tutorials.com/esp32-esp-idf-freertos-queue-tutorial/?utm_source=chatgpt.com
@@ -810,7 +812,17 @@ c'est la partie du programme qui passe à la tâche suivante lorsqu'une tâche a
 
 ## Task Management   - Mutex - Semaphore - ISR
 Créer, suspendre, reprendre et effacer des tâches. Une tâche est une fonction indépendante, ayant sa propre zone mémoire allouée et possédant un état (en cours / pret / bloqué / suspendue).  
-es
+
+Sémaphore = À l’origine, un sémaphore désigne les bras articulés utilisés avant le télégraphe pour transmettre des signaux à distance.
+
+En informatique (notamment avec FreeRTOS utilisé dans ESP-IDF) :
+
+Un sémaphore est un mécanisme de synchronisation permettant de contrôler l’accès à une ressource ou de synchroniser des tâches.
+
+Il ne transporte pas de données, il ne fait que gérer un compteur et selon son état bloque / débloque des tâches
+le sémaphore se compose d'une queue (ce n'est pas la même que celle des tâches) et d'une variable int qui est incrémenté / décrémenté. Tant que la variable est supérieur à 0 on peut la décrémenter. Il faut voir ça comme un salon de coiffure de x places et une file d'attente. Lorsqu'une place se libère dans le salon de coiffure, une task mise en file d'attente peut entrer dans le salon et si une nouvelle task est appellée, le sémaphore l'ajoute à la file d'attente.
+
+Mutex = abréviation de mutual exclusion. Le mutex est une forme de Sémaphore c'est une sorte de verou qui bloque une section critique du code (géographiquement il vérouille une zone mémoire contenant une variable globale) afin d'empêcher le reste du code de la modifier tant qu'il n'a pas fini de le faire. Utilisé afin d'éviter les race conditions.
 
 -----------------
 MQTT = protocole efficace pr dialogue entre appareils.
@@ -841,7 +853,7 @@ SoC = System on Chip , signifie qu'il n'y a qu'un composant, la puce ESP32 par e
 
 SMP = Symmetric Multi-Processing, plusieurs coeurs et un système capable de gérer les tâches sur n'importe quelle coeur de manière équitable. N'importe quelle tâche peut être gérée par nimporte quel coeur.
 
-Un petit raspberry pi peut être un serveur à - de 100.-
+Un petit raspberry pi peut être un serveur à moins de 100.-
 un Nass - network attak ? storage marque synologie.
 
 --------------------------------

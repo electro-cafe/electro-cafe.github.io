@@ -36,7 +36,8 @@ Ce qui suit a été réecrits plusieurs fois.
 **méthode** = fonction d'une classe. "Décrit" le comportement de la classe.
 **attribut** = variable dans une classe. "Décrit" l'état de la classe.  
 **constructeur** = méthode d'une classe instanciant (créant) un objet.    
-**destructeur** = méthode détruisant l'objet, à appeller lorsque l'on a plus besoin de l'objet pour ne pas surcharger la mémoire.  
+**destructeur** = méthode détruisant l'objet, à appeller lorsque l'on a plus besoin de l'objet pour ne pas surcharger la mémoire.    
+**Variable métasyntaxique** = nom fictif utilisé dans les exemples de code. foo() et bar() sont utilisés par convention. C'est un placeholder qu'on remplacera par le nom que l'on aura choisi.   
   
 **pointeur** = variable pointant vers une adresse.  
 **adresse** = emplacement d'un "composant" (variable / fonction / classe / objet) dans la mémoire. L'adresse n'est pas fixe, elle peut changer d'un appel du programme à l'autre.      
@@ -546,6 +547,133 @@ Ce qui qui porte à confusion c'est la nomination:
 Quand on dit pass by reference on dit que l'argument est une référence.    
 Quand on dit pass by adresse on dit que l'argument est une adresse.  
 quand on dit pass by pointeur, l'argument est toujours une adresse, ce nom fait référence au paramètre dans la déclaration de fonction. Synonyme de pass by adresse.
+
+## pointeur de fonction  
+Contrairement à Javascript, C++ ne peut pas imbriquer des fonctions. Cependant, si l'on veut qu'une fonction s'execute puis à un certain point de son execution, execute une autre fonction, l'on peut créer un pointeur vers une fonction. 
+Donner ce pointeur de fonction en argument à une autre fonction.  
+exemple:    
+
+```cpp  
+// La fonction que l'on veut passer
+int MyFunction2() {
+    return 2;
+}
+
+// La fonction qui REÇOIT le pointeur (remarquez la syntaxe int(*)())
+int MyFunction1(int (*ptrFonction)()) {
+    int x = 5;
+    // On appelle la fonction via le pointeur pour obtenir sa valeur
+    int y = ptrFonction() + x; 
+    return y;
+}
+
+// Appel
+int resultat = MyFunction1(MyFunction2); // résultat 7
+```   
+
+Qui dit pointeur dit risque de null.
+c'est différent si on veut utiliser cette technique avec une méthode plutôt qu'une fonction (rapport à comment accéder aux attributs de la classe).    
+
+the Cherno: whenever you have a funciton pointer, you could use a lambda.
+les lambda sont des pointeur de fonction ?
+
+## fonction prenant une fonction comme argument
+
+Plutôt que d'utiliser un pointeur on peut passer une fonction en tant que paramètre. Pour ce faire dans la dfinition il faut indiquer le mot clé std::function puis mettre entre <> le type de retour suivi de parenthèse et enfin le nom générique de la fonction qui sera réutilisé dans les accolades. 
+
+```cpp  
+void myFunction(std::function <void()> func) {
+  func();
+  func();
+}
+```     
+L'avantage de cette technique comparée au pointeur de fonction ???
+
+## Callback
+C'est le fait d'appeller une fonction A grâce à une fonction B. Les pointeurs de fonction sont le moyen historique en C pour implémenter un callback.
+En plus d'un pointeur de fonction, un callback peut aussi être un foncteur, une fonction anonyme où un objet std::fonction (un conteneur pouvant stocker les 3 éléments précédement cités). 
+
+## Functor
+Foncteur en français, il s'agit d'un élément  qui peut être traité comme une fonction où un pointeur de fonction. Utilisé dans les scénarios XXX
+Les lambdas sont des functor.
+
+## Lambda   
+Un lambda est une fonction anonyme, c'est une fonction n'existant que (sous cette forme) que dans le code source car le compilateur en fait une classe anonyme (foncteur) lors de la compilation. C'est pour ça qu'on parle aussi d'un lambda comme d'un objet. En fait un lambda est à la fois la déclaration, la définition et l'appel d'une fonction.
+
+Notre code:  
+```cpp
+int bonus = 10;
+auto monLambda = [bonus](int x) { return x + bonus; };
+```
+
+En arrière plan le compilateur génère quelquechose de ce genre:
+```cpp
+class __Lambda_Anonyme {
+    int bonus; // La variable capturée devient un attribut de la classe
+public:
+    __Lambda_Anonyme(int b) : bonus(b) {} // Constructeur avec liste d'initialisation
+    int operator()(int x) const { return x + bonus; } // Le corps du lambda
+};
+```  
+ça c'est juste pour mieux comprendre pourquoi dans la documentation on en parle comme d'une fonction anonyme mais aussi d'une classe et d'un objet.
+Un lambda défini un objet, pas juste une fonction sans nom. Cet objet peut capturer les variables dans son scope, possède des paramètre et peut être transmit en tant qu'objet.
+
+Les lambda sont typiquement crées inline, c'est à dire que contrairement aux fonctions qui sont généralement déclarés dans un fichier .h puis définies dans un fichier .cpp et appelées dans un autre fichier .cpp, les lamdas sont défini directement à l'endroit où l'on en a besoin. Ils ont pour vocation d'être utilisé que comme complément de fonction. Il peuvent capturer les variables dans leur scope, c'est à dire les variables locales du fichier où il sont défini. 
+
+```cpp  
+[capture](paramètres) { corps_de_la_fonction };
+```      
+
+Pour l'instant on ne va pas s'intéresser à la capture, on laissera alors les crochets vide afin de ne rien capturer. 
+Dans les fait il y a 2 manière de l'utiliser:  
+en assignant notre fonction anonyme à une fonction et en appelant cette fonction (... pourquoi avoir appelé ça une fonction anonyme dans ce cas...)
+```cpp  
+int main() {
+  auto add = [](int a, int b) { //auto car on ne connaiît pas forcément le type de retour.
+    return a + b;
+  };
+
+  cout << add(3, 4);
+  return 0;
+}
+```     
+La 2ème utilisation consiste à passer le lambda en tant qu'argument d'une fonction.
+
+```cpp  
+// A function that takes another function as parameter
+void myFunction(function<void()> func) {
+  func();
+  func();
+}
+
+int main() {
+  auto message = []() {
+    cout << "Hello World!\n";
+  };
+
+  myFunction(message);
+  return 0;
+}
+``` 
+xxx différence, quel intéret de la 1ère méthode, cas concret car pour l'instant ca a l'air inutile
+
+Un lambda peut être défini n'importe où, il peut avoir accès à tout ce qui est défini dans le fichier (tant que c'est dans son scope) mais pour cela il faut utiliser la capture.  Même lorsqu'on le défini dans une classe, il n'est pas membre de la classe. Comme le compilateur fait de notre lambda une autre classe, il n'a pas accès à la classe dans laquelle il est défini tant qu'on ne l'a pas capturés. L'astuce est de capturer la classe grâce à [&], ça sous entend [&this] mais attention [this] (sans &) est aussi utilisable mais ne capturerait que l'adresse de la classe (donc un pointeur), on pourrait ensuite le déréférencer et accéder à ses attributs. Jusqu'ici mes explication laissent penser que [&] permet de capturer l'ensemble des variables et des classes du fichier où est utilisé le lambda mais c'est faux. [&] capture l'ensemble des variables locales qui se trouvent dans la fonction où la classe où le lambda est défini. Si le lambda est défini hors classe/fonction il capturera uniquement les variables globales. ça parait super de tout pouvoir capturer avec [&] mais ça augmente le risque que la durée de vie des élément capturés soit finie lorsqu'on utilise le lambda. Si c'est le cas autant utiliser [nomDeCeQueJeCapture] et en avoir une copie plutôt qu'une référence. On Peut aussi tout capturer ce qui est dans le scope du lambda grâce à [=] afin que ça ne coûte pas trop cher en mémoire. Le scope c'est tout ce qui est contenu entre les "{}" dans lesquelles se situe le lambda. Le lambda retient que ce qui est utilisé dans son corps de fonction, donc dans ses propres "{}".
+
+| type de capture                                      | utilité                                         |
+|----------------------------------------------|------------------------------------------------|
+|     [variableName]     |  stock une copie de la variable capturée       |
+|      [&variableName]   |  stock l'adresse de la variable capturée  |
+| [this] | utilisé que quand le lambda est dans une classe, stock un pointeur vers cette classe donnant accès à tous ses membres. Risque de comportement imprévisible / crash si la classe est suprimé. ?? |
+| [&] | Sous entend &this. comprend pas en quoi ça diffère de this ??|
+| [=] | stock tout ??|
+
+
+Attention à la durée de vie de ce qui est capturé par référence (contrairement à la capture by copie). Une fois un élément sorti de la heap impossible de savoir ce qui se trouve à l'adresse de cet espace mémoire. Ou pointer sur un null.  
+
+Différence fonction/lambda:  Une définition de fonction régulière est une instruction, alors qu'une définition de fonction lambda est une expression. Les fonctions lambda peuvent donc être définies puis passées à une autre fonction en une seule étape, sans avoir à passer par un nom local (c'est aussi pour cela que les fonctions lambda sont parfois appelées fonctions anonymes). Lambda est une fonctionnalité pratique permettant de définir plus facilement/rapidement de petites fonctions ponctuelles.
+
+## getter setter  
+XXXXXXXXXXXXXXComme on a parlé de capture, liens. les getter et setter permettent de sortir du scope d'une classe ?  
 
 ## modulo  
 
@@ -1156,6 +1284,9 @@ void exemple(const std::vector<int>& myVector) {
 ```   
 
 Avec un pointeur vers un vecteur invalide, la compilation n'échoue pas et les fonctions ne plantent pas lors de leur exécution si le vecteur est vide (tant que l'on ne déréférence pas le pointeur pour lire les valeurs). Dans ce cas on risque un comportement imprévisible (puisque le programme peut continuer de tourner avec des pointeurs null, on intègre un test de nullptr pour être prévenu)
+## Debug  
+**ctrl + clic** sur une ligne d'erreur nous "téléporte" sur la ligne erronée dans le bon fichier.
+![image](mkdocs/debug.png)  
 
 ## UML  
 Acronyme d'Unified Modeling Language, il s'agit d'une notation permettant de représenter la structure d'un système de par ses classes, leurs atributs et méthodes, ainsi que les relations entre les objets.  

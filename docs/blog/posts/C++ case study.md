@@ -151,6 +151,16 @@ int applyGammaFast(int input) {
 }
 ```  
 
+## fonction dans une fonction dans une fonction
+Ma classe LedPanel possède une méthode qui définit des attributs, parcour une grille et décrémente la valeur lue dans la case de la grille. J'ai une autre méthode qui parcour une grille et met à jour l'attribut brightness avec la valeur sur chaque case de la grille. Mon idée était de simplifier le tout en effaçant le code de parcour de grille qui est en doublon, d'en faire une méthode et de l'appeller en tant que callback. Mais cette méthode doit à son tour appeller un callback... ça complexifie le tout.
+
+Pour réaliser ceci, il aurait fallu faire appel à un lambda:  
+```cpp
+parcourirGrille([&](int i, int j) {
+    ledPanelMatrix_[i][j]--; // Sans le [&], la lambda ne saurait pas ce qu'est "ledPanelMatrix_"
+});
+```    
+
 ## timer diagram  
 ```mermaid
 classDiagram
