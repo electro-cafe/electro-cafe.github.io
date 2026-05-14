@@ -164,33 +164,52 @@ quand on se met dans le dossier local et que l'on fait un **git status** depuis 
 Quand on fait un **pull** on lui dit de récupérer ce qu'il y a de nouveau sur Github.  
 Quand on fait un **push** on lui dit d'envoyer les modifications locales vers Github.  
 
-## créer un repository sur Github à partir d'un dossier local.
-Une fois le dossier crée, utiliser Gitbash depuis son emplacement avec ces commandes:
+## créer un repository sur Github à partir d'un dossier local.  
+
+1) Ouvrir Gitbash, avec cd naviguer dans le dossier dont l'on souhaite créer un repository. Puis utiliser ces commandes:
 > git init  
 > git add .  
-> git commit -m "message du commit"    
+> git commit -m "message du commit"      
 
-Créer un repository vide sur Github et lui donner un nom  
+Cela va créer un repository local sur notre ordinateur. Maintenant il faut créer un Repository vide sur Github.
 
+2) Créer un repository vide sur Github et lui donner un nom.    
+Attention on peut soit créer le repository dans notre compte où dans une organisation (= dossier parent contenant plusieurs Repo mais n'étant pas un profil utilisateur. c'est plûtot comme un groupe). Voila les 2 méthodes:
+
+Sur notre profil git (**changer le nom**):
 > git remote add origin https://github.com/nomUtilisateurGithub/NomDossierProjet.git  
+
+Sur une organisation git. Créer un dossier vide (pas de readme) depuis Github puis utiliser cette commande (ici on a NomOrganisation/NomRepoGit):
+> git remote add origin https://github.com/electro-cafe/stabilisateur.git
+
+
+3)  Maintenant que le lien est crée, il faut envoyer les données
 > git push -u origin main   
+
+## Supprimer un Repository 
+Il faut évidement se connecter à son compte. 
+Attention action définitive si le dépo est privé, toutes les duplications du dépot seront également supprimés.  Si il est publique, les duplications ne seront pas supprimées.
+Ouvrir la page settings, tout en bas de celle-ci nous pouvons cliquer sur Delete this repository pour le supprimer  
+![emplacement copie locale](mkdocs/Github_settings.png)  
+![emplacement copie locale](mkdocs/github_delete_repo.png)  
+
 
 ## Branche
 Les Branches sont une version parallèle de notre projet. En fait lorsque l'on crée un repository, Github le stock automatiquement dans la branche main. Si l'on souhaite faire des changement tout en maintenant ce que l'on a déjà dans la branche main on peut créer une nouvelle branche. Cela nous permet de faire des tests et d'implémenter une nouvelle feature sans perturber notre contenu fonctionel. Lorsque l'implémentation est terminée, on va pouvoir valider la pull request de la branche vers la branche main (ça s'appelle un merge). à chaques commit depuis VSC vers notre branche, on va tout de même voir apparaître une pull request dans notre branche merge, il faut simplement l'ignorer si l'on ne veut pas encore la mettre à jour.  
 
 ![emplacement copie locale](mkdocs/github_branche.png)   
-> creation d'une nouvelle branche   
+> consulter les branches  
 ![emplacement copie locale](mkdocs/github_branche_2.png)   
 > creation d'une nouvelle branche       
-
-![emplacement copie locale](mkdocs/git_branch_maj_localement.png)   
-> les commandes gitbash pour, depuis le repo local, le mettre à jour avec ce qu'il y a sur github. Note: c'est la commande git checkout nomDeLaBranche qui crée la branche en locale.      
 
 ![emplacement copie locale](mkdocs/Git_Pull_request.png)   
 > le message de pull request (merge vers main)  
 
 ![emplacement copie locale](mkdocs/changer_de_branch.png)    
 > Dans VSC en bas à gauche il faut sélectioner dans quelle branche l'on souhaite faire notre commit.  
+
+![emplacement copie locale](mkdocs/git_branch_maj_localement.png)   
+> les commandes gitbash pour, depuis le repo local, le mettre à jour avec ce qu'il y a sur github. Note: c'est la commande git checkout nomDeLaBranche qui crée la branche en locale.      
 
 Pour info il existe aussi la rebase, imaginons l'état du code de la branche main au moment où l'on crée une nouvelle branche, le rebase consiste à effacer cet état de base de la nouvelle branche et lui assigner l'état de la branche main mis à jour par un où des nouveau commit de main. C'est à éviter, sauf si l'on est seul à travailler sur un projet.
 
