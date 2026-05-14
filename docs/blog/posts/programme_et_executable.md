@@ -46,7 +46,13 @@ Ici nous affichons le contenu du directory (le dossier) nous avons bien notre pr
 ![image](mkdocs/dir.png)     
 On voit aussi bonjour.exe, il s'agit du même executable que a.exe mais on a pu le nommer selon notre convenance. pour ce faire on a utiliser la commande **clang [-o nom donné à l'executable] main.cpp** On va donc écrire **clang -o bonjour main.cpp**     
 
-Sous Windows on est pas obligé de mettre .exe dans le nom de notre executable mais ça permet à l'ordinateur de reconnaître qu'il s'agit d'un executable et de le lancer grâce à un double clic. Sans .exe on peut toujours lancer le programme via une ligne de commande.   
+Sous Windows on est pas obligé de mettre .exe dans le nom de notre executable mais ça permet à l'ordinateur de reconnaître qu'il s'agit d'un executable et de le lancer grâce à un double clic. Sans .exe on peut toujours lancer le programme via une ligne de commande.     
+
+# Librairies, CMakeLists.txt et build  
+Dans le cas ou notre programme utilise des librairies, on doit ajouter un fichier CMakeLists.txt au même niveau que main.cpp et les autres fichiers cpp incluant des librairies. Ce fichier indique quelles librairies sont utilisées, leur emplacement ainsi que le nom à donner à l'executable.  
+On n'a plus besoin de créer l'executable via le terminal de commande. Le **bouton build** de Visual Studio Code s'en charge. En fait il parcourt le code, lie les librairies, génère le dossier build et y ajoute l'executable dans le sous dossier Debug.  
+
+![image](mkdocs/VSCBuildExecutable.png)     
 
 
 # commandes terminal
@@ -85,10 +91,10 @@ Les commandes .\hello Damien et .\hello Simon (pour peu qu'on ait compilé notre
 
 Il y a une autre manière de faire mais elle est moins dynamique, on va utiliser une macro (un mot placeholder qui sera remplacé par l'argument de la commande de compilation). Dans notre cas ça va créer un programme dont on aura remplacé toutes les instances de la macro par un nom, on ne pourra pas revenir en arrière, notre hello world saluera toujours la même personne à chaque appel (à moins de recompiller avec un autre paramètre pour remplacer la macro). On parle de changement lors de la compilation.
 
-
+```cpp
 #include <iostream>
 
-```cpp
+
 int main() {
     // NOM est une variable qui n'existe pas encore, elle sera créée par le compilateur
     std::cout << "Hello " << NOM << " !" << std::endl;
@@ -98,5 +104,5 @@ int main() {
 
 commande de compilation: clang++ -o hello -DNOM="\"Damien\"" main.cpp.
 
-Soyons attentif au fait que le programme n'est pas le même, que dans le 1er exemple c'est lors de l'appel de l'executable que le changement ce produit, qu'on peut avoir un résultat différent à chaque appel, via des argument différents lors de l'appel.  l'argument (argv) permet de changer le comportement du programme pendant qu'il tourne.  
-Dans le deuxième exemple c'est lors de la compilation que le changement ce produit, que quel que soit l'appel le résultat sera le même. Pour un autre résultat il faut compiler le programme sous un autre nom avec un autre argument. -> Le flag de compilation -D a permis de modifier le programme lors qu'on en a fait un executable.
+Soyons attentif au fait que le programme n'est pas le même, que dans le 1er exemple c'est lors de l'appel de l'executable que le changement se produit, qu'on peut avoir un résultat différent à chaque appel, via des argument différents lors de l'appel. Dans le 1er exemple l'argument (argv) permet de changer le comportement du programme pendant qu'il tourne.  
+Dans le deuxième exemple c'est lors de la compilation que le changement ce produit, quel que soit l'appel le résultat sera le même. Pour un autre résultat il faut compiler le programme sous un autre nom avec un autre argument. -> Le flag de compilation -D a permis de modifier le programme lorsque l'on en a fait un executable.

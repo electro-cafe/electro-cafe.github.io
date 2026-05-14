@@ -180,7 +180,7 @@ Les Branches sont une version parallèle de notre projet. En fait lorsque l'on c
 
 ![emplacement copie locale](mkdocs/github_branche.png)   
 > creation d'une nouvelle branche   
-![emplacement copie locale](mkdocs/github_branche2.png)   
+![emplacement copie locale](mkdocs/github_branche_2.png)   
 > creation d'une nouvelle branche       
 
 ![emplacement copie locale](mkdocs/git_branch_maj_localement.png)   

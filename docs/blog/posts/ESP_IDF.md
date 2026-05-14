@@ -858,5 +858,11 @@ un Nass - network attak ? storage marque synologie.
 
 --------------------------------
 
+## ESP-NOW
+Il s'agit d'un protocol de communication entre 2 ou plusieurs ESP n'utilisant pas le wifi et permettant l'échange de 250 bytes (250*8 = 2000 octets). 
+Il y a plusieurs moyen de communication. soit l'émeteur a un récepteur où plusieurs. Les récepteurs peuvent se contenter de recevoir mais ils peuvent aussi émettre ver l'émetteur d'origine.  
+![Esp Now logo](mkdocs/ESPNOW_logo.png)  
+
+
 ## ressources et liens
 [random nerd tutorial blinking on-board LED](https://randomnerdtutorials.com/esp-idf-esp32-blink-led/)

@@ -63,9 +63,17 @@ Si on utilise la main droite et remplissons les 2 conditions, alors le pouce poi
 ![Scas possible coil](mkdocs/champ_magnetique.png)     
 
 
-## capacitor
-![PCB](mkdocs/capacitor.png)   
-**Stock l'énergie** et la **redistribue**. Après avoir été chargé, son voltage est égale à celui de sa source. L'énergie qu'il stock, où charge par unité de voltage est nommée **capacitance**, plus sa capacité est élevée plus longtemps il peut fournir de l'énergie. L'**unité de la capacitance** sont les **Farad**, en électronique on parle de micro, nano et pico -farads. Le capacitor est composé de deux plaques conductrices, entre elle il y a une couche isolante résistant à un certain voltage indiqué sur le capacitor. Il ne faut pas le dépasser. Un capacitor stock la charge électrique sans l'énergie électrique en énergie chimique comme le fait une batrie. 
+## capacitor / Condensateur
+![PCB](mkdocs/capacitor.png)     
+Il déteste que la tension change brusquement, il tente de la maintenir. Il **Stock l'énergie** et la **redistribue** lors des chutes. Après avoir été chargé, son voltage est égale à celui de sa source. L'énergie qu'il stock, où charge par unité de voltage est nommée **capacitance**, plus sa capacité est élevée plus longtemps il peut fournir de l'énergie. L'**unité de la capacitance** sont les **Farad**, en électronique on parle de micro, nano et pico -farads. Le capacitor est composé de deux plaques conductrices, entre elle il y a une couche isolante résistant à un certain voltage indiqué sur le capacitor. Il ne faut pas le dépasser. Un capacitor stock l'énergie sous forme de champ électrique, contrairement à une batterie qui utilise une réaction chimique. 
+
+## Inductor / inductance  
+![multimètre](mkdocs/inducteur.png)  
+C'est une bobine de fil de cuivre qui, comme le condensateur, cherche à maintenir un état stable du courant. Lui il travaille sur l'intensité.  
+Quand du courant parcour la bobine, un champ magnétique se forme. Ce champ magnétique "stock" de l'énergie. Si l'intensité du courant vient à baisser, le champ magnétique peut la restorer en se "consommant", il ne stoppera pas la baisse mais la freinera.
+
+## diode de roue libre
+Lorsqu'un moteur tourne, ses bobines génère un champ magnétique. le champ magnétique participe à faire circuler le courant (c'est comme la différence de voltage de la batterie qui pousse le courant) on appelle ça la Force Electromotrice (FEM) de retour Si l'on coupe d'un coup l'alimentation de courant, le champ magnétique continue à pousser le courant encore présent. Cela le fait monter en tension et son passage va endomager les composants. Afin d'éviter cela on utilise une diode de roue libre 
 
 ## Batterie
 ![multimètre](mkdocs/lipo_battery.png)  
@@ -136,3 +144,84 @@ certains composant ont plusieurs unités, j'ai représenté que les plus importa
 | **bouton** | - | ![diod symbol](mkdocs/bouton_symbol.png) |  
 | **switch** | - | ![diod symbol](mkdocs/switch_symbol.png) |  
 | **3 point switch** | - | ![diod symbol](mkdocs/3_points_switch_symbol.png) |  
+
+## paramètres du courant, extrèmes théoriques  
+Afin de mieux comprendre, voici les cas extrème de "modulation" du courant (sa tension et son intensité) dans un circuit. Dans la pratique, ce qui suit ne serait pas possible car ces exemples ne prennent pas compte des changements que subit le courant lorsque les composants chauffent. Cela ne prend pas non plus la résistance due au diamètre des câbles en compte (plus ils sont fin plus la résistance est grande). Une batterie ne peut pas fournir son maximum, la tension chute un peu quand on lui le demande. Un montage doit utiliser une batterie un peu plus puissante  -> risque ? comment les contrer.
+
+--> Obtenir la tension la plus haute:  
+En courant altenratif on utilise un tranformateur.  
+En courant continu Il faut un convertisseur Boost. est-ce un transormateur + un élément. lire page wikipedia  
+--> Obtenir l'ampérage le plus haut:  
+Dans les 2 cas on utilise un convertisseur Buck.   
+  
+dans les 2 cas la puissance reste identique, si la tension où l'intensité augmente, l'autre doit diminuer car la puissance ne peut pas augmenter.   
+
+Quand on parle de la puissance, ex 10W, cela signifie que la batterie peut fournir 10W durant une heure avant d'être vide. Ainsi on alimenterait 2h un circuit nécessitant 5W.
+
+un composant a besoin que la batterie puisse le voltage indiqué dans son datasheet sans quoi il ne fonctionnera pas. C'est tout où rien.  
+Un composant va tirer l'ampérage dont il a besoin. Qu'importe que la batterie puisse lui le fournir où non. C'est la le risque. Si la batterie ne peut pas répondre au besoin en intensité elle va surchauffer ce qui risque de créer une réaction chimique accélérant encore sa surchauffe jusqu'à ce qu'elle prenne feux.    
+
+Analyse de cas d'un circuit alimenté en 10V 10 ampères:  
+
+| **besoin composant**    | ***Puissance** | **réalisable** | **modif. requise |   
+|--------------|----------------------------|----------------------------------------------------------|------------|  
+| **20V / 20A**  | 400W | ❌   | impossible sans ajouter une source d'alimentation |  
+| **20V / 10A**  | 200W | ❌   | impossible sans ajouter une source d'alimentation |   
+| **10V / 20A**  | 200W | ❌   | impossible sans ajouter une source d'alimentation. La tension est bonne mais la demande en ampérage va faire surchauffer la batterie |  
+| **5V / 5A**  | 25W | ❌   | convertisseur Buck sinon les 10V grilleraient le composant |      
+| **10V / 5A**  | 50W | ❌✅   | Il faut mettre une resistance non ? |      
+| **5V / 10A**  | 50W | ❌   | convertisseur Buck |      
+| **20V / 5A**  | 100W | ❌   | boost |      
+| **5V / 20A**  | 100W | ❌   | convertisseur Buck |      
+
+trop de voltage dans le composant: il grille.
+pas assed de voltage dans le composant:  
+trop d'ampérage dans le composant:  
+pas assez   
+
+trop de tension demandée par le composant à la batterie:
+pas assez de tension demandée par le composant à la batterie:
+trop d'ampérage  demandé par le composant à la batterie:
+pas assez d'ampérage demandé par le composant à la batterie:
+
+Dans un montage en série:
+La tension n'est pas identique dans tout le circuit, elle baisse après chaque élément, en fonction de la tension requise par l'élément.  
+L'ampérage est identique dans tout le circuit.  
+  
+Dans un montage en parallèle:  
+La tension d'entrée est aussi celle que l'on retrouve sur chaque branche (elle sont identique) et à la sortie de l'ambranchement. Comme l'on a pas de baisse de tension c'est l'ampérage qui chute en fonction des composants présent sur chaque branche (il n'est donc pas forcément identique).  
+L'ampérage se divise entre les branches en fonction de leur résistance, plus une branche résiste, moins elle aura d'ampérage.
+
+
+## guideline alimentation circuit
+En général, dans un circuit en série, on calcule les besoin en tension basés sur les composants, on regarde de quel ampérage ils ont besoin et quel résistance ils font amener au circuit. On ajoute la resistance du circuit et à parir de ces données on calcule la tension nécessaire et on peut acheter la bonne batterie.   
+Voici un exemple: 
+
+| **element** | **résistance**    | ***ampérage** | **tension** |  
+|--------------|----------------------------|----------------------------------------------------------|----|     
+| **circuit** | 1 | - | - |   
+| **composant** | 2  | 3A | 9V |    
+
+-> Le composant a besoin de 9 volt, dans ce cas, comme le montage est dimensionné pour 9V, la multiplication de la somme des tensions donne bien 9V-. (1+2) * 3, On peut simplement utiliser une batterie 9V  
+Mais tout n'est pas toujours aussi simple:  
+
+| **element** | **résistance**    | ***ampérage** | **tension** |  
+|--------------|----------------------------|----------------------------------------------------------|----|     
+| **circuit** | 3 | - | - |   
+| **composant** | 2  | 3A | 9V |    
+
+-> Nous utilisons le même composant, il demande toujours 9V mais cette fois le circuit présente plus de résistance. La batterie nécessaire se calcule comme suit: (3+2) * 3 = 15. La baterie est plus puissante.  
+
+En général c'est tout ce qu'on fait: mettre une batterie plus puissante si le voltage n'est pas suffisant. Ajouter une résistance si le voltage est trop puissant. Utiliser des câbles plus gros pour diminuer la resistance si trop de voltage est perdu.  
+Attention on ne peut pas avoir plus de voltage que celui fourni par la batterie, à moins d'utiliser un transformateur (gain de voltage perte d'intensité)  
+Attention les résistances n'ont pas de stat de tension nécessaire à leur fonctionnement comme les composants. Elles ont qu'une stat de résistance. On l'utilise dans le calcul **V**out = **V**in * (R2 / (R1 + R2)). Elles ont également une statt de puissance (en Watts) c'est ce qu'elle peut supporter.
+les résistance font chuter la tension du circuit situé après elle. Elle font chuter l'ampérage global.  
+
+L'ampérage fait monter les composants en chaleur. Un court circuit c'est lorsque la resistance est proche de zéro, l'ampérage grimpe en flêche. les composants fondent  
+
+Tant que la résistance est plus petite que la résistance de notre corps (1000 ohm lorsque l'on est mouillé)on ne risque pas grand chose si ce n'est de se brûler.
+Les organes du corps recoivent les ordres sous forme d'influx neveux, dans les faits ce sont de toutes petites impulsions électriques de l'ordre du miliampère. Un ampérage très faible de 0.03A suffit à parasiter le signal et faire fonctionner les organes n'importe comment. Ainsi c'est l'ampérage qui est mortel mais c'est la tension qui permet à l'électricité de nous parcourrir.  
+
+en prenant une réistance ohmique de sécurité de 1000 ohm pour le corps humain, même en basse tension, si on a 50volt à 20 ampère ça représente un danger mortel.
+
+un truc que je comprend pas a propos du montage en parallèle. comment 2 composants avec des besoin en tension différents ne font ils pas chuter la tension différement d'une branche à l'autre ?
