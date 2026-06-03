@@ -69,8 +69,17 @@ Il déteste que la tension change brusquement, il tente de la maintenir. Il **St
 
 ## Inductor / inductance  
 ![multimètre](mkdocs/inducteur.png)  
-C'est une bobine de fil de cuivre qui, comme le condensateur, cherche à maintenir un état stable du courant. Lui il travaille sur l'intensité.  
+C'est une bobine de fil de cuivre qui, comme le condensateur, cherche à maintenir un état stable du courant (inductance). Lui il travaille sur l'intensité.  
 Quand du courant parcour la bobine, un champ magnétique se forme. Ce champ magnétique "stock" de l'énergie. Si l'intensité du courant vient à baisser, le champ magnétique peut la restorer en se "consommant", il ne stoppera pas la baisse mais la freinera.
+Les moteurs électirques fonctionnent grâce à une série d'inducteurs enroulés dans le stator (partie fixe du moteur). Une fois parcouru par le courant, elles attirent le rotor (partie mobile du moteur). Le problème c'est que lorsque l'on "allume" l'inducteur suivant, le précédent conserve un peu son intensité, ce qui fait qu'il attire encore un peu le rotor. Une tension élevée permet de lutter contre ça. 
+
+## FOC - Field oriented control  
+Les moteurs électriques à courant continus utilisent un driver qui se charge d'électriser les inducteurs selon la séquence du moteur.    
+Pour ceux qui utilisent du courant alternatifs c'est plus compliqués. Si l'on se contente d'envoyer le courant une fois dans un sens du circuit, une fois dans l'autre, le changement de courant est brutal. Sur un diagramme ça aurait l'aspect de marches d'escaliers.  Ces à coups de courant génèrent des vibrations, et des saccades. Si le moteur doit tourner très vite, l'inertie pourrait nullifier ces côtés négatifs mais pour un bras robotique c'est génant. En utilisant le PWM, les Mosfets du driver peuvent s'ouvrir 10% du temps puis 20% etc. Comme les bobines du moteur ont de l'inductance (elles agissent comme un filtre lisseur), elles ne ressentent pas les micro-coupures du PWM. Ainsi on arrive à une forme sinusoidale.  
+Le FOC c'est le calcul en temps réel (des milliers de fois par seconde) ces temps d'ouvertur pour que le courant sur les trois fils U, V, W ait l'aspect d'ondes sinusoïdales parfaites et progressives.  
+En résumé, ce composant reçoit les signaux PWM calculés par le processeur en amont, récupère le courant de la batterie puis le transmet de manière optimale sur les phases u v w au bon moment. Cela permet d'éviter de perdre de l'énergie, du couple et de fluidité.  
+Il peut y avoir une confusion lorsque l'on parle de FOC, strictement parlant ça désigne l'algorithme / le logiciel qui tourne dans le processeur (de l'esp32 par exemple). Les composants comportant la mention FOC, reçoivent les signaux PWM et transmettent les signaux électriques sinusoïdaux. Dans ce cas FOC est une nomination commerciale signifiant "Ce composant est optimisé et câblé pour recevoir les signaux PWM d'un algorithme FOC.
+
 
 ## diode de roue libre
 Lorsqu'un moteur tourne, ses bobines génère un champ magnétique. le champ magnétique participe à faire circuler le courant (c'est comme la différence de voltage de la batterie qui pousse le courant) on appelle ça la Force Electromotrice (FEM) de retour Si l'on coupe d'un coup l'alimentation de courant, le champ magnétique continue à pousser le courant encore présent. Cela le fait monter en tension et son passage va endomager les composants. Afin d'éviter cela on utilise une diode de roue libre 

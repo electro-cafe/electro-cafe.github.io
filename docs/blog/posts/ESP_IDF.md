@@ -863,6 +863,170 @@ Il s'agit d'un protocol de communication entre 2 ou plusieurs ESP n'utilisant pa
 Il y a plusieurs moyen de communication. soit l'émeteur a un récepteur où plusieurs. Les récepteurs peuvent se contenter de recevoir mais ils peuvent aussi émettre ver l'émetteur d'origine.  
 ![Esp Now logo](mkdocs/ESPNOW_logo.png)  
 
+**Pour commencer il nous faut connaître la Mac adresse** des ESP impliqués. On peut la connaître grâce à ce code qui nous retournera celle de l'ESP flashé.
+```cpp
+// set up un tableau de 6 unsigned int de 256 bit, soit 1 octet
+uint8_t broadcastAddress[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+
+// Function to read the MAC address of the ESP32 and print it to Serial Monitor
+void readMacAddress() {
+  uint8_t baseMac[6];
+  esp_err_t ret = esp_wifi_get_mac(WIFI_IF_STA, baseMac);
+  if (ret == ESP_OK) {
+    Serial.printf("%02x:%02x:%02x:%02x:%02x:%02x\n", baseMac[0], baseMac[1],
+                  baseMac[2], baseMac[3], baseMac[4], baseMac[5]);
+  } else {
+    Serial.println("Failed to read MAC address");
+  }
+}
+
+void loop() {
+
+Serial.print("[DEFAULT] ESP32 Board MAC Address: ");
+readMacAddress();
+
+  delay(500);
+}
+```
+> J'aurais bien aimé voir comment le code qui récupère la Mac Adresse et la stock dans notre array mais comme le code relatif à l'antenne, il est malheureusement inaxessible. Espressif, le fabriquant, a décidi de le bloquer (il est sous forme compilé en binaire) afin qu'on ne puisse pas modifier la puissance et la fréquence d'émission de l'antenne (afin qu'elle ne puisse pas se retrouver dans les plages réservées aux militaires et à l'aviation) et pour protéger leur R&D. On a accès qu'à l'API pour intéragir dans la limite de ce qui est authorisé par Espressig.
+
+Maintenant qu'on a la Mac adresse, on peut remplacer le code qui la récupère par un array:  
+
+```cpp
+uint8_t broadcastAddress[] = {0x64, 0xe8, 0x33, 0x7c, 0x1e, 0x14};
+```
+> 0x signifie que ce qui suite est une notation base 16. 16*16 = 2^4 * 2^4 = 2^8 = 256 bits, soit 1 octet (où byte)
+  
+  
+```cpp
+// Basic demo for 2 ESP32 communicating with each other using ESP-NOW
+
+#include <WiFi.h> //ajout pour la partie espnow
+#include <Wire.h> // cLibrary for I2C communication
+#include <esp_now.h>
+#include <esp_wifi.h> //ajout pour la partie espnow
+
+// Mac Adresse de l'ESP32. Il faudra la changer quand on flashera l'autre ESP32
+uint8_t broadcastAddress[] = {0xf4, 0x12, 0xfa, 0xCB, 0x20, 0xDC};
+
+// Define variables to store variable that will be sent
+int numberToSent = 8;
+
+// Define variables to store incoming readings
+int incomingNumber = 0;
+
+// a compléter si l'on souhaite passer d'autres variables dans le package envoyé
+typedef struct struct_message {
+  int numberToSent;
+} struct_message;
+// on aurait pu noter:
+//  struct struct_message {
+//  int numberToSent;
+//  }
+//mais ça aurait alourdi la création de struct selon le modèle struct_messge:
+// struct struct_message monStruct;
+// en ajoutant typedef on peut définir un alias après les accolades. 
+// struct_message dit implicitement struct struct_message.
+
+// Create a struct_message called ESP32Readings to hold sensor readings
+struct_message ESP32Readings;
+
+// Create a struct_message to hold incoming sensor readings
+struct_message incomingReadings;
+
+//struct défini par Espressif qui contient toutes les infos du module avec lequel on souhaite communiquer  
+// soit la MacAdresse(array), le canal (int) et l'encription (bool)
+esp_now_peer_info_t peerInfo; 
+
+// Variable to store if sending data was successful
+bool transmissionStatus = false;
+
+void printTransmissionStatus(bool success) {
+  if (success) {
+    Serial.println("Delivery Success :)");
+  } else {
+    Serial.println("Delivery Fail :(");
+  }
+}
+
+// Callback when data is sent. Nous informe si le message a été envoyé avec succès
+void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
+  Serial.print("\r\nLast Packet Send Status:\t");
+  // short form d'un if status est égal à SUCCESS, mets true dans transmissionStatus, sinon mets false
+  transmissionStatus = (status == ESP_NOW_SEND_SUCCESS); 
+  printTransmissionStatus(transmissionStatus);
+}
+
+// Callback when data is received
+//incomingData est un pointeur l'ESP32 stock les octets bruts qu'il reçoit. Il est défini dans l'API
+// len (pour length) est un int qui stock le nombre d'octet dont le incomingData est composé
+//memcpy (pour memory copy) est la fonction récupérant le signal binaire, le découpant en octet et le stockant dans la structure incomingReadings. Grâce au type des variables de la structure il sait que les x premiers octets sont ceux de la 1ère variable, etc. Len permet de vérifier que le message attendu est bien celui réceptionné. On pourait avoir plusieurs ESP qui transmettent en même temps des messages de longueurs différents. On peut aussi vérifier que le message n'a pas été corrompu par des parasites 
+void OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len) {
+  memcpy(&incomingReadings, incomingData, sizeof(incomingReadings));
+  Serial.print("Bytes received: ");
+  Serial.println(len);
+}
+
+// --------------------------------------SETUP---------------------------------------
+void setup(void) {
+  Serial.begin(115200);
+
+  // active l'antenne WiFi de l'ESP32 pour pouvoir utiliser ESP-NOW. 
+  // ça fonctionne sans connection wifi.
+  WiFi.mode(WIFI_STA);
+
+  // Init ESP-NOW
+  if (esp_now_init() != ESP_OK) {
+    Serial.println("Error initializing ESP-NOW");
+    return;
+  }
+
+  // Cette fonction "lie" la fonction OnDataSent à la fonction esp_now_send.
+  // Après l'execution de esp_now_send (dans loop), OnDataSent sera appelé
+  esp_now_register_send_cb(OnDataSent);
+
+  // Set up des paramètres/variables du recepteur. On va lui donner la MacAdresse de l'expéditeur
+  memcpy(peerInfo.peer_addr, broadcastAddress, 6);
+  peerInfo.channel = 0;
+  peerInfo.encrypt = false;
+
+  // Add peer
+  if (esp_now_add_peer(&peerInfo) != ESP_OK) {
+    Serial.println("Failed to add peer");
+    return;
+  }
+  // Register for a callback function that will be called when data is received
+  esp_now_register_recv_cb(OnDataRecv);
+
+  // debounce time
+  delay(100);
+}
+
+//en gros on communique à tout le monde notre mac adresse, on valide le fait que la communication a été envoyée. La mac adresse reçu est enregistrée dans les peers qui répondent en donnant leur MacAdresse. le "pont de communication" est crée.
+
+// --------------------------------------LOOP---------------------------------------
+void loop() {
+
+  // uncomment to see the MAC address of the ESP32
+  // Serial.print("[DEFAULT] ESP32 Board MAC Address: ");
+  // readMacAddress();
+
+  // ici c'est absurde, il faudrait remplacer par les valeurs des capteurs
+  ESP32Readings.numberToSent = numberToSent;
+
+  // Send message via ESP-NOW
+  esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *)&ESP32Readings,
+                                  sizeof(ESP32Readings));
+
+  if (result == ESP_OK) {
+    Serial.println("Sent with success");
+  } else {
+    Serial.println("Error sending the data");
+  }
+
+  delay(500);
+}
+```
 
 ## ressources et liens
-[random nerd tutorial blinking on-board LED](https://randomnerdtutorials.com/esp-idf-esp32-blink-led/)
+[random nerd tutorial blinking on-board LED](https://randomnerdtutorials.com/esp-idf-esp32-blink-led/).

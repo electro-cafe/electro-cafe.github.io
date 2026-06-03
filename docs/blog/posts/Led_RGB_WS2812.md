@@ -190,3 +190,5 @@ Démonstration de la formule du diviseur de tension
 accéléromètre incluant un gyroscope.
 les sorties SCL SDA permettent d'échanger déchanger les données du gyroscope vers notre board de dévloppement, On appelle ça le bus I2C, ex l'ESP32S3, SDA pour Serial DAta, transmet les données d'angles et d'accélération, le SCL pour Serial CLock, est l'horloge qui donne le rythme afin que le MPU et l'ESP32S3 se synchronisent. ça permet de lire les données au bon rythme, sans quoi le SDA serait illisible.
 La sortie INT transmet un signal beaucoup moins complexe que SDA SCL, juste Haut où Bas (en fonction du voltage). ça sert à informer l'ESP32 qu'on a des données pour lui, ainsi on peut le décharger du MPU6050 quand on en a pas besoin et il peut faire autre chose. Cet pin permet également à l'ESP32 de vider la mémoire FIFO (First in, first out) du MPU6050 et ainsi lire les données les plus récentes (car FIFO c'est que la 1ère donées que l'on lit est la 1ère à avoir été stocké, ce qui en fait la plus ancienne)
+<figcaption>Ceci est le commentaire dans le rectangle grisé sous l'image.</figcaption>
+</figure>
