@@ -62,10 +62,37 @@ On peut récupérer l'URL de cette page et générer un code QR avec.
 Scanner le code QR ouvrira l'expérience AR une fois que l'utilisateur aura authorisé l'accès caméra
 
 ## image target
-[Tutoriel de référence](https://www.youtube.com/watch?v=-WLfXuZNy4g)
+[Tutoriel de référence](https://www.youtube.com/watch?v=-WLfXuZNy4g)    
+Note: 8th wall open source a un peu évolué depuis la parution de la vidéo. Par exemple les images targets apparaissent maintenant dans l'interface.  
+
+Dans 8th wall il nous faut ajouter une image target (cible d'image en français):  
+![ajout image target](mkdocs/8th_wall_image_target.png)   
+
+Il va nous falloir convertir l'image que l'on shouhaite utiliser comme point d'ancrage dans un format qu'8th wall puisse détecter:
+[convertisseur d'images en image target](https://8thwallimagetarget.pratikmane.tech)    
+Si on désactive default crop, on est libre de définir le format grâce à un clic maintenu sur la zone de l'image. Format 3:4 imposé
+![ajout image target](mkdocs/image_target_generator.png)     
+L'outil est un peu pénible, tant qu'on aura pas entré un nom sous target name, que l'image ne fait pas 480px de large minimum et si la zone de crop dépasse de l'image nous ne pourrons pas générer l'image target.   
+On peut télécharger le fichier zip
+![ajout image target](mkdocs/image_target_download.png)  
+Puis créer un dossier "image-targets" à la racine de notre dossier de projet et y extraire le fichier zip.  
+On peut maintenant faire le liens entre le composant image target qu'on a ajouté sur 8th wall et les images targets qu'on vient de générer:  
+ ![ajout image target](mkdocs/8th_wall_image_target_param_0.png)  
+ ![ajout image target](mkdocs/8th_wall_image_target_param_1.png)  
+ Je choisi l'image luminance car c'est à partir d'elle que s'effectue les calcul de tracking (luminance est une version noir et blanc de l'image, l'algorithme cherche des points de fort contrast pour se repérer dans l'image a faible coût)  
+  ![ajout image target](mkdocs/8th_wall_image_target_param_2.png)    
+  ![ajout image target](mkdocs/8th_wall_image_target_param_3.png)    
+
+
 
 ## Quick preview
 NPM demandera les autorisation administrateur pour être installé de manière global. Mieux vaut utiliser la commande **xxxx** pour **xxxx** localement dans le dossier de travail lié aux projets 8th wall. Tant que la fenêtre du terminal où l'on vient de taper cette commande est ouverte, les appareils connecés au même réseau peuvent consulter le contenu du dossier. Ainsi on a fait de notre dossier un mini serveur. NPM permet de faire de notre ordinateur un serveur web. Les appareils sur le même wifi peuvent consulter son contenu (où un dossier spécifique si NPM est activé dans un dossier local). Pour commencer je m'en suis passé et je me contente d'héberger mon projet sur github
+
+ngrock où tailscale et ce que ça fait. 
+reorganisser architecture dossier pour que le build soit dans le dossier du projet.
+faire un build sans passer par le GUI afin de pouvoir automatiser avec les github actions.
+se renseigner fonctionalités cloudflare 
+
 
 
 
