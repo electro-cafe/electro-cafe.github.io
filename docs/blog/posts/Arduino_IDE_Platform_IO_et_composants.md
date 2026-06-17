@@ -99,6 +99,25 @@ Un wrapper c'est un framework simple qui enveloppe un framework plus complexe af
 -> On utilises l'IDE VS Code, le Build System PlatformIO, pour appeler l'API d'une librairie tierce au sein du Framework ESP IDF inclu dans le Framework Arduino(wrapper).
 
 ## Mise en place de PlatformIO
+![inclure la librairie neopixel d'adafruit](mkdocs/vsc_extension_platformIO.png)   
+
+## Création de projet avec PlatformIO et utilisation
+Création d'un nouveau projet avec PlatformIO, comme les images ci dessous l'indique, il faut choisir notre board de développement. On ne peut pas changer la board de développement en cours de route. Si on utilise une autre board, il faut refaire un projet. Le dossier crée contient tous les sous dossiers nécessaires au développement (include, lib, src etc...) Il se situe dans [user]\Documents\PlatformIO\Projects. De mon côté je vais le déplacer dans le dossier relatif à mon projet de stabilisateur.
+![inclure la librairie neopixel d'adafruit](mkdocs/vsc_Platform_IO_new_project_0.png)    
+![inclure la librairie neopixel d'adafruit](mkdocs/vsc_Platform_IO_new_project_1.png)    
+![inclure la librairie neopixel d'adafruit](mkdocs/vsc_Platform_IO_new_project_2.png)  
+
+Pour ne pas s'emêler les pinceau entre l'interface d'ESP IDF et PlatformIO, on peut désactiver ESP IDF:  
+![inclure la librairie neopixel d'adafruit](mkdocs/ESP_IDF_Disable.png)  
+
+On configure la baud rate dans le fichier PlatformIO.ini
+![inclure la librairie neopixel d'adafruit](mkdocs/platformIO_baudRate.png)   
+
+barre de commandes PlatformIO:  
+![inclure la librairie neopixel d'adafruit](mkdocs/PlatformIO_blue_bar.png)  
+
+Ajoute de librairie. PlatformIo cherche la librairie dans notre ordianteur , si il ne la trouve pas il la télécharge et met à jour les fichiers du projet pour qu'on puisse l'utiliser.
+![inclure la librairie neopixel d'adafruit](mkdocs/platformIO_library.png)  
 
 ## Questions
 
@@ -189,6 +208,31 @@ Démonstration de la formule du diviseur de tension
 ## MPU6050
 accéléromètre incluant un gyroscope.
 les sorties SCL SDA permettent d'échanger déchanger les données du gyroscope vers notre board de dévloppement, On appelle ça le bus I2C, ex l'ESP32S3, SDA pour Serial DAta, transmet les données d'angles et d'accélération, le SCL pour Serial CLock, est l'horloge qui donne le rythme afin que le MPU et l'ESP32S3 se synchronisent. ça permet de lire les données au bon rythme, sans quoi le SDA serait illisible.
-La sortie INT transmet un signal beaucoup moins complexe que SDA SCL, juste Haut où Bas (en fonction du voltage). ça sert à informer l'ESP32 qu'on a des données pour lui, ainsi on peut le décharger du MPU6050 quand on en a pas besoin et il peut faire autre chose. Cet pin permet également à l'ESP32 de vider la mémoire FIFO (First in, first out) du MPU6050 et ainsi lire les données les plus récentes (car FIFO c'est que la 1ère donées que l'on lit est la 1ère à avoir été stocké, ce qui en fait la plus ancienne)
+La sortie INT transmet un signal beaucoup moins complexe que SDA SCL, juste Haut où Bas (en fonction du voltage). ça sert à informer l'ESP32 qu'on a des données pour lui, ainsi on peut le décharger du MPU6050 quand on en a pas besoin et il peut faire autre chose. Cet pin permet également à l'ESP32 de vider la mémoire FIFO (First in, first out) du MPU6050 et ainsi lire les données les plus récentes (car FIFO c'est que la 1ère donées que l'on lit est la 1ère à avoir été stocké, ce qui en fait la plus ancienne).  
+
+## GM5208  
+C'est un moteur triphasé (il doit être alimenté via 3 phases avec du courant alternatif dont les pics sont décallés), la modulation du courant dans les bobines fait tourner le champ magnétique interne ce qui entraine le mouvement du moteur. Si il indique 0.09 Ampères d'intensité dans sa datasheet, cette valeur n'est pas tout à fait exacte car elle s'applique quand le moteur est en mouvement. Il a une crête plus élevé lors du démarage car comme les aimants ne bougent pas encore par rapport aux bobines, aucune force contre électromotrice n'est créée pour s'opposer au courant. La seule chose qui limite le courant, c'est la toute petite résistance électrique du fil de cuivre de ta bobine. Résultat : le courant s'engouffre au maximum, l'ampérage explose. C'est d'ailleurs pour cela que si tu bloques l'axe d'un moteur avec tes doigts pendant qu'il est alimenté, il se met à chauffer très vite et peut griller : en l'empêchant de tourner, tu annules la FCEM, et le courant explose à nouveau comme au démarrage, mais cette fois-ci en continu !
+24N / 22P, cela signigie 24 Nail, soit 24 bobines dans la partie fixe (stator) et 22 Poles sur le rotor. ce ratio élevé permet un couple élevé à basse vitesse et un mouvement fluide.  
+AWG 24, American Wire Gauge, c'est une norme internationale de diamètre des fil de cuivre. 24 correspond à environ 0.5mm de diamètre. Plus le numéro AWG est grand plus le fil est fin. Plus le fil est fin plus la résistance est grande.
+Fonctionne avec 20V, 0.09A à vide et 1A en charge. Puissance = 20*1 = 20 watt heure lorsqu'il tourne avec une charge. Si on l'alimente avec une batterie de 20V 2000 mAh on peut calculer l'autonomie comme suit: Autonomie = Puissance moteur / Puissance batterie. On a dit que notre batterie fait 2000 mAh (miliampère heure), on peut mulitplier par 1000 pour obtenir des ampère heure. Ce qui fait 20V * 2Ah = 40 Watt heures.  Autonomie: 40 Wh / 20 W = 2H. Les micro ajustement du moteur consomment probablement moins que si il tournait en continu donc l'autonomie sera plus élevée.
+
+https://www.galaxus.ch/fr/s1/product/noname-batterie-1-pcs-specifique-a-lappareil-3400-mah-batteries-piles-23547688
+
+## SimpleFOCmini 
+Board open source née du projet SimpleFOC, j'en ai acheté une du fabriquant DFRobot (référence DRI0058), c'est un pilote de moteur à courant continu sans balais (BLDC -> brushless direct current) basé sur la technique de contrôle en champ orienté (Field oriented control). Contrairement aux contrôleurs sans balais traditionnels (ESCs) qui utilisent la commutation par bloc, la carte hache le courant via PWM afin que l'évolution de sa tension soit similaire à une courbe sinusoîdale, comme l'on aurait avec du courant alternatif. Elle décale les phases du courant des câbles d'alimentation pour générer un champ magnétique tournant au sein du moteu. Elle peut contrôler une variété de moteur demandant entre 8 et 30volts avec un ampérage max. de 2.5A par phase.
+Ce modèle est supporté par la librairie Arduino SimpleFOClibrary.  
+
+Générer un dossier de projet avec la librairie simpleFOC via PlatformIO : 
+![démonstration formule diviseur de tension](mkdocs/PlatformIO_SimpleFOC.png)  
+Lorsqu'on ouvre le dossier ainsi crée, on voit bien que les fichiers de la librairie sont présent. Il faut cependant ajouter la ligne **lib_archive = false** dans le fichier .ini afin que la compilation se passe sans accros avec PlatformIO.
+On remarquera que le dossier lib est vide, la librairie simpleFOC et les exemple se situe en fait dans le dossier **.pio**, ceci afin de ne pas "polluer la librairie"
+![démonstration formule diviseur de tension](mkdocs/PlatformIO_SimpleFOC_lib.png)  
+L'idée derrière cela c'est que le fichier .ini télécharge les librairies indiquées à la compilation. Ainsi on peut partager notre projet avec quelqu'un ne possédant pas la librairie sur son ordinateur. Cela permet également de séparer les librairies provenant de l'extérieur de celles que l'on a écrit soi même que l'on rangera dans lib.
+
+## HW 504 joystick
+composé de 2 potentiomètre et d'un bouton. Au niveau du pinout **VRX** et **VRY** retournent la valeur analogique des potentiomètres sur l'axe x et y. Pour rappel un potentiomètre contient une lanquette se déplaçant sur une piste résistante. Plus la languette (qui fait office de sortie) est loin de l'entrée de la piste résistante, plus la tension du courant baisse. **SW** est le bouton.
+On va relier VRX et VRY à des pins ADC (Analog Digital Converters) de notre ESP32 ça nous permettra de convertir la valeur analogique mesurée (la tension) en valeur digitale. On ne peut pas lire des valeurs de tension supérieur à 3.3V. On a une plage de 4095 int pour exprimer la tension, comme nous le montre ce graph, l'ADC n'est pas linéaire. L'esp ne fait pas la différence entre 0 et 0.1V, cette plage se voit attribuée la valeur 0. Pareil pour 3.2 et 3.3V qui partagent la valeur 4095. Consulter la datasheet pinout du modèle d'ESP ou Arduino pour voir quelles pins sont ADC
+![démonstration formule diviseur de tension](mkdocs/ESP32_ADC_reading.png)  
+
 <figcaption>Ceci est le commentaire dans le rectangle grisé sous l'image.</figcaption>
 </figure>

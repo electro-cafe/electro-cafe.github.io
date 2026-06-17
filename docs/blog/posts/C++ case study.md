@@ -13,7 +13,7 @@ slug: c++
 
 # C++ case study
 
-Cet article présente différents cas d'école de la programmation en C++  
+Cet article présente différents cas d'école de la programmation en C++  ainsi que des librairies commentées relatives aux différents que j'ai intégrés sur mes projets
 
 <!-- more -->
 ## Rotation d'une grille  
@@ -204,6 +204,10 @@ StepperMotor : ResetStep() int
 
 ```
 
+## simpleFOC
+voir l'article Arduino_IDE_Platform_IO_et_composants pour une description du moteur gimbol GM5208 de IFlight et du SimpleFOCmini de DFRobot
+  [NomDuLiens](https://docs.simplefoc.com/mini_code#step-1-testing-the-sensor  
+  )
 ## element utile pour écrire le blog  
 
 ```mermaid
