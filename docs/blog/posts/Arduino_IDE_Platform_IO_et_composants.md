@@ -102,7 +102,7 @@ Un wrapper c'est un framework simple qui enveloppe un framework plus complexe af
 ![inclure la librairie neopixel d'adafruit](mkdocs/vsc_extension_platformIO.png)   
 
 ## Création de projet avec PlatformIO et utilisation
-Création d'un nouveau projet avec PlatformIO, comme les images ci dessous l'indique, il faut choisir notre board de développement. On ne peut pas changer la board de développement en cours de route. Si on utilise une autre board, il faut refaire un projet. Le dossier crée contient tous les sous dossiers nécessaires au développement (include, lib, src etc...) Il se situe dans [user]\Documents\PlatformIO\Projects. De mon côté je vais le déplacer dans le dossier relatif à mon projet de stabilisateur.
+Création d'un nouveau projet avec PlatformIO, comme les images ci dessous l'indique, il faut choisir notre board de développement. Le dossier crée contient tous les sous dossiers nécessaires au développement (include, lib, src etc...) Il se situe dans [user]\Documents\PlatformIO\Projects. De mon côté je vais le déplacer dans le dossier relatif à mon projet de stabilisateur.
 ![inclure la librairie neopixel d'adafruit](mkdocs/vsc_Platform_IO_new_project_0.png)    
 ![inclure la librairie neopixel d'adafruit](mkdocs/vsc_Platform_IO_new_project_1.png)    
 ![inclure la librairie neopixel d'adafruit](mkdocs/vsc_Platform_IO_new_project_2.png)  
@@ -118,6 +118,38 @@ barre de commandes PlatformIO:
 
 Ajoute de librairie. PlatformIo cherche la librairie dans notre ordianteur , si il ne la trouve pas il la télécharge et met à jour les fichiers du projet pour qu'on puisse l'utiliser.
 ![inclure la librairie neopixel d'adafruit](mkdocs/platformIO_library.png)  
+
+Contrairement à ESP-IDF, PlatformIO n'utilise pas de fichier CMakeList.txt. A la place, on a le fichier platformio.ini qui gère les bibliothèque, la baud rate, etc. Autre avantage, grâce à lib_deps on peut indiquer le nom et la version de la bibliothèque et PlatformIO se charge d'aller sur le web et de la télécharger. On peut aussi y définir des variables globales avec build_flags et changer / gérer plusieurs board de dev au sein du même fichier. 
+
+## Serial monitor  
+Il s'agit d'un outil permettant de voir ce qui se passe dans le microprocesseur de notre ESP 32 où autre board, pour autant que l'on aie utilisé des **Serial.println()** ou **std::cout** dans notre code. Et que le code soit en train de tourner sur notre microprocesseur.
+C'est pour ça qu'il faut lui fournir l'emplacement du microprocesseur (ex COM3) la baud rate.
+![inclure la librairie neopixel d'adafruit](mkdocs/serial_monitor.png)  
+
+## Teleplot
+Cette extension de Visual studio code permet de visualiser une suite de valeurs dans le temps sous forme de courbe. On a ainsi un graph qui facilite le debuggage.
+![inclure la librairie neopixel d'adafruit](mkdocs/teleplot.png)  
+![inclure la librairie neopixel d'adafruit](mkdocs/teleplot_icon.png)  
+
+**ne fonctionne pas si le Serial monitor est ouvert** (une seul entité peut l'écouter le port série à la fois).  
+On ne **peut pas flasher ni utiliser le serial monitor lorsque teleplot est ouvert**, il faut cliquer sur close afin de pouvoir flasher le code modifié.
+Ne fonctionne pas si le cable USB-C qui relie l'ordinateur à l'ESP lolin S3 est branché dans le port UART.
+
+Pour utiliser teleplot il faut utiliser cette syntaxe: >nom_de_la_courbe:valeur en combinaison avec un Serial.print et un Serial.println.  
+">" indique à  teleplot qu'il doit utiliser ce qui va suivre pour faire un graph. Sans lui on a les infos sous forme de texte.  
+"nom_de_la_courbe" à nous de donner le nom que l'on souhaite à notre courbe. 
+":" séparateur qui indique que la désignation de la courbe est finie et que ce qui suit est la valeur à tracer.  
+"valeur" la variable que l'on veut voir évoluer dans le graph.  
+exemple:    
+```cpp
+Serial.print(">mycurve:");
+Serial.println(myvariable);
+```     
+
+Sélectionner le serial port 
+![inclure la librairie neopixel d'adafruit](mkdocs/teleplot_select_com.png)
+Dans cet exemple une partie du code dédié à teleplot ne comporte pas de chevron > c'est pour ça qu'on a aussi des valeurs sous forme textuelle.  
+![inclure la librairie neopixel d'adafruit](mkdocs/teleplot_chevron.png)  
 
 ## Questions
 
@@ -207,8 +239,10 @@ Démonstration de la formule du diviseur de tension
 
 ## MPU6050
 accéléromètre incluant un gyroscope.
-les sorties SCL SDA permettent d'échanger déchanger les données du gyroscope vers notre board de dévloppement, On appelle ça le bus I2C, ex l'ESP32S3, SDA pour Serial DAta, transmet les données d'angles et d'accélération, le SCL pour Serial CLock, est l'horloge qui donne le rythme afin que le MPU et l'ESP32S3 se synchronisent. ça permet de lire les données au bon rythme, sans quoi le SDA serait illisible.
-La sortie INT transmet un signal beaucoup moins complexe que SDA SCL, juste Haut où Bas (en fonction du voltage). ça sert à informer l'ESP32 qu'on a des données pour lui, ainsi on peut le décharger du MPU6050 quand on en a pas besoin et il peut faire autre chose. Cet pin permet également à l'ESP32 de vider la mémoire FIFO (First in, first out) du MPU6050 et ainsi lire les données les plus récentes (car FIFO c'est que la 1ère donées que l'on lit est la 1ère à avoir été stocké, ce qui en fait la plus ancienne).  
+les sorties SCL SDA permettent d'échanger les données du gyroscope vers notre board de dévloppement, On appelle ça le bus I2C.  
+Le SDA pour Serial DAta, transmet les données d'angles et d'accélération, le SCL pour Serial CLock, est l'horloge qui donne le rythme afin que le MPU et l'ESP32S3 se synchronisent. ça permet de lire les données au bon rythme, sans quoi le SDA serait illisible.
+La sortie INT transmet un signal beaucoup moins complexe que SDA SCL, juste Haut où Bas (en fonction du voltage). ça sert à informer l'ESP32 qu'on a des données pour lui, ainsi on peut le décharger de l'écoute du MPU6050 quand on en a pas besoin et il peut faire autre chose. Cette pin permet également à l'ESP32 de vider la mémoire FIFO (First in, first out) du MPU6050 et ainsi lire les données les plus récentes (car FIFO c'est que la 1ère donées que l'on lit est la 1ère à avoir été stocké, ce qui en fait la plus ancienne).  
+Le MPU possède un DMP (Digital Motion Processor), cette unitée de calcul utilise un algorithme proche du filtre de Kalman pour filter le bruit (fausses mesures) et tirer le meilleur du compo accéléromètre (stable à long terme mais bruyant à court terme) et gyroscope (précis à court terme mais qui dérive dans le temps). La librairie d'ElectronicCats possède une fonction qui utilise le DMP
 
 ## GM5208  
 C'est un moteur triphasé (il doit être alimenté via 3 phases avec du courant alternatif dont les pics sont décallés), la modulation du courant dans les bobines fait tourner le champ magnétique interne ce qui entraine le mouvement du moteur. Si il indique 0.09 Ampères d'intensité dans sa datasheet, cette valeur n'est pas tout à fait exacte car elle s'applique quand le moteur est en mouvement. Il a une crête plus élevé lors du démarage car comme les aimants ne bougent pas encore par rapport aux bobines, aucune force contre électromotrice n'est créée pour s'opposer au courant. La seule chose qui limite le courant, c'est la toute petite résistance électrique du fil de cuivre de ta bobine. Résultat : le courant s'engouffre au maximum, l'ampérage explose. C'est d'ailleurs pour cela que si tu bloques l'axe d'un moteur avec tes doigts pendant qu'il est alimenté, il se met à chauffer très vite et peut griller : en l'empêchant de tourner, tu annules la FCEM, et le courant explose à nouveau comme au démarrage, mais cette fois-ci en continu !
@@ -224,10 +258,19 @@ Ce modèle est supporté par la librairie Arduino SimpleFOClibrary.
 
 Générer un dossier de projet avec la librairie simpleFOC via PlatformIO : 
 ![démonstration formule diviseur de tension](mkdocs/PlatformIO_SimpleFOC.png)  
-Lorsqu'on ouvre le dossier ainsi crée, on voit bien que les fichiers de la librairie sont présent. Il faut cependant ajouter la ligne **lib_archive = false** dans le fichier .ini afin que la compilation se passe sans accros avec PlatformIO.
+Lorsqu'on ouvre le dossier ainsi crée, on voit bien que les fichiers de la librairie sont présent. Il faut cependant ajouter la ligne **lib_archive = false** dans le fichier .ini afin que la compilation se passe sans accros avec PlatformIO. Je change aussi la ligne "lib_deps = askuric/Simple FOC@^2.4.0" pour "**askuric/Simple FOC @ 2.3.2**", ceci afin de ne pas avoir de problème de compatibilité de version. SimpleFOC 2.4.0 a besoin de ESP-IDF 5.x mais PlatformIO ne l'a pas encore intégré. En retrograndant SimpleFOC pour la 2.3.2, la version d'ESP-IDF présente sur platform IO est compatible:
+![démonstration formule diviseur de tension](mkdocs/SimpleFOC_PlatformIni.png)  
 On remarquera que le dossier lib est vide, la librairie simpleFOC et les exemple se situe en fait dans le dossier **.pio**, ceci afin de ne pas "polluer la librairie"
 ![démonstration formule diviseur de tension](mkdocs/PlatformIO_SimpleFOC_lib.png)  
-L'idée derrière cela c'est que le fichier .ini télécharge les librairies indiquées à la compilation. Ainsi on peut partager notre projet avec quelqu'un ne possédant pas la librairie sur son ordinateur. Cela permet également de séparer les librairies provenant de l'extérieur de celles que l'on a écrit soi même que l'on rangera dans lib.
+L'idée derrière cela c'est que le fichier .ini télécharge les librairies indiquées à la compilation. Ainsi on peut partager notre projet avec quelqu'un ne possédant pas la librairie sur son ordinateur. Cela permet également de séparer les librairies provenant de l'extérieur de celles que l'on a écrit soi même que l'on rangera dans lib.  
+
+Maintenant que tout est en place on peut parcourir les exemple pour comprendre comment marche et ce que peut faire simpleFOC. Rien qu'avec le nom des fichiers d'exemple on comprend que le contrôle se base sur la lecture des capteurs d'encodage de position (perso je m'en passerai, c'est mon gyroscope MPU6050 qui dira au moteur de tourner / de se stopper), l'angle de rotation (ex: tourne de 20 degrés), la vélocité de la rotation et le torque (le couple aka la force). Il faudra aussi voir si le moteur va le plus vite possible à sa position puis s'arrête net, du fait de l'inertie il continuera sa cours et il faudra le faire tourner en sens inverse pour compenser l'overshoot. L'autre méthode est de faire baisser la vitesse du moteur lorsqu'il arrive proche de sa destination, c'est possible grâce au régulateur PID (Proportional Integral Derivative) de simpleFOC, un algorithme qui ajuste la vitesse.
+
+Je compte utiliser ESP Now pour la communication sans fil entre le joystick de commande et les moteurs mais il est aussi possible de les controller via OSC (voir les bibliothèque osc_control_examples).  
+OSC (Open Sound Control) permet à notre ESP de se connecter au réseau Wi-Fi où de créer son propre point d'accès Wifi dans les 2 cas notre smartphone peut aussi s'y connecter. La différence avec ESP-Now c'est qu'on dépend du wifi. l'avantage c'est que notre smartphone peut venir se greffer dans la boucle et l'on profite alors d'une interface graphique.  
+
+
+https://docs.simplefoc.com/library_platformio
 
 ## HW 504 joystick
 composé de 2 potentiomètre et d'un bouton. Au niveau du pinout **VRX** et **VRY** retournent la valeur analogique des potentiomètres sur l'axe x et y. Pour rappel un potentiomètre contient une lanquette se déplaçant sur une piste résistante. Plus la languette (qui fait office de sortie) est loin de l'entrée de la piste résistante, plus la tension du courant baisse. **SW** est le bouton.
