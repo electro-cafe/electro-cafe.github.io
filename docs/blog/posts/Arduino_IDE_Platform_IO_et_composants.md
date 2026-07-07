@@ -151,6 +151,12 @@ Sélectionner le serial port
 Dans cet exemple une partie du code dédié à teleplot ne comporte pas de chevron > c'est pour ça qu'on a aussi des valeurs sous forme textuelle.  
 ![inclure la librairie neopixel d'adafruit](mkdocs/teleplot_chevron.png)  
 
+Les graph adaptent leur échelle y à la plus haute valeur enregistré, c'est embêtant de se retrouver avec plusieurs graph liés au même capteurs mais avec des échelles différentes.
+ On peut régler ça en glissant les graph dans le même graph afin qu'ils partagent la même échelle.  
+![inclure la librairie neopixel d'adafruit](mkdocs/teleplotScale.png)
+On peut zoomer dans un graph avec clic + drag et revenir au niveau initial avec double clic.
+![inclure la librairie neopixel d'adafruit](mkdocs/teleplot_multigraph.png)
+
 ## Questions
 
 Je m'attendais à mesurer 3.3v dans l'exemple avec la diode pourquoi le multimètre me donne t'il une valeur inférieur ?
@@ -250,7 +256,34 @@ C'est un moteur triphasé (il doit être alimenté via 3 phases avec du courant 
 AWG 24, American Wire Gauge, c'est une norme internationale de diamètre des fil de cuivre. 24 correspond à environ 0.5mm de diamètre. Plus le numéro AWG est grand plus le fil est fin. Plus le fil est fin plus la résistance est grande.
 Fonctionne avec 20V, 0.09A à vide et 1A en charge. Puissance = 20*1 = 20 watt heure lorsqu'il tourne avec une charge. Si on l'alimente avec une batterie de 20V 2000 mAh on peut calculer l'autonomie comme suit: Autonomie = Puissance moteur / Puissance batterie. On a dit que notre batterie fait 2000 mAh (miliampère heure), on peut mulitplier par 1000 pour obtenir des ampère heure. Ce qui fait 20V * 2Ah = 40 Watt heures.  Autonomie: 40 Wh / 20 W = 2H. Les micro ajustement du moteur consomment probablement moins que si il tournait en continu donc l'autonomie sera plus élevée.
 
-https://www.galaxus.ch/fr/s1/product/noname-batterie-1-pcs-specifique-a-lappareil-3400-mah-batteries-piles-23547688
+Le code commenté de la librairy SimpleFOC (voir articl C++ case study) explique ce qui se passe au niveau du champ magnétique et du voltage dans le moteur. Pour faire simple on défini le voltage max.  
+
+⚠️Attention: Si on utilise l'exemple open loop de la librairie OpenLoop on ne peut pas connaître l'ampérage au sein du moteur donc si on l'utilise il faut insérer des valeurs basses et ne pas chercher la vitesse afin de ne pas l'endommager où le bruller.
+
+On peut combiner différentes board SimpleFoc avec différent senseur et microcontrôleur.  
+Je vais essayer de partir sur la simpleFOC Shield car elle permet de mesurer le courant dans le moteur plutôt que de l'estimer. ceci afin de mettre en place un système évitant que le moteur tire trop d'énergie et surchauffe (ce qui peut arriver si le moteur bloque mais que le programme ne le voit pas, alors il n'y a plus de FCEM mais le programme fournit le voltage en quantité afin de contrer la FCEM qu'il s'attend a avoir dans le moteur) L'ESP32 support la manière Inline du controler pour lire le courant. On partira donc sur la librairie current_sense -> InlineCurrentSense.cpp/h   
+
+Avant d'attaquer le code il faut récolter ces données physiques:
+**max ampérage du moteur**:  
+**max voltage du moteur**:  
+**résistance phases du moteur**:  15 ohm. Obtenu avec un multimètre entre 2 phases du moteur. Le problème c'est qu'il faut savoir si il est câblé en étoile où delta et modifier cette valeur respectivement en la divisant par 2 où multipliant par 1.5. Si le fabriquant de le dit pas il faut le tester avec la valeur comme si il est en étoile 
+
+**KV rating** (vitesse du moteur à vide par volte):  Se mesure avec un encodeur et sert à optimiser les dernier pourcent de performance (vitesse et torque) quand le moteur est poussé dans ses retranchements. si on en a pas d'encodeur, on peut prendre le RPM moyen du moteur et le divisé par le volatge du moteur. 416/20 = 21.     
+
+**Inductance**(décrit le courant qui est "stocké" dans le champ magnétique.) paramètre le moins important. On peut le laisser tombier si le fournisseur ne le fournit pas. C'est utile uniquement si on veut maximiser les performances de vitesse.
+
+[mesurer paramètres physiques du moteur + test des valeurs mesurées](https://docs.simplefoc.com/phase_resistance)
+
+
+[configuration physique par soudure SimpleFOC Shield](https://docs.simplefoc.com/pads_soldering_v3)
+
+[choix, mesure et marche a suivre SimpleFOC](https://docs.simplefoc.com/estimated_current_mode#pure-voltage-control)
+Partir sur le mode: Estimated current control with Back-EMF compensation
+
+[implémentation d'un sensor personalisé](https://docs.simplefoc.com/generic_sensor)
+
+[batterie](https://www.galaxus.ch/fr/s1/product/noname-batterie-1-pcs-specifique-a-lappareil-3400-mah-batteries-piles-23547688)
+
 
 ## SimpleFOCmini 
 Board open source née du projet SimpleFOC, j'en ai acheté une du fabriquant DFRobot (référence DRI0058), c'est un pilote de moteur à courant continu sans balais (BLDC -> brushless direct current) basé sur la technique de contrôle en champ orienté (Field oriented control). Contrairement aux contrôleurs sans balais traditionnels (ESCs) qui utilisent la commutation par bloc, la carte hache le courant via PWM afin que l'évolution de sa tension soit similaire à une courbe sinusoîdale, comme l'on aurait avec du courant alternatif. Elle décale les phases du courant des câbles d'alimentation pour générer un champ magnétique tournant au sein du moteu. Elle peut contrôler une variété de moteur demandant entre 8 et 30volts avec un ampérage max. de 2.5A par phase.
@@ -269,8 +302,37 @@ Maintenant que tout est en place on peut parcourir les exemple pour comprendre c
 Je compte utiliser ESP Now pour la communication sans fil entre le joystick de commande et les moteurs mais il est aussi possible de les controller via OSC (voir les bibliothèque osc_control_examples).  
 OSC (Open Sound Control) permet à notre ESP de se connecter au réseau Wi-Fi où de créer son propre point d'accès Wifi dans les 2 cas notre smartphone peut aussi s'y connecter. La différence avec ESP-Now c'est qu'on dépend du wifi. l'avantage c'est que notre smartphone peut venir se greffer dans la boucle et l'on profite alors d'une interface graphique.  
 
+[installation SimpleFOC sur platform IO]( https://docs.simplefoc.com/library_platformio)
 
-https://docs.simplefoc.com/library_platformio
+## PeakTech 6226
+Alimentation de labo pouvant fournir 0-30 V et 0 - 5 A de courant continu.  
+Les molettes de réglage peuvent être pressées pour modifier les dixième de l'untité.    
+Presser les 2 molettes durant 3 secondes permet de verrouiller les réglages.  
+Le bouton output permet de basculer entre C.V. (constant voltage) et C.C (constant current) ainsi que de délivrer le courant dans le système relié au PeakTech. Si il n'y a pas de charge connectée. Output n'affichera pas l'ampérage, uniquement le voltage.   
+Le mode courant constant signifie que l'alimentation de labo fera baisser la tension pour maintenir l'ampérage à son niveau. Un changement d'ampérage peut survenir si la résistance de la charge change. En fait le mode C.C. s'active que quand la valeur d'ampérage tirée par le composant dépasse le plafond fixé.  
+Le mode C.V. fait l'inverse, il maintient la tension fixe en abaissant/relevant l'ampérage.
+
+Attention avec les moteurs électriques: leur rotation peut créer une forece contre électromagnétique capable d'endomager le PeakTech lorsqu'ils y sont reliés si il n'y a pas un driver avec des capacitor où une diode fly wheel capable d'absorber le choc. Voici les 2 cas de figure pouvant générer une FCEM:  
+-> pas d'alimentation de la part du PeakTech, nous faisons tourner rapidement le moteur à la main. Il agit comme un générateur et envoie un courant en amont.   
+-> Le PeakTech alimente le moteur et le fait tourner rapidement, si on baisse rapidement la tension, l'inertie transforme le moteur en générateur.  
+
+Marche à suivre alimentation et désalimentation moteur:  
+
+-> Allumer la machine via le bouton ON/OFF.    
+-> sélectionner la tension / l'ampérage et le mode C.V. ou C.C.
+-> Brancher le moteur.  
+-> Appuyer sur le bouton Output. ça va faire le lien entre le PeakTech et le composant.  
+-> Activer le mouvement du moteur via le logiciel qui le contrôle.    
+.  
+.  Pour modifier le courant et la tension tourner **lentement** les molettes et bien vérifier quel chiffre clignote. Puisque la molette controle les unités et les dizaines.
+.  
+-> Stopper le mouvement du moteur via le logiciel qui le contrôle.  
+-> Appuyer sur le bouton Output. ça va désolidariser l'électronique du Peaktech. Le moteur est maintenant isolé.  
+-> Débrancher le moteur.
+-> Éteignez la machine via le bouton ON/OFF.  
+
+![PeakTech](mkdocs/PeakTech.png)  
+
 
 ## HW 504 joystick
 composé de 2 potentiomètre et d'un bouton. Au niveau du pinout **VRX** et **VRY** retournent la valeur analogique des potentiomètres sur l'axe x et y. Pour rappel un potentiomètre contient une lanquette se déplaçant sur une piste résistante. Plus la languette (qui fait office de sortie) est loin de l'entrée de la piste résistante, plus la tension du courant baisse. **SW** est le bouton.
