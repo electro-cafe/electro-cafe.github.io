@@ -10,7 +10,11 @@ tags:
 authors:
   - thomas
 slug: AR
+
+draft: true 
 ---
+
+enlever draft: true pour afficher en ligne
 
 # 8th Wall augmented réality
 début 2026 8th wall est passé opensource, permettant de créer une expérience AR sans abonnement.

@@ -79,6 +79,14 @@ Pour ceux qui utilisent du courant alternatifs c'est plus compliqués. Si l'on s
 Le FOC c'est le calcul en temps réel (des milliers de fois par seconde) ces temps d'ouvertur pour que le courant sur les trois fils U, V, W ait l'aspect d'ondes sinusoïdales parfaites et progressives.  
 En résumé, ce composant reçoit les signaux PWM calculés par le processeur en amont, récupère le courant de la batterie puis le transmet de manière optimale sur les phases u v w au bon moment. Cela permet d'éviter de perdre de l'énergie, du couple et de fluidité.  
 Il peut y avoir une confusion lorsque l'on parle de FOC, strictement parlant ça désigne l'algorithme / le logiciel qui tourne dans le processeur (de l'esp32 par exemple). Les composants comportant la mention FOC, reçoivent les signaux PWM et transmettent les signaux électriques sinusoïdaux. Dans ce cas FOC est une nomination commerciale signifiant "Ce composant est optimisé et câblé pour recevoir les signaux PWM d'un algorithme FOC.
+  
+## AS5600
+Encodeur magnétique, se place dans l'axe de rotation d'un moteur fonctionnant via un champ magnétique tournant. Il permet de mesurer l'angle précis du moteur.
+En théorie ça a l'air inutile: si le driver et l'ESP32 pilotent le moteur pour le faire tourner de 20 degrés à quoi bon le mesurer. Dans la pratique, une accélération de l'objet équipé du moteur où une résistance matérielle viennent affecter le comportement du moteur. Si la résistance augmente, le voltage pour faire tourner le moteur à la vitesse voulue n'est plus suffisant et la relation voltage vitesse peut se "désynchroniser", ce qui mène à des tremblement. Ce capteur permet d'analyser le comportement physique. En couplant ces données avec ses les commandes reçues par le moteur on peut corriger l'imprévisibilité physique. 
+  
+## FOC Sensorless  
+Il est possible de se passer d'encodeur à ces 2 conditions: un moteur qui tourne assez vite pour produire une force contre électromotrice et avoir un driver capable d'analiser la tension dans le moteur (en comparant celle fournie et celle mesurée il détermine la FCEM).
+
 
 
 ## diode de roue libre
