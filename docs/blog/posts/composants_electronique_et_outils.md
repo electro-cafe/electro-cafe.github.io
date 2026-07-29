@@ -62,6 +62,17 @@ Si on utilise la main droite et remplissons les 2 conditions, alors le pouce poi
 **⚠️ Attention** ce n'est pas parce que l'alimentation est à gauche du coil que le nord est à droite. ça dépend du sens de bobinage:  
 ![Scas possible coil](mkdocs/champ_magnetique.png)     
 
+## MPU6050
+Module 6 axe détectant son orientation dans l'espace. Composé d'un accéléromètre et d'un gyroscope. L'Accéléromètre mesure l'accélération par secondes grâce à la gravité (qui est constante). Il ne peut pas détecter le changement d'anglee sur l'axe yaw cal il n'y a pas eu de modificationd e l'angle du composant vis à vis de la gravité.. Le pinout permet d'y coupler un magnétomètre pour en faire une 9 axis et régler ce problème. Sans magnetomètre on utilise le gyroscope pour le yaw mais ça signifie un drift constant.
+Les mesures de l'accéléromètre ont le désavantage de comporter beaucoup de bruit, c'est un problème à "court terme". Le gyroscope mesure le changement d'angle par seconde, il a le désavantage de drifter légèrement et ce de manière continue. C'est un problème à long terme. Chaqu'un de ces composants peut fournir l'orientation du module. On peut utiliser l'accéléromètre et le gyroscope en tandem afin d'anuler presque tous leur problèmes individuels. Malheureusement le yaw continue à drifter mais plus lentement.  
+Le composant possède une mémoire FIFO de 1024 octet (1ko) pour stocker les mesures que le microprocesseur pourra lire. Il est équipé d'une broche Int (interupt output) pour interombre le processeur lorsque sa mémoire est pleine. Cela évite d'avoir à faire du polling (arreter la tache en cours du microprocesseur toutes les x milisecondes pour voir si il y a une valeur à lire sur le MPU6050.)  
+
+La fusion de sensor peut se faire via:  
+Filtre Complémentaire: mesure de l'accéléromètre * gain + mesure du gyroscope * (1-gain). gain est compris entre 0 et 1, il définit combien de pourcentage de chaque capteur affecte la mesure finale.    
+filtre de kahlman: Solution mathématique complexe et très précise (statistique/probabiliste). Lourd pour un petit microcontrôleur
+
+Le MPU6050 possède un proceseur nommé Motion Processor (DMP) qui utilise un algorythme propriétaire optimisé (dérivé du filtre de Kahlman/Madgwick). Fourni le résultat sous forme de quaternion (pas de problème de gimball lock/ comb fur sphere)
+Cette option n'est pas activée de base, il va falloir intégrer une bibliothèque à notre composant ? ou le code flashé sur le processeur ?  
 
 ## capacitor / Condensateur
 ![PCB](mkdocs/capacitor.png)     
@@ -82,8 +93,11 @@ Il peut y avoir une confusion lorsque l'on parle de FOC, strictement parlant ça
   
 ## AS5600
 Encodeur magnétique, se place dans l'axe de rotation d'un moteur fonctionnant via un champ magnétique tournant. Il permet de mesurer l'angle précis du moteur.
-En théorie ça a l'air inutile: si le driver et l'ESP32 pilotent le moteur pour le faire tourner de 20 degrés à quoi bon le mesurer. Dans la pratique, une accélération de l'objet équipé du moteur où une résistance matérielle viennent affecter le comportement du moteur. Si la résistance augmente, le voltage pour faire tourner le moteur à la vitesse voulue n'est plus suffisant et la relation voltage vitesse peut se "désynchroniser", ce qui mène à des tremblement. Ce capteur permet d'analyser le comportement physique. En couplant ces données avec ses les commandes reçues par le moteur on peut corriger l'imprévisibilité physique. 
-  
+En théorie ça a l'air inutile: si le driver et l'ESP32 pilotent le moteur pour le faire tourner de 20 degrés à quoi bon le mesurer. Dans la pratique, une accélération de l'objet équipé du moteur où une résistance matérielle viennent affecter le comportement du moteur. Si la résistance augmente, le voltage pour faire tourner le moteur à la vitesse voulue n'est plus suffisant et la relation voltage vitesse peut se "désynchroniser", ce qui mène à des tremblement. Ce capteur permet d'analyser le comportement physique. En couplant ces données avec ses les commandes reçues par le moteur on peut corriger l'imprévisibilité physique. La limite de cet encodeur c'est qu'il utilise le protocole I2C pour transmettre des informations au microprocesseur. Si l'on peut bien mettre plusieurs composant utilisant I2C sur le même bus, ils partagent malheureusement tous la même adresse. Le microprocesseur ne peut pas adresser un composant en particuler. L'esp32 possède 2 pins dédiées au I2C donc il peut donc adresser 2 composant. Il existe un module qui, branché sur le canal I2C du microprocesseur crée de multiples canaux: le multiplexer TCA9548A. 
+
+## AS5048A 
+Pour le moteur GM5208 j'utiliserai l'encodeur magnétique fourni avec qui utilise le protocole SPI. On peut avoir jusqu'à 5 composant sur le SPI. Parfait pour un stabilisateur utilisant 3 paire de moteurs / encodeurs  
+
 ## FOC Sensorless  
 Il est possible de se passer d'encodeur à ces 2 conditions: un moteur qui tourne assez vite pour produire une force contre électromotrice et avoir un driver capable d'analiser la tension dans le moteur (en comparant celle fournie et celle mesurée il détermine la FCEM).
 
