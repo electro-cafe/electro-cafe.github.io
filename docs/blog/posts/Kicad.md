@@ -41,21 +41,42 @@ Pour commencer on peut choisir le format de notre plan (A4 / A3 / ...) et son ti
 ![Kicad_main_Menu](mkdocs/Kicad_Ajustage_page.png)  
 
 
-SHORTCUT:    
-**esc** = outil sélection de base.
+## SHORTCUT:    
+**esc** = outil sélection de base.  
 **box select** gauche à droite = sélectionne les objets complètement sélectionnés.  
 **box select** droite à gauche = sélectionne les objets partiellements sélectionnés.    
 **ctrl** + **left clic**= toggle selection state.  
 **shift** + **left clic** = add to selection.  
 **ctrl** + **left clic** = remove from selection.  
 **ctrl** + **F1** = Affiche la liste des raccourcis.    
-**mouse over component** + **m** = move component sans les wires.
+**mouse over component** + **m** = move component sans les wires.  
 **mouse over component** + **g** = move component avec les wires.
 **r** = rotate component.  
 **w** = switch to wiring mode.  
 En wiring mode : **double clic** = finish drawing (!esc = cancel drawing)
 
-EMPREINTE / FOOTPRINT  
+## SYMBOL
+Le but de notre schématique est de représenter les différents "composants" du PCB et leurs connextions entre eux. Sans s'attarder sur le tracé des connexions, ça, on le fera dans l'éditeur de PCB. Il y a deux manière d'intégrer les composants dans la schématique. La plus simple est de les chercher dans la librairie intégrée à Kicad. Ce n'est pas seulement une représentation schématique du composant, en arrière plan il y a aussi les données relatives à ses dimensions, ses zones de soudure, sa zone d'exclusion etc, bref toute la physicalité du composant qui seront intégré dans la parte de l'éditeur de PCB.   
+![Kicad_main_Menu](mkdocs/KicadSymbolAdd.png)     
+
+Si la librairie de Kicad ne donne pas de résultat on peut aller sur SnapMagic.com et télécharger le symbol et footprint de notre composant.  
+![Kicad_main_Menu](mkdocs/SnapMagic.png).  
+On télécharge le fichier, on décompresse le zip (on l'extrait) sans en changer le nom. Dans Kicad -> préférence -> Configurer les librairies de symbole  
+![Kicad_main_Menu](mkdocs/Kicad_Ajout_library%20.png). charger le symbol à partir du dossier téléchargé.  
+![Kicad_main_Menu](mkdocs/Kicad_Ajout_library2%20.png).  
+On peut également télécharger le dossier d'empreinte du composant sur snapMagic. l'importation dans la librairie d'Empreinte de Kicad est assez similaire à ce que l'on a fait pour le symbol sauf que cette fois c'est le dossier dezippé que l'on importe et pas le fichier correspondant au symbol.  
+
+Note: lorsque je dis composant je fais référence à un élément de notre montage électronique. ça peut être une diode comme un ensemble de composant, ex: un driver de moteur.
+
+Il peut arriver que notre composant ne soit pas une version classique/vanilla. Aliexpress propose beaucoup de modèle issus d'un même template de base mais chaque revendeur/fabriquant peut y apporter des modifications. Ainsi 2 fabricants peuvent proposer le "même" composant mais avec un pinout différent. Dans ce cas il nous faut dessiner le symbol de notre composant. 
+Symbol (représentation logique) et empreinte(représentation physique) sont 2 choses différentes. Il y a un lien entre les 2 mais elles restent indépendante dans le sens où si le fabriquant à changé le pinout l'empreinte n'a pas forcément changée. Si le fabriquant a changé l'empreinte, le symbol n'a pas forcément changé.  
+
+
+xxxxxxecrire article xxxxxxxx
+Pour contrôler que tous nos éléments ont bien une empreinte on peut...................
+![Kicad_main_Menu](mkdocs/Kicad_check_footprint.png)   
+
+## EMPREINTE / FOOTPRINT  
 Avec un **double clic sur un composant**, on défini leur propriété et charge leur empreinte.
 L'empreinte détermine comment le robo qui va crée notre PCB doit préparer les zone sur lesquelles il va souder les composants. Elles contiennent les "cooper pads" qui matchent avec les pins du composant. 
 ![Kicad_main_Menu](mkdocs/Kicad_Propriete_Symbol.png)   
@@ -97,9 +118,9 @@ Exemple schéma symboles placés:
 
 Controle des règles électriques afin de savoir si il y a des erreurs.    
 ![alt text](mkdocs/Kicad_control_regle_electrique.png)    
-//////Il reste à définir les zones d'exclusion autour des pin, ce sont des zones où aucun autre composant ne doit être placé. ces zones seront fait decuivre et serviront de base pour souder le composant.  
+//////Il reste à définir les zones d'exclusion autour des pin, ce sont des zones où aucun autre composant ne doit être placé. ces zones seront fait de cuivre et serviront de base pour souder le composant.  
 
-Une fois les zones symboles en place, les connexions effectuées, il faut trouver chaque composant sur le site [JLC PCB part](https://jlcpcb.com/parts/all-electronic-components) où [LCSC],(https://lcsc.com/) récupérer le numéro d'article et son package (=footprint/empreinte) afin de terminer la partie schématique. Ces deux site appartiennent au producteur de PCB à qui l'on va fournir les fichiers finaux. Il récupérera les composants dans ces stocks, les souderas sur le PCB et créera le circuit imprimé reliant les composants. 
+Une fois les zones symboles en place, les connexions effectuées, il faut trouver chaque composant sur le site [JLC PCB part](https://jlcpcb.com/parts/all-electronic-components) où [LCSC](https://lcsc.com/) récupérer le numéro d'article et son package (=footprint/empreinte) afin de terminer la partie schématique. Ces deux site appartiennent au producteur de PCB à qui l'on va fournir les fichiers finaux. Il récupérera les composants dans ces stocks, les souderas sur le PCB et créera le circuit imprimé reliant les composants. 
 
 Afin de trouver notre pièce il faut indiquer son type puis utiliser les nombreux filtre pour faire apparaître que les pièces qui nous intéressent. c'est fastidieux, suivant quoi il faut consulter des doc où mesurer pour avoir plus d'infos à entrer dans les filtres. Voici quelques termes afin de mieux s'y retrouver dans la nomenclature des composants.
 
@@ -130,7 +151,7 @@ On choisi si on trie de gauche à droite où haut en bas dans la section ordre.
 ![alt text](mkdocs/Kicad_anotation_schematique_2.png)   
 
 
-BILL OF MATERIALS  
+## BILL OF MATERIALS  
 c'est notre liste de course, abrégé **BOM** ça dit au fabricant du PCB quels composant prendre dans ses stock.  
 ![alt text](mkdocs/Kicad_BOM.png)      
 

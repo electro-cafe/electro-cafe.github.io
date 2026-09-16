@@ -46,4 +46,11 @@ Une **jupe de 3mm** aide à décoller l'impression à la fin.
 6) filament -> retracter  
 7) filament -> extruder.
 
+## Wave Overhang
+Il s'agit d'une option expérimentale. en août 2026 elle est disponible en téléchargeant ce repo github: https://github.com/stmcculloch/PrusaSlicer-WaveOverhangs
+A priori c'est sous cet onglet que l'on active la fonction.
+![Prussa](mkdocs/Wave_Overhang_param.png)  
+
+## hauteur de couche dynamique
+![Prussa](mkdocs/hauteur_layer_variable.png)  
 
