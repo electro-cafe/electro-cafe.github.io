@@ -61,10 +61,13 @@ Le but de notre schématique est de représenter les différents "composants" du
 
 Si la librairie de Kicad ne donne pas de résultat on peut aller sur SnapMagic.com et télécharger le symbol et footprint de notre composant.  
 ![Kicad_main_Menu](mkdocs/SnapMagic.png).  
-On télécharge le fichier, on décompresse le zip (on l'extrait) sans en changer le nom. Dans Kicad -> préférence -> Configurer les librairies de symbole  
-![Kicad_main_Menu](mkdocs/Kicad_Ajout_library%20.png). charger le symbol à partir du dossier téléchargé.  
+On télécharge le fichier, on décompresse le zip (on l'extrait) sans en changer le nom. On récupère le fichier .kicad_sym et on le place dans le dossier symbol (à nous de le créer si il n'existe pas).  ![Kicad_main_Menu](mkdocs/dossierSymbol.png).  
+Dans Kicad -> préférence -> Configurer les librairies de symbole    
+![Kicad_main_Menu](mkdocs/Kicad_Ajout_library%20.png)  
+charger le symbol à partir du dossier téléchargé.  
 ![Kicad_main_Menu](mkdocs/Kicad_Ajout_library2%20.png).  
-On peut également télécharger le dossier d'empreinte du composant sur snapMagic. l'importation dans la librairie d'Empreinte de Kicad est assez similaire à ce que l'on a fait pour le symbol sauf que cette fois c'est le dossier dezippé que l'on importe et pas le fichier correspondant au symbol.  
+On peut également télécharger le dossier d'empreinte du composant sur snapMagic.  
+![Kicad_main_Menu](mkdocs/SnapMagic_Footprint.png).  
 
 Note: lorsque je dis composant je fais référence à un élément de notre montage électronique. ça peut être une diode comme un ensemble de composant, ex: un driver de moteur.
 
@@ -72,18 +75,37 @@ Il peut arriver que notre composant ne soit pas une version classique/vanilla. A
 Symbol (représentation logique) et empreinte(représentation physique) sont 2 choses différentes. Il y a un lien entre les 2 mais elles restent indépendante dans le sens où si le fabriquant à changé le pinout l'empreinte n'a pas forcément changée. Si le fabriquant a changé l'empreinte, le symbol n'a pas forcément changé.  
 
 
-xxxxxxecrire article xxxxxxxx
-Pour contrôler que tous nos éléments ont bien une empreinte on peut...................
-![Kicad_main_Menu](mkdocs/Kicad_check_footprint.png)   
+Pour contrôler que tous nos éléments ont bien une empreinte on peut utiliser le bouton de la barre du haut: Assigner empreinte -> afficher empreintes sélectionnées.  
+Dans la colonne du centre, à gauche on a le nom du composant et après les ":" le nom de l'empreinte  
+Les lignes en jaunes correspondent à une empreinte qui n'est pas valide (dans mon cas j'avais par exemple l'empreinte dans mes téléchargements, quelques jours plus tard je les effaces et kicad ne la retrouve plus. C'est pour ça qu'il est important de se faire sa bibliothèque)
+![Kicad_main_Menu](mkdocs/Kicad_check_footprint.png)         
+
+Pour modifier un symbol, utiliser le bbouton **éditeur de symbol**, une fênetre souvre, on sélectionne le symbol que l'on souhaite modifier dans la liste.  
+![alt text](mkdocs/kicadEditeurSymbol.png)  
+ Une fois le changement fait, il faut encore faire un clic droit sur le symbol dans notre schématique -> mise à jour symbol.  
+ ![Kicad_main_Menu](mkdocs/kicadUpdateSymbol.png)    
+
+## PLUGIN  
+Ces plugin ajoutent des bibliothèques de composants courant et permettent de générer des fichiers nécessaires à la commande sur JLCPCB.
+![Kicad_main_Menu](mkdocs/KicadPlugIN.png)   
 
 ## EMPREINTE / FOOTPRINT  
 Avec un **double clic sur un composant**, on défini leur propriété et charge leur empreinte.
-L'empreinte détermine comment le robo qui va crée notre PCB doit préparer les zone sur lesquelles il va souder les composants. Elles contiennent les "cooper pads" qui matchent avec les pins du composant. 
+L'empreinte détermine comment le robot qui va crée notre PCB doit préparer les zone sur lesquelles il va souder les composants. Elles contiennent les "cooper pads" qui matchent avec les pins du composant. 
 ![Kicad_main_Menu](mkdocs/Kicad_Propriete_Symbol.png)   
 
 On peut aussi utiliser l'éditeur d'empreinte et ses filtres.  
 Au milieu nos composant, à droite les empreintes dispo selon filtres.
-![alt text](mkdocs/Kicad_assigner_empreinte.png)
+![Kicad_main_Menu](mkdocs/Kicad_check_footprint.png)  
+Dans la fenêtre du milieu, après le nom du composant, si il n'y a rien après le symbol ":" c'est que le composant n'a pas d'empreinte
+
+Cette fênetre est aussi disponible via Outil -> assigner empreinte  
+![alt text](mkdocs/KicadFootprintAssign.png).
+
+Si l'empreinte n'est pas disponible dans les librairies mise à disposition, on peut aller la télécharger sur SnapMagic. Il faut extraire le dossier .zip et récupérer le fichier avec l'extension .kicad_mod. On doit ensuite le stocker dans un dossier avec l'extension .pretty. J'en ai donc crée un dans le dossier dédié à Kicad.  
+
+![alt text](mkdocs/CustomFootprintLocation.png).  
+Attention l'outil éditeur d'empreinte ne permet pas d'assigner les empreintes, il est là pour éditer leur tracé.    
 
 L'outil **trace** et bus permettent de réaliser les connexions.  
 
@@ -93,7 +115,7 @@ Icone **non connexion**
 
 
 ![Kicad_main_Menu](mkdocs/Kicad_pin_unused.png)   
-Afin d'éviter d'avoir des connexions partout comme ci dessous voir pire, on utilise les labels paramétrés en entrée et sortie.
+Afin d'éviter d'avoir des connexions partout comme ci dessous voir pire, on utilise les labels paramétrés en entrée et sortie.  
 ![Kicad wire](mkdocs/Kicad_wire.png)      
 Quand on double clic sur un **label** on peut **choisir** si il s'agit d'une **entrée** ou d'une **sortie**  
 ![Kicad label](mkdocs/label_entree.png)    
@@ -110,7 +132,7 @@ Une sortie peut être connectée à plusieurs entrées mais plusieurs sorties ne
   Mais juste voir le composant, bien que permettant de déterminer quellques indices sur les composants n'est pas suffisant. Il faut chercher des schéma du module. le mot clé dans la recharche google c'est le **nom du module + schematic**
 ![alt text](mkdocs/driver_moteur_schematic.png)
 
-Pour se simplifier la vie au niveau des connections du GND et de l'alimentation on utilise les symboles GND et VCC, ça permet de rendre le schéma plus lisible car on a moins de conexions partout.
+Pour se simplifier la vie au niveau des connections du GND et de l'alimentation on utilise les symboles GND et VCC, ça permet de rendre le schéma plus lisible car on a moins de connections partout.  
 ![alt text](mkdocs/Kicad_symbole_alimentation.png)  
 ![alt text](mkdocs/Kicad_Symbole_GND.png)  
 Exemple schéma symboles placés:
@@ -141,7 +163,7 @@ filtre:
 nr part et package.
 ![alt text](mkdocs/JLC_PCB_Part.png) 
 
-Il faut maintenant ajouter ces 2 infos dans le symbol. Pour ce faire on double clique sur le composant pour faire apparaître l'éditeur de sympole et clique sur le **+** pour ajouter un champ qu'on nomme **LCSC** et on y met le **JLCPCB part #**. Dans **empreinte** on entre ce qu'on a trouvé comme **Package**   
+Il faut maintenant ajouter le nr JLCPCB Part. Pour ce faire on double clique sur le composant pour faire apparaître l'éditeur de sympole et clique sur le **+** pour ajouter un champ qu'on nomme **LCSC** et on y met le **JLCPCB part #**. Dans **empreinte** on entre ce qu'on a trouvé comme **Package**   
 ![alt text](mkdocs/Kicad_LCSC_nr.png) 
   
 
