@@ -307,3 +307,34 @@ Pour importer l'image il faut utiliser l'outil symbole, chercher notre dossier d
 ##   Fabrication Toolkit
 Disponible depuis l'éditeur de PCB, le bouton Fabrication Toolkit, permet de générer les fichiers nécessaire à la réalisation du PCB par JLCPCB. Cela comprent le fichier Gerber (trace des circuits), le fichier drill (plan de perçage) et le fichier position (position des composants).
 ![alt text](mkdocs/Kicad_generer_fichier_fabrication.png)     
+
+## Spice
+C'est un outil de simulation de notre circuit imprimé disponible dans Kicad.  
+Pour la source d'alimentation on peut chercher le symbole **Spice VDC**, il s'agit d'un courant continu.  
+
+Double clic sur un symbol pour éditer sa valeur, on peut utiliser les caractères m K etc pour mili, kilo etc.  
+Pour ouvrir le mode simulation on utilise ce bouton:  
+![alt text](mkdocs/SpiceSimulation.png)      
+Puis ceux-ci pour démarrer la simulation dans le mode sélectionné:  
+![alt text](mkdocs/kicadSpiceSimulationType.png)    
+Une fois un mode sélectionné, si l'on veut basculer sur un autre mode, l'interface est un peu différente: il faut d'abord effacer le mode en cours puis le bouton de démarrage de la simulation nous donnera à nouveau accès au choi des modes:  
+![alt text](mkdocs/Spice_change_mod.png)    
+
+  
+Chaque changement apportés à la schématique ne sont pas automatiquement reportés dans la simulation, il faut recliquer sur l'icône de flèche bleu pour les appliquer.  
+Le type **point de fonctionnement DC** anote la schématique avec la valeur du courant et le voltage au points clés.  
+Le type de simulation **Analyse de balayage DC** permet de voir sous forme de graphe l'évolution du voltage, de l'ampérage et de la puissance sur un temps donné.  
+On défini le voltage de départ de l'alimentation et son voltage final (donc simplement de 0 à la valeur de l'alimentation) ainsi qu'un incrément.  
+
+
+Ici le même circuit réalisé de 4 manières différentes pour montrer ce qu'il ne faut pas faire:  
+1er schéma depuis la gauche je n'ai pas utiliser le VCC de spice, la simulation ne foncitonne pas.
+2ème schéma: j'utilise les éléments (vcc et gnd) de spice mais je n'ai pas connectés les 2 poles de l'alimentation entre eux. la simulation ne foncitonne pas.  
+3ème schéma: la rotation de la resistance amène un courant négatif.  
+4ème schéma: la résistance a été tournée de 180 degrés, tout fonctionne.
+5ème schéma: sans GND cela fonctionne aussi, j'imagine que son intégration n'est pas obligatoire tant que l'on a un seul circuit, du moment que l'on a plusieurs circuits ils doivent partager le même ground.
+
+![alt text](mkdocs/Spice_rule.png) 
+
+Si on obtient du courant négatif, c'est que kicad considère que les composants ont un sens, une resistance et sa copie tournée de 180 degrés n'ont aucune distinctions visuelle mais kicad les traite comme si elles avaient un pole + et - inversés.  
+
