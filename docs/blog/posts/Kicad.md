@@ -325,7 +325,7 @@ Chaque changement apportés à la schématique ne sont pas automatiquement repor
 Le type **point de fonctionnement DC** anote la schématique avec la valeur du courant et le voltage au points clés.  
 Le type de simulation **Analyse de balayage DC** permet de voir sous forme de graphe l'évolution du voltage, de l'ampérage et de la puissance sur un temps donné.  
 On défini le voltage de départ de l'alimentation et son voltage final (donc simplement de 0 à la valeur de l'alimentation) ainsi qu'un incrément.  
-
+![alt text](mkdocs/Spice_DC_balayage.png) 
 
 Ici le même circuit réalisé de 4 manières différentes pour montrer ce qu'il ne faut pas faire:  
 1er schéma depuis la gauche je n'ai pas utiliser le VCC de spice, la simulation ne foncitonne pas.
@@ -334,7 +334,9 @@ Ici le même circuit réalisé de 4 manières différentes pour montrer ce qu'il
 4ème schéma: la résistance a été tournée de 180 degrés, tout fonctionne.
 5ème schéma: sans GND cela fonctionne aussi, j'imagine que son intégration n'est pas obligatoire tant que l'on a un seul circuit, du moment que l'on a plusieurs circuits ils doivent partager le même ground.
 
-![alt text](mkdocs/Spice_rule.png) 
+![alt text](mkdocs/Spice_rule.png)  
+![alt text](mkdocs/Spice_custom_Model.png)  
 
 Si on obtient du courant négatif, c'est que kicad considère que les composants ont un sens, une resistance et sa copie tournée de 180 degrés n'ont aucune distinctions visuelle mais kicad les traite comme si elles avaient un pole + et - inversés.  
+Le symbol test point n'est pas compatible avec Spice.
 

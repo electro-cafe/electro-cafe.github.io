@@ -206,7 +206,7 @@ StepperMotor : ResetStep() int
 
 ## simpleFOC
 voir l'article Arduino_IDE_Platform_IO_et_composants pour une description du moteur gimbol GM5208 de IFlight et du SimpleFOCmini de DFRobot
-  [NomDuLiens](https://docs.simplefoc.com/mini_code#step-1-testing-the-sensor  
+  [Documentation_officielle](https://docs.simplefoc.com/mini_code#step-1-testing-the-sensor  
   )
 
   Open loop position commenté:  
@@ -431,17 +431,17 @@ void loop() {
 
 ## mise en place de test du moteur, simple foc, alimentation de labo
 
-Contrairement à un simple stepper motor pouvant directement être piloté par l'esp32, un moteur de type gimball brushless nessessite une plus grande alimentation (donc une alimentation de labo pour les tests), un driver, la librairie simple FOC, éventuellement encoder. Tout ceci car l'on va controller le champ magnétique (voltage / vitesse de rotation) plutôt que la position du rotor avec 2 simples coils. De plus, une fois tout le matériel en place, la librairie simpleFOC reste complexe quand on la découvre, de même que les aspects du champ électromagnétique. Ci dessous je traite de la librairie open_loop_velocity_exemple.
+Contrairement à un simple stepper motor pouvant directement être piloté par l'esp32, un moteur de type gimball brushless nessessite une plus grande alimentation (donc une alimentation de labo pour les tests), un driver, la librairie simple FOC, éventuellement un encoder. Tout ceci car l'on va controller le champ magnétique (voltage / vitesse de rotation) plutôt que la position du rotor avec 2 simples coils. De plus, une fois tout le matériel en place, la librairie simpleFOC reste complexe quand on la découvre, de même que les aspects du champ électromagnétique. Ci dessous je traite de la librairie open_loop_velocity_exemple.
 
-Grace à l'alimentation de labo fixé à 20 V 1 ampère on évite que le FOCmini tire trop d'ampère lorsque le moteur est à l'arrêt. Comme la fonction de verrouillage du courant (C.C) se déclenche moins rapidement que les actions internes du FOC on peut tout de même avoir un pic non désirable. Le simple FOC ne connait pas la force contre electromotrice en openloop car il n'y a pas d'encodeur pour mesurer la vitesse de rotation du moteur. Ce mode aveugle nécessite que l'utilisateur fixe ces variables avant l'éxecution du programme:  
--> Nombre de paire de pole du moteur.
--> driver.voltage_power_supply = 20; // [V]
--> driver.voltage_limit = 20; // [V]
+Grace à l'alimentation de labo fixé à 20 V 1 ampère on évite que le FOCmini tire trop d'ampère lorsque le moteur est à l'arrêt. Comme la fonction de verrouillage du courant (C.C) se déclenche moins rapidement que les actions internes du FOC on peut tout de même avoir un pic non désirable. Le simple FOC ne connait pas la force contre-electromotrice en openloop car il n'y a pas d'encodeur pour mesurer la vitesse de rotation du moteur. Ce mode aveugle nécessite que l'utilisateur fixe ces variables avant l'éxecution du programme:  
+-> Nombre de paire de pole du moteur.  
+-> driver.voltage_power_supply = 20; // [V]  
+-> driver.voltage_limit = 20; // [V]  
 Lors de l'execution du programme (quand le moteur est alimenté) l'utilisateur peut modifier les valeurs de la limite de tension et de la vitesse de rotation.
 -> motor.voltage_limit = 3; // [V] limite la tension que le FOC transmet au moteur. Modifiable par l'utilisateur lors de l'execution du programme.  
 -> La variable de la vitesse de rotation va modifier le taux de PWM du FOC ce qui va accélérer la rotation.
-Le programme a quelques gardes fous via les variables de voltage de la source d'alimentation et la limite de voltage mais pas au niveau de l'ampérage. Lorsqu'il ne tourne pas le moteur ne doit pas dépasser 0.09A
-L'ampérage était un débit de la part des composants, (ce n'est pas la source d'énergie qui pousse l'ampérage, c'est quelquechose qu'elle met juste à disposition) le moteur en soi ne va pas tirer plus que ce qu'il a besoin. Le hic c'est que le moteur ne fait pas ce qu'il veut, il est contrôlé par le FOC c'est lui qui tire l'ampérage pour le donner au moteur et comme indiqué précédement, il est aveugle en mode openloop. Ne pouvant pas estimer la FCEM, il prend ce qu'on lui demande de prendre.
+Le programme a quelques gardes fous via les variables de voltage de la source d'alimentation et la limite de voltage mais pas au niveau de l'ampérage. Lorsqu'il ne tourne pas le moteur ne doit pas dépasser 0.09A  
+L'ampérage était un débit de la part des composants, (ce n'est pas la source d'énergie qui pousse l'ampérage, c'est quelquechose qu'elle met juste à disposition) le moteur en soi ne va pas tirer plus que ce qu'il a besoin. Le hic c'est que le moteur ne fait pas ce qu'il veut, il est contrôlé par le FOC c'est lui qui tire l'ampérage pour le donner au moteur et comme indiqué précédement, il est aveugle en mode openloop. Ne pouvant pas estimer la FCEM (force contre-electromotrice), il prend ce qu'on lui demande de prendre.
 Du fait de la FCEM lié à la vitesse de rotation et du voltage créant le champ magnétique, on est dans un système aux propriétés physiques changeante (la FCEM réduit le courant. Le parallèle avec une résistance n'est pas exact car si dans les 2 cas il y a effectivement moins de voltage, la résistance dissipe l'énergie sous forme de chaleur. La FCEM est une tension opposée à celle de l'alimentation du moteur, elle vient en annuler une partie, ce qui se traduit par un freinage du moteur comparé à la vitesse qu'il aurait du avoir sans FCEM. Il n'y a pas de dissipation de l'énergie sous forme de chaleur.)
 Si on indique une vitesse de rotation trop rapide, le driveur va s'executer, si le champ magnétique n'est pas assez puissant (pas assez de voltage pour contrer la FCEM générée par sa rotation et entrainer le rotor), le rotor va décrocher, ayant perdu sa synchronisation avec le champ magnétique. ça se traduit par des tremblement. 
 **Si on indique un voltage haut alors que le moteur est à l'arrêt**, la FCEM n'étant pas encore en place, **l'ampérage va lui aussi être élevé et dépassant ainsi les 0.09 A indiqués** à l'arrêt dans la datasheet (sans charge, la charge se référant majoritairement à la FCEM et un petit peu au poid que le moteur met en mouvement)
